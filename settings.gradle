@@ -15,3 +15,10 @@ include('app', 'list', 'utilities')
 
 include 'lexer'
 include 'token'
+include 'parser'
+include 'interpreter'
+include 'ast'
+include 'formatter'
+include 'analyzer'
+include 'cli'
+
