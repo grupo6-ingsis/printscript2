@@ -3,6 +3,7 @@ package org.gudelker.rules
 import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
+import org.gudelker.components.org.gudelker.TokenType
 
 class WhitespaceTokenizer : RuleTokenizer {
     override fun matches(actualWord: String, nextChar: Char?): Boolean {
@@ -10,6 +11,11 @@ class WhitespaceTokenizer : RuleTokenizer {
     }
 
     override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
-        return tokens
+        val mutableCopy = tokens.toMutableList()
+        mutableCopy.add(Token(TokenType.WHITESPACE, actualWord, position))
+
+        val newImmutableList: List<Token> = mutableCopy.toList()
+
+        return newImmutableList
     }
 }

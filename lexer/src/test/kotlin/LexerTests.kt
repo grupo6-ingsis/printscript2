@@ -41,10 +41,10 @@ class LexerTests {
             newLineTokenizer,
             eqTokenizer,
             assignationTokenizer,
+            prohibitedSymbolDoubleTokenizer,
             identifierTokenizer,
             double,
             integer,
-            prohibitedSymbolDoubleTokenizer
         )
         lexer = NormalLexer(tokenizers)
 

@@ -57,13 +57,13 @@ class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
         return when (char) {
             '\n' -> position.copy(
                 startLine = position.endLine + 1,
-                startColumn = 1,
-                endColumn = 1,
+                startColumn = 0,
+                endColumn = 0,
                 endLine = position.endLine + 1
             )
             else -> position.copy(
                 endColumn = position.endColumn + 1,
-                startColumn = position.endColumn
+                startColumn = position.endColumn + 1
 
             )
         }
