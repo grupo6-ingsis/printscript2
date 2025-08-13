@@ -22,5 +22,5 @@ class NewLineTokenizer : RuleTokenizer{
 
         return newImmutableList
     }
-    
+
 }

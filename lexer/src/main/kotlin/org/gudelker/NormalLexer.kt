@@ -15,10 +15,11 @@ class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
             reader.next()
             val nextChar = reader.peek()
 
-            rules.map{
-                 if (it.matches(actualWord, nextChar)) {
-                     tokensList = it.generateToken(tokensList, actualWord, startPos)
-                 }
+            for (rule in rules) {
+                if (rule.matches(actualWord, nextChar)) {
+                    tokensList = rule.generateToken(tokensList, actualWord, startPos)
+                    break
+                }
             }
 
         }
