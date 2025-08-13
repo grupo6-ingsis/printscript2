@@ -5,16 +5,17 @@ import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
-class IdentifierTokenizer : RuleTokenizer {
+class EqualComparativeTokenizer: RuleTokenizer {
     override fun matches(actualWord: String, nextChar: Char?): Boolean {
-        val regex = "[a-zA-Z_][a-zA-Z0-9_]*"
-        return actualWord.matches(regex.toRegex()) &&
-                (nextChar == null || !nextChar.toString().matches(regex.toRegex()))
+        return actualWord == "==" || actualWord == "!=" || actualWord == "<=" || actualWord == ">=" || actualWord == "<" || actualWord == ">"
     }
 
     override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
         val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.IDENTIFIER, actualWord, position))
-        return mutableCopy.toList()
+        mutableCopy.add(Token(TokenType.COMPARATOR, actualWord, position))
+
+        val newImmutableList: List<Token> = mutableCopy.toList()
+
+        return newImmutableList
     }
 }

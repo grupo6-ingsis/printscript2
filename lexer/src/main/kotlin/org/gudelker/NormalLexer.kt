@@ -11,19 +11,24 @@ class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
         var startPos = Position()
 
         while (!reader.isEOF()) {
-            actualWord = reader.next().toString()
-            reader.next()
+            actualWord += reader.next().toString()
             val nextChar = reader.peek()
+            if (nextChar == '\n'){
+                advancePosition(startPos, nextChar)
+            }
 
             for (rule in rules) {
                 if (rule.matches(actualWord, nextChar)) {
-                    tokensList = rule.generateToken(tokensList, actualWord, startPos)
+                    val pos = startPos.copy()
+                    tokensList = rule.generateToken(tokensList, actualWord, pos)
+                    startPos = advancePosition(startPos, nextChar)
+                    actualWord = resetWordToEmpty()
                     break
                 }
             }
 
         }
-        TODO()
+        return tokensList
     }
 
     private fun resetWordToEmpty(): String {
@@ -47,7 +52,7 @@ class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
 
     private fun advancePosition( // No está bien implementado pero va por ahí
         position: Position,
-        char: Char
+        char: Char?
     ): Position {
         return when (char) {
             '\n' -> position.copy(
@@ -57,7 +62,9 @@ class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
                 endLine = position.endLine + 1
             )
             else -> position.copy(
-                endColumn = position.endColumn + 1
+                endColumn = position.endColumn + 1,
+                startColumn = position.endColumn
+
             )
         }
     }
