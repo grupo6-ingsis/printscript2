@@ -21,4 +21,5 @@ include 'ast'
 include 'formatter'
 include 'analyzer'
 include 'cli'
+include 'utilities'
 

@@ -1,4 +1,4 @@
-package org.gudelker.components
+package org.gudelker
 
 data class Position (
     val startOffset: Int = 1, // Index of the first character of a token in the entire input string

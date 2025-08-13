@@ -1,27 +1,28 @@
-package org.gudelker.lexer
+package org.gudelker
 
-import org.gudelker.components.Position
-import org.gudelker.components.Token
-import org.gudelker.components.TokenType
+import org.gudelker.components.org.gudelker.TokenType
 
-class NormalLexer : Lexer {
-    override fun lex(input: String): List<Token> {
+class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
+
+    override fun lex(fileName: String): List<Token> {
+        val reader = Reader(fileName)
         var actualWord = ""
-        var tokensList = mutableListOf<Token>()
+        var tokensList = listOf<Token>()
         var startPos = Position()
 
-        for (character: Char in input) { // ACORDARSE de ver el tema de leer de archivo o string (o si tenemos algo que pase de archivo a string poniendo \n en los saltos)
-            if (character == ' ') {
-                val type: TokenType = findTokenType(actualWord)
-                val newPos = startPos.copy(endColumn = startPos.endColumn - 1)
-                tokensList.add(Token(type, actualWord, newPos))
-                actualWord = resetWordToEmpty()
-            } else {
-                actualWord = addCharacterToWord(actualWord, character)
+        while (!reader.isEOF()) {
+            actualWord = reader.next().toString()
+            reader.next()
+            val nextChar = reader.peek()
+
+            rules.map{
+                 if (it.matches(actualWord, nextChar)) {
+                     tokensList = it.generateToken(tokensList)
+                 }
             }
-            startPos = advancePosition(startPos, character)
+
         }
-        return tokensList
+        TODO()
     }
 
     private fun resetWordToEmpty(): String {

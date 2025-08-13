@@ -1,4 +1,4 @@
-package org.gudelker.components
+package org.gudelker.components.org.gudelker
 
 enum class TokenType {
     TYPE,

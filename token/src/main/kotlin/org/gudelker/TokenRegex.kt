@@ -1,6 +1,6 @@
-package org.gudelker.lexer
+package org.gudelker
 
-import org.gudelker.components.TokenType
+import org.gudelker.components.org.gudelker.TokenType
 import java.util.EnumMap
 
 object TokenRegex {
