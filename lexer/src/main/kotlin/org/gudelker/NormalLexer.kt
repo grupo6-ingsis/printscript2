@@ -17,7 +17,7 @@ class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
 
             rules.map{
                  if (it.matches(actualWord, nextChar)) {
-                     tokensList = it.generateToken(tokensList)
+                     tokensList = it.generateToken(tokensList, actualWord, startPos)
                  }
             }
 

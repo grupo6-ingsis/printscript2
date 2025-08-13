@@ -5,17 +5,22 @@ import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
-class SemicolonTokenizer : RuleTokenizer {
+class NotLineAfterSemicolonTokenizer : RuleTokenizer {
     override fun matches(actualWord: String, nextChar: Char?): Boolean {
-        return actualWord == ";"
+        return actualWord == ";" && nextChar == '\n'
     }
 
-    override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
+    override fun generateToken(
+        tokens: List<Token>,
+        actualWord: String,
+        position: Position
+    ): List<Token> {
         val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.SEMICOLON, actualWord, position))
+        mutableCopy.add(Token(TokenType.UNKNOWN, actualWord, position))
 
         val newImmutableList: List<Token> = mutableCopy.toList()
 
         return newImmutableList
     }
+
 }
