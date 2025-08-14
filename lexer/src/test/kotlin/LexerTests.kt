@@ -1,4 +1,4 @@
-import org.gudelker.NormalLexer
+import org.gudelker.FileLexer
 import org.gudelker.rules.AssignationTokenizer
 import org.gudelker.rules.ColonTokenizer
 import org.gudelker.rules.DoubleTokenizer
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 
 class LexerTests {
-    lateinit var lexer: NormalLexer
+    lateinit var lexer: FileLexer
 
 
     @BeforeEach
@@ -46,7 +46,7 @@ class LexerTests {
             double,
             integer,
         )
-        lexer = NormalLexer(tokenizers)
+        lexer = FileLexer(tokenizers)
 
 
 

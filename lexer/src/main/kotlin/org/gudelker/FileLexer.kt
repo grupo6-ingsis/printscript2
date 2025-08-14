@@ -2,7 +2,7 @@ package org.gudelker
 
 import org.gudelker.components.org.gudelker.TokenType
 
-class NormalLexer(val rules : List<RuleTokenizer>) : Lexer {
+class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
 
     override fun lex(fileName: String): List<Token> {
         val reader = Reader(fileName)
