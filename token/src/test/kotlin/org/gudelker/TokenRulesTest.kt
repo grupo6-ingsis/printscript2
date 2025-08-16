@@ -1,10 +1,12 @@
-import org.junit.jupiter.api.BeforeEach
-import kotlin.test.Test
+package org.gudelker
+
 import org.gudelker.rules.ColonTokenizer
 import org.gudelker.rules.IdentifierTokenizer
 import org.gudelker.rules.NewLineTokenizer
 import org.gudelker.rules.SemicolonTokenizer
 import org.gudelker.rules.WhitespaceTokenizer
+import org.junit.jupiter.api.BeforeEach
+import kotlin.test.Test
 
 class TokenRulesTest {
     val colonTokenizer: ColonTokenizer = ColonTokenizer()

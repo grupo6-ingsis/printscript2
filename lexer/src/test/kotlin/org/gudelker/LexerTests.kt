@@ -1,4 +1,5 @@
-import org.gudelker.LexerFactory
+package org.gudelker
+
 import org.junit.jupiter.api.BeforeEach
 import java.nio.file.Paths
 import kotlin.test.Test
