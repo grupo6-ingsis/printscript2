@@ -9,8 +9,11 @@ import org.gudelker.rules.IntegerTokenizer
 import org.gudelker.rules.LetTokenizer
 import org.gudelker.rules.NewLineTokenizer
 import org.gudelker.rules.NotLineAfterSemicolonTokenizer
+import org.gudelker.rules.NotSpaceOperationTokenizer
+import org.gudelker.rules.OperationTokenizer
 import org.gudelker.rules.ProhibitedSymbolDoubleTokenizer
 import org.gudelker.rules.SemicolonTokenizer
+import org.gudelker.rules.StringTokenizer
 import org.gudelker.rules.WhitespaceTokenizer
 
 object LexerFactory {
@@ -19,12 +22,15 @@ object LexerFactory {
             listOf(
                 LetTokenizer(),
                 ColonTokenizer(),
+                NewLineTokenizer(),
                 NotLineAfterSemicolonTokenizer(),
                 SemicolonTokenizer(),
+                OperationTokenizer(),
+                StringTokenizer(),
                 WhitespaceTokenizer(),
-                NewLineTokenizer(),
                 EqualComparativeTokenizer(),
                 AssignationTokenizer(),
+                NotSpaceOperationTokenizer(),
                 ProhibitedSymbolDoubleTokenizer(),
                 IdentifierTokenizer(),
                 DoubleTokenizer(),

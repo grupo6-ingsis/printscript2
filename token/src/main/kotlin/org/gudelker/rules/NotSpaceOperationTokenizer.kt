@@ -5,9 +5,11 @@ import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
-class NewLineTokenizer : RuleTokenizer{
+class NotSpaceOperationTokenizer : RuleTokenizer {
     override fun matches(actualWord: String, nextChar: Char?): Boolean {
-        return actualWord == "\n" || actualWord == "\r"
+        val isNumber = actualWord[actualWord.length - 1].isDigit()
+        val nextCharIsOperation = nextChar == '+' || nextChar == '-' || nextChar == '*' || nextChar == '/'
+        return isNumber && nextCharIsOperation
     }
 
     override fun generateToken(
@@ -16,11 +18,10 @@ class NewLineTokenizer : RuleTokenizer{
         position: Position
     ): List<Token> {
         val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.NEWLINE, actualWord, position))
+        mutableCopy.add(Token(TokenType.UNKNOWN, actualWord, position))
 
         val newImmutableList: List<Token> = mutableCopy.toList()
 
         return newImmutableList
     }
-
 }

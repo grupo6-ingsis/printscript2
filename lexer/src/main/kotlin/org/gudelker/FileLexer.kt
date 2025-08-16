@@ -1,7 +1,5 @@
 package org.gudelker
 
-import org.gudelker.components.org.gudelker.TokenType
-
 class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
 
     override fun lex(fileName: String): List<Token> {
@@ -11,7 +9,8 @@ class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
         var startPos = Position()
 
         while (!reader.isEOF()) {
-            actualWord += reader.next().toString()
+            val newChar = reader.next().toString()
+            actualWord += newChar
             val nextChar = reader.peek()
             if (nextChar == '\n'){
                 advancePosition(startPos, nextChar)
@@ -19,9 +18,10 @@ class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
 
             for (rule in rules) {
                 if (rule.matches(actualWord, nextChar)) {
-                    val pos = startPos.copy()
+                    val posWithNewOffset = changingOffSet(startPos, actualWord)
+                    val pos = posWithNewOffset.copy()
                     tokensList = rule.generateToken(tokensList, actualWord, pos)
-                    startPos = advancePosition(startPos, nextChar)
+                    startPos = advancePosition(posWithNewOffset, nextChar)
                     actualWord = resetWordToEmpty()
                     break
                 }
@@ -33,21 +33,6 @@ class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
 
     private fun resetWordToEmpty(): String {
         return ""
-    }
-
-    private fun addCharacterToWord(actualWord: String, character: Char): String {
-        var newWord = actualWord
-        newWord += character
-        return newWord
-    }
-
-    private fun findTokenType(text: String): TokenType {
-        TokenRegex.getAllPatterns().forEach {
-            (type, pattern) -> if (text.matches(pattern.toRegex())) {
-                return type
-            }
-        }
-        return TokenType.UNKNOWN
     }
 
     private fun advancePosition( // No está bien implementado pero va por ahí
@@ -62,10 +47,18 @@ class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
                 endLine = position.endLine + 1
             )
             else -> position.copy(
+                startOffset = position.endOffset + 1,
+                endOffset = position.endOffset + 1,
                 endColumn = position.endColumn + 1,
                 startColumn = position.endColumn + 1
 
             )
         }
+    }
+
+    private fun changingOffSet(position: Position, actualWord: String): Position {
+        return position.copy(
+            endOffset = position.endOffset + actualWord.length,
+        )
     }
 }

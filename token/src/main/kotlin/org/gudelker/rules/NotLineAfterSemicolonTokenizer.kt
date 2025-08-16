@@ -7,7 +7,7 @@ import org.gudelker.components.org.gudelker.TokenType
 
 class NotLineAfterSemicolonTokenizer : RuleTokenizer {
     override fun matches(actualWord: String, nextChar: Char?): Boolean {
-        return actualWord == ";" && nextChar != '\n'
+        return actualWord == ";" && !(nextChar == '\n' || nextChar == '\r' || nextChar == null)
     }
 
     override fun generateToken(
