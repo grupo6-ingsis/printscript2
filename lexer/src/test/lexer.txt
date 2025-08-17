@@ -1,5 +1,5 @@
-let 34 boca: ==string3  = Hello=World;
-3;
+let 34 boca: == astring  = Hello=World;
+tring;
 jdakdjka;
 "shasaj";
 'sasasa';
