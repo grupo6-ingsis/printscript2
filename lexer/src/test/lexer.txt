@@ -1,7 +1,7 @@
 let 34 boca: ==string3 3a  = Hello=World;
 3;
 jdakdjka;
-5+3 5 +3 5+ 3 5 + 3;
 "shasaj";
 'sasasa';
-"kaajskjsa;
+"kaajs
+kjsa";

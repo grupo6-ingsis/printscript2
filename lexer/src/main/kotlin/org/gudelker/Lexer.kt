@@ -1,6 +1,7 @@
 package org.gudelker
 
-interface Lexer {
-    fun lex(input: String): List<Token>
+import org.gudelker.result.Result
 
+interface Lexer {
+    fun lex(input: String): Result
 }

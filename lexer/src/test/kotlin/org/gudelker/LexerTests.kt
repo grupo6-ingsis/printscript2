@@ -1,5 +1,7 @@
 package org.gudelker
 
+import org.gudelker.result.SyntaxError
+import org.gudelker.result.Valid
 import org.junit.jupiter.api.BeforeEach
 import java.nio.file.Paths
 import kotlin.test.Test
@@ -18,8 +20,11 @@ class LexerTests {
         // Ahora no hay que cambiarlo constantemente
         val relativePath = Paths.get("src/test/lexer.txt").toAbsolutePath().toString()
         val tokens = lexer.lex(relativePath)
-        for (token in tokens) {
-            println(token)
+        when (tokens){
+            is Valid ->
+                for (token in tokens.getList()) println(token)
+            is SyntaxError ->
+                println(tokens.getError())
         }
     }
 }

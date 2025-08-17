@@ -24,5 +24,7 @@ enum class TokenType {
     COMPARATOR, // <, >, <=, >=, ==, !=
 
     IDENTIFIER, // variable name
-    UNKNOWN // Error
+    UNKNOWN, // Error
+
+    EOF
 }
