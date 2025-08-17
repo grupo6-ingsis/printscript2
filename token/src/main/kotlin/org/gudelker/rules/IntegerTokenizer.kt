@@ -22,8 +22,7 @@ class IntegerTokenizer : RuleTokenizer {
         actualWord: String,
         position: Position
     ): List<Token> {
-        val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.INTEGER, actualWord, position))
-        return mutableCopy.toList()
+        val newList = tokens + Token(TokenType.NUMBER, actualWord, position)
+        return newList
     }
 }

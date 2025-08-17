@@ -17,11 +17,7 @@ class NotSpaceOperationTokenizer : RuleTokenizer {
         actualWord: String,
         position: Position
     ): List<Token> {
-        val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.UNKNOWN, actualWord, position))
-
-        val newImmutableList: List<Token> = mutableCopy.toList()
-
-        return newImmutableList
+        val newList = tokens + Token(TokenType.UNKNOWN, actualWord, position)
+        return newList
     }
 }

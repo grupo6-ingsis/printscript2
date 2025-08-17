@@ -10,8 +10,7 @@ enum class TokenType {
     FUNCTION, // printf(), println(), read(), etc.
 
     STRING,
-    INTEGER,
-    DOUBLE,
+    NUMBER,
     BOOLEAN,
     CHARACTER,
 

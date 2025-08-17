@@ -21,8 +21,7 @@ class DoubleTokenizer: RuleTokenizer {
         actualWord: String,
         position: Position
     ): List<Token> {
-        val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.DOUBLE, actualWord, position))
-        return mutableCopy.toList()
+        val newList = tokens + Token(TokenType.NUMBER, actualWord, position)
+        return newList
     }
 }

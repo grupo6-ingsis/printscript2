@@ -15,12 +15,7 @@ class NewLineTokenizer : RuleTokenizer{
         actualWord: String,
         position: Position
     ): List<Token> {
-        val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.NEWLINE, actualWord, position))
-
-        val newImmutableList: List<Token> = mutableCopy.toList()
-
-        return newImmutableList
+        return tokens
     }
 
 }

@@ -12,11 +12,7 @@ class OperationTokenizer : RuleTokenizer {
     }
 
     override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
-        val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.OPERATOR, actualWord, position))
-
-        val newImmutableList: List<Token> = mutableCopy.toList()
-
-        return newImmutableList
+        val newList = tokens + Token(TokenType.OPERATOR, actualWord, position)
+        return newList
     }
 }

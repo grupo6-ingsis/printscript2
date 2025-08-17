@@ -17,11 +17,7 @@ class IdentifierTokenizer : RuleTokenizer {
     private fun matchesRegex(actualWord: String, regex: String) = actualWord.matches(regex.toRegex())
 
     override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
-        val mutableCopy = tokens.toMutableList()
-        mutableCopy.add(Token(TokenType.IDENTIFIER, actualWord, position))
-
-        val newImmutableList: List<Token> = mutableCopy.toList()
-
-        return newImmutableList
+        val newList = tokens + Token(TokenType.IDENTIFIER, actualWord, position)
+        return newList
     }
 }
