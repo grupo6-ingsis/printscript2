@@ -37,11 +37,11 @@ class FileLexer(val rules : List<RuleTokenizer>) : Lexer {
                     break
                 }
             }
-            var finalTokenList = tokensList.toMutableList()
-            finalTokenList.add(Token(TokenType.EOF,"EOF", advancePosition(startPos, null)))
-
         }
-        return Valid(tokensList)
+        var finalTokenList = tokensList.toMutableList()
+        finalTokenList.add(Token(TokenType.EOF,"EOF", startPos))
+        val resultValue = finalTokenList
+        return Valid(resultValue)
     }
 
     private fun resetWordToEmpty(): String {

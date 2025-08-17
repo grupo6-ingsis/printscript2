@@ -1,4 +1,4 @@
-let 34 boca: ==string3 3a  = Hello=World;
+let 34 boca: ==string3  = Hello=World;
 3;
 jdakdjka;
 "shasaj";
