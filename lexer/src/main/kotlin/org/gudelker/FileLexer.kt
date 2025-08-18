@@ -9,7 +9,6 @@ class FileLexer(val rules: List<RuleTokenizer>) : Lexer {
 
     override fun lex(fileName: String): Result {
         val reader = Reader(fileName)
-
         fun lexRec(
             actualWord: String,
             tokensList: List<Token>,

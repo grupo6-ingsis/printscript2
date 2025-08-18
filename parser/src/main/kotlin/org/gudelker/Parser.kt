@@ -1,4 +1,4 @@
-import org.example.Statement
+import org.example.org.gudelker.Statement
 import org.gudelker.Token
 
 interface Parser {

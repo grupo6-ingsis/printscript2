@@ -1,28 +1,35 @@
 package org.gudelker
 
-import org.example.Statement
+import org.example.org.gudelker.Statement
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.Result
+import org.gudelker.result.Valid
 
 class DefaultParser(val list: List<Token>, val root: List<Statement>) {
-    fun parse(): List<Statement> {
+    fun parse(): Result{
         return parseRec(0, root)
     }
 
-    private fun parseStatement(token: Token): Statement {
-        // TODO: Implement actual statement parsing logic
-        throw NotImplementedError("parseStatement not implemented")
-    }
-    private fun parseRec(index: Int, ast: List<Statement>): List<Statement> {
+    private fun parseRec(index: Int, ast: List<Statement>): Result {
         if (index >= list.size || list[index].getType() == TokenType.EOF) {
-            return ast
+            return Valid(ast)
         }
-        val token = list[index]
-        if (token.getType() == TokenType.SEMICOLON) {
-            return parseRec(index + 1, ast)
+        // Find the next semicolon or EOF
+        val end = (index until list.size).firstOrNull {
+            list[it].getType() == TokenType.SEMICOLON || list[it].getType() == TokenType.EOF
+        } ?: list.size
+        val statementTokens = list.subList(index, end)
+        val statement = parseStatement(statementTokens)
+        val nextIndex = if (end < list.size && list[end].getType() == TokenType.SEMICOLON) end + 1 else end
+        return parseRec(nextIndex, ast + statement)
+    }
+
+    // Now parseStatement takes a list of tokens
+    private fun parseStatement(tokens: List<Token>): Statement {
+        for (token in tokens) {
+
         }
-        val statement = parseStatement(token)
-        val newRoot = ast + statement
-        return parseRec(index + 1, newRoot)
+        TODO()
     }
 
     fun getRoot(): List<Statement> = root

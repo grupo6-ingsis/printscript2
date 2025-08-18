@@ -1,4 +1,4 @@
-package org.example
+package org.example.org.gudelker
 
 interface ExpressionStatement: Statement {
 
