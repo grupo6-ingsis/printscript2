@@ -5,12 +5,12 @@ import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.Valid
 
-class FileLexer(val rules: List<RuleTokenizer>) : Lexer {
+class FileLexer(private val rules: List<RuleTokenizer>) : Lexer {
 
     override fun lex(fileName: String): Result {
         val reader = Reader(fileName)
 
-        fun lexRec(
+        fun lexRecursive(
             actualWord: String,
             tokensList: List<Token>,
             startPos: Position
@@ -22,11 +22,13 @@ class FileLexer(val rules: List<RuleTokenizer>) : Lexer {
             val newChar = reader.next().toString()
             val updatedWord = actualWord + newChar
             val nextChar = reader.peek()
-            val updatedPos = if (nextChar == '\n' || nextChar == '\r') {
+
+            val updatedPos = if (nextCharIsNewLine(nextChar)) {
                 advancePosition(startPos, nextChar)
             } else startPos
 
             val matchingRule = rules.firstOrNull { it.matches(updatedWord, nextChar) }
+
             return if (matchingRule != null) {
                 val posWithNewOffset = changingOffSet(updatedPos, updatedWord)
                 val pos = posWithNewOffset.copy()
@@ -35,14 +37,14 @@ class FileLexer(val rules: List<RuleTokenizer>) : Lexer {
                 if (lastToken.getType() == TokenType.UNKNOWN) {
                     SyntaxError("Syntax error in line: ${lastToken.getPosition().startLine}")
                 } else {
-                    lexRec("", newTokens, advancePosition(posWithNewOffset, nextChar))
+                    lexRecursive("", newTokens, advancePosition(posWithNewOffset, nextChar))
                 }
             } else {
-                lexRec(updatedWord, tokensList, updatedPos)
+                lexRecursive(updatedWord, tokensList, updatedPos)
             }
         }
 
-        return lexRec("", listOf(), Position())
+        return lexRecursive("", listOf(), Position())
     }
 
     private fun advancePosition(
@@ -71,4 +73,7 @@ class FileLexer(val rules: List<RuleTokenizer>) : Lexer {
             endOffset = position.endOffset + actualWord.length,
         )
     }
+
+    private fun nextCharIsNewLine(nextChar: Char?) = nextChar == '\n' || nextChar == '\r'
+
 }
