@@ -11,6 +11,8 @@ enum class TokenType {
 
     STRING,
     NUMBER,
+    STRING_TYPE,
+    NUMBER_TYPE,
     BOOLEAN,
     CHARACTER,
 

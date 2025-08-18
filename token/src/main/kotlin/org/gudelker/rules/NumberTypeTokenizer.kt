@@ -5,9 +5,9 @@ import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
-class StringTypeTokenizer: RuleTokenizer {
+class NumberTypeTokenizer: RuleTokenizer {
     override fun matches(actualWord: String, nextChar: Char?): Boolean {
-        return (actualWord == "String") && (nextChar == null || nextChar.isWhitespace() || nextChar == '='|| nextChar==';')
+        return actualWord == "Number" && (nextChar == null || nextChar.isWhitespace() || nextChar == '=' || nextChar == ';')
     }
 
     override fun generateToken(
@@ -15,10 +15,8 @@ class StringTypeTokenizer: RuleTokenizer {
         actualWord: String,
         position: Position
     ): List<Token> {
-        val newToken = Token(TokenType.STRING_TYPE, actualWord, position)
+        val newToken = Token(TokenType.NUMBER_TYPE, actualWord, position)
         val newList = tokens + newToken
         return newList
     }
-
-
 }

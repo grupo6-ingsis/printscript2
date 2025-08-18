@@ -26,10 +26,14 @@ class DefaultParser(val list: List<Token>, val root: List<Statement>) {
 
     // Now parseStatement takes a list of tokens
     private fun parseStatement(tokens: List<Token>): Statement {
-        for (token in tokens) {
+        if(tokens.get(0).getType() == TokenType.KEYWORD) {
 
         }
         TODO()
+    }
+
+    private fun createVariableDeclaration(tokens: List<Token>): Statement {
+TODO()
     }
 
     fun getRoot(): List<Statement> = root
