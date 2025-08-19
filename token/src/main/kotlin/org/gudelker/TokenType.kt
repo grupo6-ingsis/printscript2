@@ -3,7 +3,7 @@ package org.gudelker.components.org.gudelker
 enum class TokenType {
     TYPE,
 
-    DECLARATION, // :
+    COLON, // :
     ASSIGNATION, // =
     KEYWORD, // class, import, package, let, const, var, return, etc.
     FUNCTIONKEYWORD, // if, else, while, for, etc.
@@ -11,8 +11,6 @@ enum class TokenType {
 
     STRING,
     NUMBER,
-    STRING_TYPE,
-    NUMBER_TYPE,
     BOOLEAN,
     CHARACTER,
 

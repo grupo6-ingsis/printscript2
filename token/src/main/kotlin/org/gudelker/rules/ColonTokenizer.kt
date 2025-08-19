@@ -11,7 +11,7 @@ class ColonTokenizer : RuleTokenizer {
         }
 
     override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
-        val newList = tokens + Token(TokenType.DECLARATION, actualWord, position)
+        val newList = tokens + Token(TokenType.COLON, actualWord, position)
         return newList
     }
 }

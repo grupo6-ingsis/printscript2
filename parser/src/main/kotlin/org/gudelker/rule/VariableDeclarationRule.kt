@@ -1,0 +1,87 @@
+package org.gudelker.rule
+
+import org.example.org.gudelker.ExpressionStatement
+import org.example.org.gudelker.VariableDeclaration
+import org.gudelker.Token
+import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.IndexOutOfBounds
+import org.gudelker.result.Result
+import org.gudelker.result.SyntaxError
+import org.gudelker.result.ValidStatementResult
+
+class VariableDeclarationRule: SyntaxRule {
+    override fun matches(tokens: List<Token>, index: Int): Boolean {
+        return isFirstTokenKeyword(tokens, index)
+    }
+
+    override fun parse(tokens: List<Token>, index: Int): Result {
+        if (isNextIndexOutOfBounds(index, tokens)) {
+            return IndexOutOfBounds("Index out of tokenList bounds at index: $index")
+        }
+
+        if (!isTokenAtIndexIdentifier(tokens, index + 1)) {
+            return SyntaxError("Se esperaba un identificador después de 'let' en la fila: "
+                    + tokens[index].getPosition().startLine)
+        }
+
+        val identifier = tokens[index + 1].getValue()
+        var currentIndex = index + 2
+
+        var type: String? = null
+        if (currentIndex < tokens.size && isTokenAtIndexColon(tokens, currentIndex)) {
+            if (isNextIndexOutOfBounds(currentIndex, tokens)) {
+                return IndexOutOfBounds("Index out of tokenList bounds at index: $currentIndex")
+            }
+
+            if (isTokenAtIndexType(tokens, currentIndex)) {
+                return SyntaxError("Se esperaba un tipo después de ':'")
+            }
+
+            type = tokens[currentIndex + 1].getValue()
+            currentIndex += 2
+        }
+        // Verificar asignación
+        if (currentIndex >= tokens.size || tokens[currentIndex].getType() != TokenType.ASSIGNATION) {
+            return SyntaxError("Se esperaba '=' después de la declaración")
+        }
+        currentIndex+=1
+
+        // Parsear el valor (expresión)
+        val expressionRule = ExpressionRule()
+
+        when (val valueExpr = expressionRule.parse(tokens, currentIndex + 1)){
+            is ValidStatementResult -> {
+                val expressionStatement = valueExpr.getStatement() as ExpressionStatement
+                val statement = VariableDeclaration(
+                    identifier,
+                    type,
+                    expressionStatement,
+                )
+                return ValidStatementResult(statement, currentIndex)
+            }
+            else -> {
+                return SyntaxError("Error al parsear la expresión")
+            }
+        }
+    }
+
+    private fun isTokenAtIndexType(tokens: List<Token>, currentIndex: Int) =
+        tokens[currentIndex + 1].getType() != TokenType.TYPE
+
+    private fun isTokenAtIndexColon(tokens: List<Token>, currentIndex: Int) =
+        tokens[currentIndex].getType() == TokenType.COLON
+
+    private fun isTokenAtIndexIdentifier(tokens: List<Token>, index: Int) =
+        tokens[index].getType() == TokenType.IDENTIFIER
+
+    private fun isNextIndexOutOfBounds(index: Int, tokens: List<Token>) : Boolean
+    {
+        return index + 1 >= tokens.size
+    }
+
+    private fun isFirstTokenKeyword(tokens: List<Token>, index: Int): Boolean {
+        val type = tokens[index].getType()
+        return type == TokenType.KEYWORD
+    }
+
+}

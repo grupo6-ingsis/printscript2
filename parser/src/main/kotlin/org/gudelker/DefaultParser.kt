@@ -5,40 +5,40 @@ import org.gudelker.components.org.gudelker.TokenType
 
 import org.gudelker.result.Result
 import org.gudelker.result.Valid
-class DefaultParser(val list: List<Token>, val root: List<Statement>) {
+import org.gudelker.rule.SyntaxRule
+
+
+class DefaultParser(private val tokens: List<Token>,
+                    private val root: List<Statement>,
+                    private val rules: List<SyntaxRule>
+    ) {
     fun parse(): Result {
         return parseRecursive(0, root)
     }
 
-    private fun parseStatement(token: Token): Statement {
-        // TODO: Implement actual statement parsing logic
-        throw NotImplementedError("parseStatement not implemented")
-    }
     private fun parseRecursive(index: Int, ast: List<Statement>): Result {
-        if (index >= list.size || list[index].getType() == TokenType.EOF) {
+        if (isTokenAtIndexEof(index)) {
             return Valid(ast)
         }
+
         // Find the next semicolon or EOF
-        val end = (index until list.size).firstOrNull {
-            list[it].getType() == TokenType.SEMICOLON || list[it].getType() == TokenType.EOF
-        } ?: list.size
-        val statementTokens = list.subList(index, end)
-        val statement = parseStatement(statementTokens)
-        val nextIndex = if (end < list.size && list[end].getType() == TokenType.SEMICOLON) end + 1 else end
-        return parseRecursive(nextIndex, ast + statement)
-    }
+        val nextSemiColonIndex : Int = (index until tokens.size).firstOrNull {
+            tokens[it].getType() == TokenType.SEMICOLON} ?: tokens.size
 
-    // Now parseStatement takes a list of tokens
-    private fun parseStatement(tokens: List<Token>): Statement {
-        if(tokens.get(0).getType() == TokenType.KEYWORD) {
+        val statementTokens = tokens.subList(index, nextSemiColonIndex)
+        
+        for (rule in rules) {
+            if (rule.matches(statementTokens, index)) {
 
+            }
         }
-        TODO()
+        return parseRecursive(index + 1, ast) // ver lo del punto y coma
+
     }
 
-    private fun createVariableDeclaration(tokens: List<Token>): Statement {
-TODO()
-    }
+    private fun isTokenAtIndexEof(index: Int) = tokens[index].getType() == TokenType.EOF
+
+
 
     fun getRoot(): List<Statement> = root
 }

@@ -15,7 +15,7 @@ class NumberTypeTokenizer: RuleTokenizer {
         actualWord: String,
         position: Position
     ): List<Token> {
-        val newToken = Token(TokenType.NUMBER_TYPE, actualWord, position)
+        val newToken = Token(TokenType.TYPE, actualWord, position)
         val newList = tokens + newToken
         return newList
     }
