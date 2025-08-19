@@ -6,7 +6,10 @@ import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
 class StringTokenizer : RuleTokenizer {
-    override fun matches(actualWord: String, nextChar: Char?): Boolean {
+    override fun matches(
+        actualWord: String,
+        nextChar: Char?,
+    ): Boolean {
         // Verificar que tenga al menos 2 caracteres (comillas de apertura y cierre)
         if (actualWord.length < 2) {
             return false
@@ -23,9 +26,16 @@ class StringTokenizer : RuleTokenizer {
         return actualWord.last() == firstChar
     }
 
-    private fun matchesRegex(actualWord: String, regex: String) = actualWord.matches(regex.toRegex())
+    private fun matchesRegex(
+        actualWord: String,
+        regex: String,
+    ) = actualWord.matches(regex.toRegex())
 
-    override fun generateToken(tokens: List<Token>, actualWord: String, position: Position): List<Token> {
+    override fun generateToken(
+        tokens: List<Token>,
+        actualWord: String,
+        position: Position,
+    ): List<Token> {
         val newList = tokens + Token(TokenType.STRING, actualWord, position)
         return newList
     }

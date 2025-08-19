@@ -6,14 +6,13 @@ import org.gudelker.result.SyntaxError
 import org.gudelker.result.Valid
 
 class FileLexer(private val rules: List<RuleTokenizer>) : Lexer {
-
     override fun lex(fileName: String): Result {
         val reader = Reader(fileName)
 
         fun lexRecursive(
             actualWord: String,
             tokensList: List<Token>,
-            startPos: Position
+            startPos: Position,
         ): Result {
             if (reader.isEOF()) {
                 val finalTokens = tokensList + Token(TokenType.EOF, "EOF", startPos)
@@ -23,9 +22,12 @@ class FileLexer(private val rules: List<RuleTokenizer>) : Lexer {
             val updatedWord = actualWord + newChar
             val nextChar = reader.peek()
 
-            val updatedPos = if (nextCharIsNewLine(nextChar)) {
-                advancePosition(startPos, nextChar)
-            } else startPos
+            val updatedPos =
+                if (nextCharIsNewLine(nextChar)) {
+                    advancePosition(startPos, nextChar)
+                } else {
+                    startPos
+                }
 
             val matchingRule = rules.firstOrNull { it.matches(updatedWord, nextChar) }
 
@@ -49,31 +51,35 @@ class FileLexer(private val rules: List<RuleTokenizer>) : Lexer {
 
     private fun advancePosition(
         position: Position,
-        char: Char?
+        char: Char?,
     ): Position {
         return when (char) {
-            '\n', '\r' -> position.copy(
-                endOffset = -1,
-                startLine = position.endLine + 1,
-                startColumn = 0,
-                endColumn = 0,
-                endLine = position.endLine + 1
-            )
-            else -> position.copy(
-                startOffset = position.endOffset + 1,
-                endOffset = position.endOffset + 1,
-                endColumn = position.endColumn + 1,
-                startColumn = position.endColumn + 1
-            )
+            '\n', '\r' ->
+                position.copy(
+                    endOffset = -1,
+                    startLine = position.endLine + 1,
+                    startColumn = 0,
+                    endColumn = 0,
+                    endLine = position.endLine + 1,
+                )
+            else ->
+                position.copy(
+                    startOffset = position.endOffset + 1,
+                    endOffset = position.endOffset + 1,
+                    endColumn = position.endColumn + 1,
+                    startColumn = position.endColumn + 1,
+                )
         }
     }
 
-    private fun changingOffSet(position: Position, actualWord: String): Position {
+    private fun changingOffSet(
+        position: Position,
+        actualWord: String,
+    ): Position {
         return position.copy(
             endOffset = position.endOffset + actualWord.length,
         )
     }
 
     private fun nextCharIsNewLine(nextChar: Char?) = nextChar == '\n' || nextChar == '\r'
-
 }

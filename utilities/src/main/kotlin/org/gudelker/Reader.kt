@@ -2,7 +2,7 @@ package org.gudelker
 
 import java.io.FileReader
 
-class Reader (fileName: String) {
+class Reader(fileName: String) {
     private val peeker = FileReader(fileName)
     private var nextChar: Int? = null
 

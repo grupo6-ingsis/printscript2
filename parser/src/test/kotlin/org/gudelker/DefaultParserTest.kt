@@ -10,27 +10,27 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class DefaultParserTest {
-
     @Test
     fun `should parse simple statement`() {
         // Crear una sentencia de prueba
-        val testStatement = object : Statement {
-            override fun toString(): String = "TestStatement"
-        }
+        val testStatement =
+            object : Statement {
+                override fun toString(): String = "TestStatement"
+            }
 
         // Crear tokens de prueba
-        val tokens = listOf(
-            Token(TokenType.KEYWORD, "let", Position()),
-            Token(TokenType.IDENTIFIER, "x", Position()),
-            Token(TokenType.COLON, ":", Position()),
-            Token(TokenType.TYPE, "Number", Position()),
-            Token(TokenType.ASSIGNATION, "=", Position()),
-            Token(TokenType.NUMBER, "10", Position()),
-            Token(TokenType.SEMICOLON, ";", Position()),
-            Token(TokenType.EOF, "", Position()),
-
-        )
-        assertTrue(false) // testing hook
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.COLON, ":", Position()),
+                Token(TokenType.TYPE, "Number", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+//        assertTrue(false) // testing hoo
         val variableDeclarationRule = VariableDeclarationRule()
         val literalNumberRule = LiteralNumberRule()
 
@@ -44,6 +44,4 @@ class DefaultParserTest {
         assertEquals(1, statements.size)
         print(statements[0])
     }
-
-
 }

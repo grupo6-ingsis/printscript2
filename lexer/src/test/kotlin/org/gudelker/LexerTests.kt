@@ -11,7 +11,6 @@ class LexerTests {
 
     @BeforeEach
     fun setUp() {
-
     }
 
     @Test
@@ -20,7 +19,7 @@ class LexerTests {
         // Ahora no hay que cambiarlo constantemente
         val relativePath = Paths.get("src/test/lexer.txt").toAbsolutePath().toString()
         val tokens = lexer.lex(relativePath)
-        when (tokens){
+        when (tokens) {
             is Valid ->
                 for (token in tokens.getList()) println(token)
             is SyntaxError ->

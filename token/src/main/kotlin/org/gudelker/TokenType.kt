@@ -25,5 +25,5 @@ enum class TokenType {
     IDENTIFIER, // variable name
     UNKNOWN, // Error
 
-    EOF
+    EOF,
 }

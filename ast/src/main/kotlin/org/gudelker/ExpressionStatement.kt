@@ -1,5 +1,3 @@
 package org.example.org.gudelker
 
-interface ExpressionStatement: Statement {
-
-}
+interface ExpressionStatement : Statement

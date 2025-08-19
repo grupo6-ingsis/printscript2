@@ -9,19 +9,27 @@ import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.ValidStatementResult
 
-class VariableDeclarationRule: SyntaxRule {
-    override fun matches(tokens: List<Token>, index: Int): Boolean {
+class VariableDeclarationRule : SyntaxRule {
+    override fun matches(
+        tokens: List<Token>,
+        index: Int,
+    ): Boolean {
         return isFirstTokenKeyword(tokens, index)
     }
 
-    override fun parse(tokens: List<Token>, index: Int): Result {
+    override fun parse(
+        tokens: List<Token>,
+        index: Int,
+    ): Result {
         if (isNextIndexOutOfBounds(index, tokens)) {
             return IndexOutOfBounds("Index out of tokenList bounds at index: $index")
         }
 
         if (!isTokenAtIndexIdentifier(tokens, index + 1)) {
-            return SyntaxError("Se esperaba un identificador después de 'let' en la fila: "
-                    + tokens[index].getPosition().startLine)
+            return SyntaxError(
+                "Se esperaba un identificador después de 'let' en la fila: " +
+                    tokens[index].getPosition().startLine,
+            )
         }
 
         val identifier = tokens[index + 1].getValue()
@@ -44,25 +52,26 @@ class VariableDeclarationRule: SyntaxRule {
         if (currentIndex >= tokens.size || tokens[currentIndex].getType() != TokenType.ASSIGNATION) {
             return SyntaxError("Se esperaba '=' después de la declaración")
         }
-        currentIndex+=1
+        currentIndex += 1
 
         // Parsear el valor (expresión)
         val expressionRule = ExpressionRule()
 
-        when (val valueExpr = expressionRule.parse(tokens, currentIndex)){
+        when (val valueExpr = expressionRule.parse(tokens, currentIndex)) {
             is ValidStatementResult -> {
                 val expressionStatement = valueExpr.getStatement() as ExpressionStatement
-                val statement = VariableDeclaration(
-                    identifier,
-                    type,
-                    expressionStatement,
-                )
-                currentIndex ++
+                val statement =
+                    VariableDeclaration(
+                        identifier,
+                        type,
+                        expressionStatement,
+                    )
+                currentIndex++
 
-                if (tokens[currentIndex] .getType() != TokenType.SEMICOLON) {
+                if (tokens[currentIndex].getType() != TokenType.SEMICOLON) {
                     return SyntaxError("Se esperaba un punto y coma al final de la declaración")
                 }
-                currentIndex ++
+                currentIndex++
                 return ValidStatementResult(statement, currentIndex)
             }
             else -> {
@@ -71,23 +80,33 @@ class VariableDeclarationRule: SyntaxRule {
         }
     }
 
-    private fun isTokenAtIndexType(tokens: List<Token>, currentIndex: Int) =
-        tokens[currentIndex + 1].getType() != TokenType.TYPE
+    private fun isTokenAtIndexType(
+        tokens: List<Token>,
+        currentIndex: Int,
+    ) = tokens[currentIndex + 1].getType() != TokenType.TYPE
 
-    private fun isTokenAtIndexColon(tokens: List<Token>, currentIndex: Int) =
-        tokens[currentIndex].getType() == TokenType.COLON
+    private fun isTokenAtIndexColon(
+        tokens: List<Token>,
+        currentIndex: Int,
+    ) = tokens[currentIndex].getType() == TokenType.COLON
 
-    private fun isTokenAtIndexIdentifier(tokens: List<Token>, index: Int) =
-        tokens[index].getType() == TokenType.IDENTIFIER
+    private fun isTokenAtIndexIdentifier(
+        tokens: List<Token>,
+        index: Int,
+    ) = tokens[index].getType() == TokenType.IDENTIFIER
 
-    private fun isNextIndexOutOfBounds(index: Int, tokens: List<Token>) : Boolean
-    {
+    private fun isNextIndexOutOfBounds(
+        index: Int,
+        tokens: List<Token>,
+    ): Boolean {
         return index + 1 >= tokens.size
     }
 
-    private fun isFirstTokenKeyword(tokens: List<Token>, index: Int): Boolean {
+    private fun isFirstTokenKeyword(
+        tokens: List<Token>,
+        index: Int,
+    ): Boolean {
         val type = tokens[index].getType()
         return type == TokenType.KEYWORD
     }
-
 }

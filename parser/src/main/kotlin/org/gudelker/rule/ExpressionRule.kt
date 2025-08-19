@@ -1,6 +1,5 @@
 package org.gudelker.rule
 
-import org.example.org.gudelker.ExpressionStatement
 import org.example.org.gudelker.LiteralNumber
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
@@ -9,7 +8,10 @@ import org.gudelker.result.SyntaxError
 import org.gudelker.result.ValidStatementResult
 
 class ExpressionRule() : SyntaxRule {
-    override fun matches(tokens: List<Token>, index: Int): Boolean {
+    override fun matches(
+        tokens: List<Token>,
+        index: Int,
+    ): Boolean {
         if (index >= tokens.size) return false
 
         val tokenType = tokens[index].getType()
@@ -17,7 +19,10 @@ class ExpressionRule() : SyntaxRule {
         return tokenType == TokenType.NUMBER
     }
 
-    override fun parse(tokens: List<Token>, index: Int): Result {
+    override fun parse(
+        tokens: List<Token>,
+        index: Int,
+    ): Result {
         if (index >= tokens.size) {
             return SyntaxError("Índice fuera de rango: $index")
         }

@@ -11,7 +11,6 @@ import kotlin.test.Test
 class TokenRulesTest {
     val colonTokenizer: ColonTokenizer = ColonTokenizer()
 
-
     @BeforeEach
     fun setUp() {
         val colonTokenizer: ColonTokenizer = ColonTokenizer()
@@ -19,15 +18,10 @@ class TokenRulesTest {
         val identifierTokenizer = IdentifierTokenizer()
         val whitespaceTokenizer = WhitespaceTokenizer()
         val newLineTokenizer = NewLineTokenizer()
-
-
-
     }
+
     @Test
     fun `test token rules`() {
         val actualWord = ""
-
-
-
     }
 }

@@ -1,4 +1,3 @@
 package org.gudelker.rules
 
-class ComparationTokenizer {
-}
+class ComparationTokenizer

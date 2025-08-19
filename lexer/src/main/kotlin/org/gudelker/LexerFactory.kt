@@ -19,7 +19,7 @@ import org.gudelker.rules.StringTypeTokenizer
 import org.gudelker.rules.WhitespaceTokenizer
 
 object LexerFactory {
-    fun createFileLexer() : FileLexer{
+    fun createFileLexer(): FileLexer {
         return FileLexer(
             listOf(
                 LetTokenizer(),
@@ -39,7 +39,7 @@ object LexerFactory {
                 IdentifierTokenizer(),
                 DoubleTokenizer(),
                 IntegerTokenizer(),
-            )
+            ),
         )
     }
 }

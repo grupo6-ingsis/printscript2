@@ -1,5 +1,3 @@
 package org.example.org.gudelker
 
-data class LiteralNumber(val value : Number) : ExpressionStatement {
-
-}
+data class LiteralNumber(val value: Number) : ExpressionStatement
