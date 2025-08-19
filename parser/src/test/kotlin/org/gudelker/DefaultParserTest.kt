@@ -2,11 +2,8 @@ package org.gudelker
 
 import org.example.org.gudelker.Statement
 import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.result.Result
 import org.gudelker.result.Valid
-import org.gudelker.result.ValidStatementResult
 import org.gudelker.rule.LiteralNumberRule
-import org.gudelker.rule.SyntaxRule
 import org.gudelker.rule.VariableDeclarationRule
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -31,7 +28,7 @@ class DefaultParserTest {
             Token(TokenType.NUMBER, "10", Position()),
             Token(TokenType.SEMICOLON, ";", Position()),
             Token(TokenType.EOF, "", Position()),
-            
+
         )
 
         val variableDeclarationRule = VariableDeclarationRule()
