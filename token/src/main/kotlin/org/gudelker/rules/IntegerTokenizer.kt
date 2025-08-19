@@ -6,28 +6,28 @@ import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
 class IntegerTokenizer : RuleTokenizer {
-    override fun matches(
-        actualWord: String,
-        nextChar: Char?,
-    ): Boolean {
-        // Use regex matching correctly to check for integers
-        val digitPattern = "\\d+".toRegex()
+  override fun matches(
+    actualWord: String,
+    nextChar: Char?,
+  ): Boolean {
+    // Use regex matching correctly to check for integers
+    val digitPattern = "\\d+".toRegex()
 
-        return actualWord.matches(digitPattern) &&
-            (
-                nextChar == null || nextChar == '=' || nextChar == '>' ||
-                    nextChar == '<' || nextChar == ';' || nextChar == ')' ||
-                    nextChar == ',' || nextChar == ' ' || nextChar == '\n' ||
-                    nextChar == '\t'
-            )
-    }
+    return actualWord.matches(digitPattern) &&
+      (
+        nextChar == null || nextChar == '=' || nextChar == '>' ||
+          nextChar == '<' || nextChar == ';' || nextChar == ')' ||
+          nextChar == ',' || nextChar == ' ' || nextChar == '\n' ||
+          nextChar == '\t'
+      )
+  }
 
-    override fun generateToken(
-        tokens: List<Token>,
-        actualWord: String,
-        position: Position,
-    ): List<Token> {
-        val newList = tokens + Token(TokenType.NUMBER, actualWord, position)
-        return newList
-    }
+  override fun generateToken(
+    tokens: List<Token>,
+    actualWord: String,
+    position: Position,
+  ): List<Token> {
+    val newList = tokens + Token(TokenType.NUMBER, actualWord, position)
+    return newList
+  }
 }

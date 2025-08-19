@@ -6,19 +6,19 @@ import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
 class AssignationTokenizer : RuleTokenizer {
-    override fun matches(
-        actualWord: String,
-        nextChar: Char?,
-    ): Boolean {
-        return actualWord == "=" && (nextChar != '=')
-    }
+  override fun matches(
+    actualWord: String,
+    nextChar: Char?,
+  ): Boolean {
+    return actualWord == "=" && (nextChar != '=')
+  }
 
-    override fun generateToken(
-        tokens: List<Token>,
-        actualWord: String,
-        position: Position,
-    ): List<Token> {
-        val newList = tokens + Token(TokenType.ASSIGNATION, actualWord, position)
-        return newList
-    }
+  override fun generateToken(
+    tokens: List<Token>,
+    actualWord: String,
+    position: Position,
+  ): List<Token> {
+    val newList = tokens + Token(TokenType.ASSIGNATION, actualWord, position)
+    return newList
+  }
 }

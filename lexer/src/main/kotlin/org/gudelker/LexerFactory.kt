@@ -19,27 +19,26 @@ import org.gudelker.rules.StringTypeTokenizer
 import org.gudelker.rules.WhitespaceTokenizer
 
 object LexerFactory {
-    fun createFileLexer(): FileLexer {
-        return FileLexer(
-            listOf(
-                LetTokenizer(),
-                ColonTokenizer(),
-                NewLineTokenizer(),
-                NotLineAfterSemicolonTokenizer(),
-                SemicolonTokenizer(),
-                OperationTokenizer(),
-                StringTokenizer(),
-                WhitespaceTokenizer(),
-                EqualComparativeTokenizer(),
-                AssignationTokenizer(),
-                NotSpaceOperationTokenizer(),
-                ProhibitedSymbolDoubleTokenizer(),
-                StringTypeTokenizer(),
-                NumberTypeTokenizer(),
-                IdentifierTokenizer(),
-                DoubleTokenizer(),
-                IntegerTokenizer(),
-            ),
-        )
-    }
+  fun createFileLexer(): FileLexer =
+    FileLexer(
+      listOf(
+        LetTokenizer(),
+        ColonTokenizer(),
+        NewLineTokenizer(),
+        NotLineAfterSemicolonTokenizer(),
+        SemicolonTokenizer(),
+        OperationTokenizer(),
+        StringTokenizer(),
+        WhitespaceTokenizer(),
+        EqualComparativeTokenizer(),
+        AssignationTokenizer(),
+        NotSpaceOperationTokenizer(),
+        ProhibitedSymbolDoubleTokenizer(),
+        StringTypeTokenizer(),
+        NumberTypeTokenizer(),
+        IdentifierTokenizer(),
+        DoubleTokenizer(),
+        IntegerTokenizer(),
+      ),
+    )
 }

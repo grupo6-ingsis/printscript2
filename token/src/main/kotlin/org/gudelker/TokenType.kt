@@ -1,29 +1,29 @@
 package org.gudelker.components.org.gudelker
 
 enum class TokenType {
-    TYPE,
+  TYPE,
 
-    COLON, // :
-    ASSIGNATION, // =
-    KEYWORD, // class, import, package, let, const, var, return, etc.
-    FUNCTIONKEYWORD, // if, else, while, for, etc.
-    FUNCTION, // printf(), println(), read(), etc.
+  COLON, // :
+  ASSIGNATION, // =
+  KEYWORD, // class, import, package, let, const, var, return, etc.
+  FUNCTIONKEYWORD, // if, else, while, for, etc.
+  FUNCTION, // printf(), println(), read(), etc.
 
-    STRING,
-    NUMBER,
-    BOOLEAN,
-    CHARACTER,
+  STRING,
+  NUMBER,
+  BOOLEAN,
+  CHARACTER,
 
-    OPERATOR,
-    SEMICOLON,
-    WHITESPACE,
-    NEWLINE,
-    PARENTHESIS,
-    BRACKET,
-    COMPARATOR, // <, >, <=, >=, ==, !=
+  OPERATOR,
+  SEMICOLON,
+  WHITESPACE,
+  NEWLINE,
+  PARENTHESIS,
+  BRACKET,
+  COMPARATOR, // <, >, <=, >=, ==, !=
 
-    IDENTIFIER, // variable name
-    UNKNOWN, // Error
+  IDENTIFIER, // variable name
+  UNKNOWN, // Error
 
-    EOF,
+  EOF,
 }
