@@ -30,7 +30,7 @@ class DefaultParserTest {
             Token(TokenType.EOF, "", Position()),
 
         )
-
+        assertTrue(false)
         val variableDeclarationRule = VariableDeclarationRule()
         val literalNumberRule = LiteralNumberRule()
 
