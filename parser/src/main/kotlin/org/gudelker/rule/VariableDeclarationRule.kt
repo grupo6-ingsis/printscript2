@@ -49,7 +49,7 @@ class VariableDeclarationRule: SyntaxRule {
         // Parsear el valor (expresión)
         val expressionRule = ExpressionRule()
 
-        when (val valueExpr = expressionRule.parse(tokens, currentIndex + 1)){
+        when (val valueExpr = expressionRule.parse(tokens, currentIndex)){
             is ValidStatementResult -> {
                 val expressionStatement = valueExpr.getStatement() as ExpressionStatement
                 val statement = VariableDeclaration(
