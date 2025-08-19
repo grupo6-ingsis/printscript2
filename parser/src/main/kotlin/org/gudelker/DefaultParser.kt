@@ -4,7 +4,9 @@ import org.example.org.gudelker.Statement
 import org.gudelker.components.org.gudelker.TokenType
 
 import org.gudelker.result.Result
+import org.gudelker.result.SyntaxError
 import org.gudelker.result.Valid
+import org.gudelker.result.ValidStatementResult
 import org.gudelker.rule.SyntaxRule
 
 
@@ -21,18 +23,20 @@ class DefaultParser(private val tokens: List<Token>,
             return Valid(ast)
         }
 
-        // Find the next semicolon or EOF
-        val nextSemiColonIndex : Int = (index until tokens.size).firstOrNull {
-            tokens[it].getType() == TokenType.SEMICOLON} ?: tokens.size
-
-        val statementTokens = tokens.subList(index, nextSemiColonIndex)
-        
         for (rule in rules) {
-            if (rule.matches(statementTokens, index)) {
+            if (rule.matches(tokens, index)) {
+                val result = rule.parse(tokens, index)
+                if (result is ValidStatementResult) {
+                    val newAst = ast + result.getStatement()
+                    return parseRecursive(result.getIndex(), newAst)
+                } else {
+                    return result // If the result is not valid, return it
+                }
 
             }
         }
-        return parseRecursive(index + 1, ast) // ver lo del punto y coma
+
+        return SyntaxError(".")
 
     }
 

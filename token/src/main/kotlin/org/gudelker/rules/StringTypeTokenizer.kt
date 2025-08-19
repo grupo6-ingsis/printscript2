@@ -15,7 +15,7 @@ class StringTypeTokenizer: RuleTokenizer {
         actualWord: String,
         position: Position
     ): List<Token> {
-        val newToken = Token(TokenType.STRING_TYPE, actualWord, position)
+        val newToken = Token(TokenType.TYPE, actualWord, position)
         val newList = tokens + newToken
         return newList
     }

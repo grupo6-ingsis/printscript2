@@ -57,6 +57,12 @@ class VariableDeclarationRule: SyntaxRule {
                     type,
                     expressionStatement,
                 )
+                currentIndex ++
+
+                if (tokens[currentIndex] .getType() != TokenType.SEMICOLON) {
+                    return SyntaxError("Se esperaba un punto y coma al final de la declaración")
+                }
+                currentIndex ++
                 return ValidStatementResult(statement, currentIndex)
             }
             else -> {

@@ -9,4 +9,8 @@ class ValidStatementResult(
     fun getStatement(): Statement {
            return statement
     }
+
+    fun getIndex(): Int {
+        return index
+    }
 }
