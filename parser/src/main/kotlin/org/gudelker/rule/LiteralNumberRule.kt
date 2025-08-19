@@ -12,7 +12,8 @@ class LiteralNumberRule: SyntaxRule {
     }
 
     override fun parse(tokens: List<Token>, index: Int): Result {
-        val number = tokens[index].getValue().toInt()
+        val value = tokens[index].getValue()
+        val number = if (value.contains('.')) value.toFloat() else value.toInt()
         val currentIndex = index + 1
         return ValidStatementResult(
             LiteralNumber(number),

@@ -8,7 +8,7 @@ import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.ValidStatementResult
 
-class ExpressionRule : SyntaxRule {
+class ExpressionRule() : SyntaxRule {
     override fun matches(tokens: List<Token>, index: Int): Boolean {
         if (index >= tokens.size) return false
 

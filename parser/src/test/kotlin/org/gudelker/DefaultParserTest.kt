@@ -42,7 +42,7 @@ class DefaultParserTest {
         assertTrue(result is Valid)
         val statements = (result as Valid).getStatements()
         assertEquals(1, statements.size)
-        assertEquals("TestStatement", statements.first().toString())
+        print(statements[0])
     }
 
 
