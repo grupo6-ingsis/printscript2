@@ -7,16 +7,13 @@ import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.ValidStatementResult
 
-class ExpressionRule : SyntaxRule {
+class ExpressionRule(private val subRules: List<SyntaxRule>) : SyntaxRule {
   override fun matches(
     tokens: List<Token>,
     index: Int,
   ): Boolean {
     if (index >= tokens.size) return false
-
-    val tokenType = tokens[index].getType()
-    // Por ahora solo manejamos números literales
-    return tokenType == TokenType.NUMBER
+    return subRules.any { rule -> rule.matches(tokens, index) }
   }
 
   override fun parse(

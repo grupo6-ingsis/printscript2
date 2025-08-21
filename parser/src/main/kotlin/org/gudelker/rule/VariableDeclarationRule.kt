@@ -9,12 +9,14 @@ import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.ValidStatementResult
 
-class VariableDeclarationRule : SyntaxRule {
+class VariableDeclarationRule(private val keywords: Set<String>,
+  private val expressionRule: SyntaxRule
+  ) : SyntaxRule {
   override fun matches(
     tokens: List<Token>,
     index: Int,
   ): Boolean {
-    return isFirstTokenKeyword(tokens, index)
+    return isFirstTokenKeyword(tokens, index) && isValueInKeywordsSet(tokens[index].getValue(), keywords)
   }
 
   override fun parse(
@@ -53,9 +55,9 @@ class VariableDeclarationRule : SyntaxRule {
       return SyntaxError("Se esperaba '=' después de la declaración")
     }
     currentIndex += 1
-
-    // Parsear el valor (expresión)
-    val expressionRule = ExpressionRule()
+    if(isTokenAtIndexColon(tokens, currentIndex)) {
+      return SyntaxError("Se esperaba una expresión después de '='")
+    }
 
     when (val valueExpr = expressionRule.parse(tokens, currentIndex)) {
       is ValidStatementResult -> {
@@ -109,4 +111,21 @@ class VariableDeclarationRule : SyntaxRule {
     val type = tokens[index].getType()
     return type == TokenType.KEYWORD
   }
+
+  private fun isValueInKeywordsSet(
+    value: String,
+    keywords: Set<String>,
+  ): Boolean {
+    return keywords.contains(value)
+  }
+
+  private fun isTokenAtIndexSemicolon(
+    tokens: List<Token>,
+    index: Int,
+  ): Boolean {
+    return tokens[index].getType() == TokenType.SEMICOLON
+  }
 }
+
+
+
