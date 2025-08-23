@@ -1,42 +1,25 @@
 package org.gudelker.rule
 
-import org.example.org.gudelker.LiteralNumber
-import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.result.Result
+import org.gudelker.result.ParseResult
 import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.tokenstream.TokenStream
 
-class ExpressionRule : SyntaxRule {
-  override fun matches(
-    tokens: List<Token>,
-    index: Int,
-  ): Boolean {
-    if (index >= tokens.size) return false
-
-    val tokenType = tokens[index].getType()
-    // Por ahora solo manejamos números literales
-    return tokenType == TokenType.NUMBER
-  }
-
-  override fun parse(
-    tokens: List<Token>,
-    index: Int,
-  ): Result {
-    if (index >= tokens.size) {
-      return SyntaxError("Índice fuera de rango: $index")
+class ExpressionRule(
+    private val rules: List<SyntaxRule>,
+) : SyntaxRule {
+    override fun matches(tokenStream: TokenStream): Boolean {
+        return rules.any { it.matches(tokenStream) }
     }
 
-    val token = tokens[index]
-    if (token.getType() != TokenType.NUMBER) {
-      return SyntaxError("Se esperaba un número en la posición $index")
+    override fun parse(tokenStream: TokenStream): ParseResult {
+        val result = rules.firstOrNull { it.matches(tokenStream) }?.parse(tokenStream)
+        if (result != null) {
+            return result
+        } else {
+            return ParseResult(
+                SyntaxError("No se encontró una expresión válida en la posición ${tokenStream.getCurrentIndex()}"),
+                tokenStream,
+            )
+        }
     }
-
-    // Procesar el número literal
-    val value = token.getValue().toInt()
-    val literalNumber = LiteralNumber(value)
-
-    // Devolver el resultado indicando que hemos consumido un token
-    return ValidStatementResult(literalNumber, index + 1)
-  }
 }

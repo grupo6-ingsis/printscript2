@@ -1,16 +1,10 @@
 package org.gudelker.rule
 
-import org.gudelker.Token
-import org.gudelker.result.Result
+import org.gudelker.result.ParseResult
+import org.gudelker.tokenstream.TokenStream
 
 interface SyntaxRule {
-  fun matches(
-    tokens: List<Token>,
-    index: Int,
-  ): Boolean
+    fun matches(tokenStream: TokenStream): Boolean
 
-  fun parse(
-    tokens: List<Token>,
-    index: Int,
-  ): Result
+    fun parse(tokenStream: TokenStream): ParseResult
 }
