@@ -3,7 +3,7 @@ package org.gudelker.result
 import org.example.org.gudelker.Statement
 
 class Valid(
-  private val statements: List<Statement>,
+    private val statements: List<Statement>,
 ) : Result {
-  fun getStatements(): List<Statement> = statements
+    fun getStatements(): List<Statement> = statements
 }

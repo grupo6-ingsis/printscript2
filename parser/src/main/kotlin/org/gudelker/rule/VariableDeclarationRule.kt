@@ -2,111 +2,81 @@ package org.gudelker.rule
 
 import org.example.org.gudelker.ExpressionStatement
 import org.example.org.gudelker.VariableDeclaration
-import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.result.IndexOutOfBounds
-import org.gudelker.result.Result
+import org.gudelker.result.ParseResult
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.ValidStatementResult
+import org.gudelker.tokenstream.TokenStream
 
-class VariableDeclarationRule : SyntaxRule {
-  override fun matches(
-    tokens: List<Token>,
-    index: Int,
-  ): Boolean {
-    return isFirstTokenKeyword(tokens, index)
-  }
-
-  override fun parse(
-    tokens: List<Token>,
-    index: Int,
-  ): Result {
-    if (isNextIndexOutOfBounds(index, tokens)) {
-      return IndexOutOfBounds("Index out of tokenList bounds at index: $index")
+class VariableDeclarationRule(
+    private val keywords: Set<String>,
+    private val expressionRule: SyntaxRule,
+) : SyntaxRule {
+    override fun matches(tokenStream: TokenStream): Boolean {
+        val current = tokenStream.current()
+        return current?.getType() == TokenType.KEYWORD && keywords.contains(current.getValue())
     }
 
-    if (!isTokenAtIndexIdentifier(tokens, index + 1)) {
-      return SyntaxError(
-        "Se esperaba un identificador después de 'let' en la fila: " +
-          tokens[index].getPosition().startLine,
-      )
-    }
-
-    val identifier = tokens[index + 1].getValue()
-    var currentIndex = index + 2
-
-    var type: String? = null
-    if (currentIndex < tokens.size && isTokenAtIndexColon(tokens, currentIndex)) {
-      if (isNextIndexOutOfBounds(currentIndex, tokens)) {
-        return IndexOutOfBounds("Index out of tokenList bounds at index: $currentIndex")
-      }
-
-      if (isTokenAtIndexType(tokens, currentIndex)) {
-        return SyntaxError("Se esperaba un tipo después de ':'")
-      }
-
-      type = tokens[currentIndex + 1].getValue()
-      currentIndex += 2
-    }
-    // Verificar asignación
-    if (currentIndex >= tokens.size || tokens[currentIndex].getType() != TokenType.ASSIGNATION) {
-      return SyntaxError("Se esperaba '=' después de la declaración")
-    }
-    currentIndex += 1
-
-    // Parsear el valor (expresión)
-    val expressionRule = ExpressionRule()
-
-    when (val valueExpr = expressionRule.parse(tokens, currentIndex)) {
-      is ValidStatementResult -> {
-        val expressionStatement = valueExpr.getStatement() as ExpressionStatement
-        val statement =
-          VariableDeclaration(
-            identifier,
-            type,
-            expressionStatement,
-          )
-        currentIndex++
-
-        if (tokens[currentIndex].getType() != TokenType.SEMICOLON) {
-          return SyntaxError("Se esperaba un punto y coma al final de la declaración")
+    override fun parse(tokenStream: TokenStream): ParseResult {
+        // Consume keyword
+        val (keywordToken, streamAfterKeyword) = tokenStream.consume(TokenType.KEYWORD)
+        if (keywordToken == null) {
+            return ParseResult(SyntaxError("Se esperaba una palabra clave al inicio de la declaración"), tokenStream)
         }
-        currentIndex++
-        return ValidStatementResult(statement, currentIndex)
-      }
-      else -> {
-        return SyntaxError("Error al parsear la expresión")
-      }
+
+        // Consume identifier
+        val (identifierToken, streamAfterIdentifier) = streamAfterKeyword.consume(TokenType.IDENTIFIER)
+        if (identifierToken == null) {
+            return ParseResult(
+                SyntaxError("Se esperaba un identificador después de '${keywordToken.getValue()}'"),
+                streamAfterKeyword,
+            )
+        }
+
+        // Optional type declaration
+        val (type, streamAfterType) = parseOptionalType(streamAfterIdentifier)
+        if (type.second != null) {
+            return ParseResult(type.second!!, streamAfterType)
+        }
+
+        // Assignation
+        val (assignToken, streamAfterAssign) = streamAfterType.consume(TokenType.ASSIGNATION)
+        if (assignToken == null) {
+            return ParseResult(SyntaxError("Se esperaba '=' después de la declaración"), streamAfterType)
+        }
+
+        // Expression
+        val expressionResult = expressionRule.parse(streamAfterAssign)
+        if (expressionResult.result !is ValidStatementResult) {
+            return ParseResult(SyntaxError("Error al parsear la expresión"), expressionResult.tokenStream)
+        }
+
+        val expressionStatement = expressionResult.result.getStatement() as ExpressionStatement
+
+        // Semicolon
+        val (semicolonToken, finalStream) = expressionResult.tokenStream.consume(TokenType.SEMICOLON)
+        if (semicolonToken == null) {
+            return ParseResult(
+                SyntaxError("Se esperaba un punto y coma al final de la declaración"),
+                expressionResult.tokenStream,
+            )
+        }
+
+        val statement = VariableDeclaration(identifierToken.getValue(), type.first, expressionStatement)
+        return ParseResult(ValidStatementResult(statement), finalStream)
     }
-  }
 
-  private fun isTokenAtIndexType(
-    tokens: List<Token>,
-    currentIndex: Int,
-  ) = tokens[currentIndex + 1].getType() != TokenType.TYPE
-
-  private fun isTokenAtIndexColon(
-    tokens: List<Token>,
-    currentIndex: Int,
-  ) = tokens[currentIndex].getType() == TokenType.COLON
-
-  private fun isTokenAtIndexIdentifier(
-    tokens: List<Token>,
-    index: Int,
-  ) = tokens[index].getType() == TokenType.IDENTIFIER
-
-  private fun isNextIndexOutOfBounds(
-    index: Int,
-    tokens: List<Token>,
-  ): Boolean {
-    return index + 1 >= tokens.size
-  }
-
-  private fun isFirstTokenKeyword(
-    tokens: List<Token>,
-    index: Int,
-  ): Boolean {
-    val type = tokens[index].getType()
-    return type == TokenType.KEYWORD
-  }
+    private fun parseOptionalType(stream: TokenStream): Pair<Pair<String?, SyntaxError?>, TokenStream> {
+        return if (stream.check(TokenType.COLON)) {
+            val (_, streamAfterColon) = stream.consume(TokenType.COLON)
+            val (typeToken, streamAfterType) = streamAfterColon.consume(TokenType.TYPE)
+            if (typeToken == null) {
+                (null to SyntaxError("Se esperaba un tipo después de ':'")) to streamAfterColon
+            } else {
+                (typeToken.getValue() to null) to streamAfterType
+            }
+        } else {
+            (null to null) to stream
+        }
+    }
 }
