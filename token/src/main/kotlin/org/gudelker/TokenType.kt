@@ -18,7 +18,8 @@ enum class TokenType {
     SEMICOLON,
     WHITESPACE,
     NEWLINE,
-    PARENTHESIS,
+    OPEN_PARENTHESIS,
+    CLOSE_PARENTHESIS,
     BRACKET,
     COMPARATOR, // <, >, <=, >=, ==, !=
 
