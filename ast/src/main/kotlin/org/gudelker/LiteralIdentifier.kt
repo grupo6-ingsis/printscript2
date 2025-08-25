@@ -1,3 +1,3 @@
-package org.example.org.gudelker
+package org.gudelker
 
 data class LiteralIdentifier(val value: String) : ExpressionStatement

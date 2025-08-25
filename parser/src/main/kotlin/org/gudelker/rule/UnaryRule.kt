@@ -1,10 +1,10 @@
 package org.gudelker.rule
 
-import org.example.org.gudelker.ExpressionStatement
-import org.example.org.gudelker.Unary
-import org.example.org.gudelker.operator.MinusOperator
+import org.gudelker.ExpressionStatement
+import org.gudelker.Unary
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.operator.AdditionOperator
+import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.Operator
 import org.gudelker.result.ParseResult
 import org.gudelker.result.SyntaxError

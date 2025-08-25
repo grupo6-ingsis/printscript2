@@ -1,7 +1,7 @@
 package org.gudelker.rule
 
-import org.example.org.gudelker.ExpressionStatement
-import org.example.org.gudelker.Grouping
+import org.gudelker.ExpressionStatement
+import org.gudelker.Grouping
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.SyntaxError

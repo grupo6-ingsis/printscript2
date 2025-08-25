@@ -1,7 +1,7 @@
 package org.gudelker.parser
 
 import Parser
-import org.example.org.gudelker.Statement
+import org.gudelker.Statement
 import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.Valid

@@ -1,6 +1,4 @@
-package org.example.org.gudelker.operator
-
-import org.gudelker.operator.Operator
+package org.gudelker.operator
 
 class MinusOperator(
     private val value: String = "-",
