@@ -4,25 +4,25 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.Result
 import org.gudelker.result.SyntaxError
 import org.gudelker.result.Valid
+import org.gudelker.sourcereader.SourceReader
 
-class FileLexer(
+class DefaultLexer(
     private val rules: List<RuleTokenizer>,
 ) : Lexer {
-    override fun lex(fileName: String): Result {
-        val reader = Reader(fileName)
+    override fun lex(sourceReader: SourceReader): Result {
 
         fun lexRecursive(
             actualWord: String,
             tokensList: List<Token>,
             startPos: Position,
         ): Result {
-            if (reader.isEOF()) {
+            if (sourceReader.isEOF()) {
                 val finalTokens = tokensList + Token(TokenType.EOF, "EOF", startPos)
                 return Valid(finalTokens)
             }
-            val newChar = reader.next().toString()
+            val newChar = sourceReader.next().toString()
             val updatedWord = actualWord + newChar
-            val nextChar = reader.peek()
+            val nextChar = sourceReader.peek()
 
             val updatedPos =
                 if (nextCharIsNewLine(nextChar)) {

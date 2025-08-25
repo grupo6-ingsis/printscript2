@@ -20,8 +20,8 @@ import org.gudelker.rules.StringTypeTokenizer
 import org.gudelker.rules.WhitespaceTokenizer
 
 object LexerFactory {
-    fun createFileLexer(): FileLexer =
-        FileLexer(
+    fun createFileLexer(): DefaultLexer =
+        DefaultLexer(
             listOf(
                 LetTokenizer(),
                 ColonTokenizer(),
