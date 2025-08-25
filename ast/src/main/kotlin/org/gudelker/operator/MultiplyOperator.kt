@@ -1,6 +1,4 @@
-package org.example.org.gudelker.operator
-
-import org.gudelker.operator.Operator
+package org.gudelker.operator
 
 class MultiplyOperator(private val value: String = "*") : Operator {
     override fun getValue(): String {

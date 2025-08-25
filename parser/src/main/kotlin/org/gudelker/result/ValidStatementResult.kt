@@ -1,6 +1,6 @@
 package org.gudelker.result
 
-import org.example.org.gudelker.Statement
+import org.gudelker.Statement
 
 class ValidStatementResult(
     private val statement: Statement,

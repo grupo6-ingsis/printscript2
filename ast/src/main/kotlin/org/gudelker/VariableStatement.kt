@@ -1,3 +1,3 @@
-package org.example.org.gudelker
+package org.gudelker
 
 interface VariableStatement : Statement

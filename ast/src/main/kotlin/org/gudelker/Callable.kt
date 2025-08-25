@@ -1,4 +1,4 @@
-package org.example.org.gudelker
+package org.gudelker
 
 class Callable(
     value: String,

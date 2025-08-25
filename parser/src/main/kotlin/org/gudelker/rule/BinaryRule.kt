@@ -1,12 +1,12 @@
 package org.gudelker.rule
 
-import org.example.org.gudelker.Binary
-import org.example.org.gudelker.ExpressionStatement
-import org.example.org.gudelker.operator.DivisionOperator
-import org.example.org.gudelker.operator.MinusOperator
-import org.example.org.gudelker.operator.MultiplyOperator
+import org.gudelker.Binary
+import org.gudelker.ExpressionStatement
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.operator.AdditionOperator
+import org.gudelker.operator.DivisionOperator
+import org.gudelker.operator.MinusOperator
+import org.gudelker.operator.MultiplyOperator
 import org.gudelker.operator.Operator
 import org.gudelker.result.ParseResult
 import org.gudelker.result.SyntaxError

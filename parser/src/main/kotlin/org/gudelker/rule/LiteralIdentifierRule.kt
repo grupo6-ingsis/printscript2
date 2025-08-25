@@ -1,6 +1,6 @@
 package org.gudelker.rule
 
-import org.example.org.gudelker.LiteralIdentifier
+import org.gudelker.LiteralIdentifier
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ValidStatementResult

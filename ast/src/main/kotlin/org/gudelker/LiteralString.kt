@@ -1,4 +1,4 @@
-package org.example.org.gudelker
+package org.gudelker
 
 data class LiteralString(
     val value: String,
