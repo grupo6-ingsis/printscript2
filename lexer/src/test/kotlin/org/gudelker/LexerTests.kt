@@ -4,7 +4,6 @@ import org.gudelker.result.SyntaxError
 import org.gudelker.result.Valid
 import org.gudelker.sourcereader.FileSourceReader
 import org.junit.jupiter.api.BeforeEach
-import java.nio.file.Paths
 import kotlin.test.Test
 
 class LexerTests {

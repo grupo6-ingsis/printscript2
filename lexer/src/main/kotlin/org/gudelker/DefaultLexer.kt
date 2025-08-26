@@ -10,7 +10,6 @@ class DefaultLexer(
     private val rules: List<RuleTokenizer>,
 ) : Lexer {
     override fun lex(sourceReader: SourceReader): Result {
-
         fun lexRecursive(
             actualWord: String,
             tokensList: List<Token>,

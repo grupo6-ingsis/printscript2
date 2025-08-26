@@ -1,1 +1,1 @@
-[*]indent_style = spaceindent_size = 2max_line_length = 140
+root = true[*]indent_style = space# Regla 1 del formatter, usar espacios en lugar de tabs para indentacionindent_size = 2# Regla 2 del formatter, usar 2 espacios para indentacionmax_line_length = 140# Regla 1 del linter, maximo 140 caracteres por lineaij_kotlin_space_around_operators = true# Regla 2 del linter, espacios alrededor de operadores
