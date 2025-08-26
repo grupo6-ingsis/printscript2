@@ -1,7 +1,7 @@
 package org.gudelker.sourcereader
 
-import java.io.FileReader
 import java.io.BufferedReader
+import java.io.FileReader
 
 class FileSourceReader(private val filename: String) : SourceReader {
     private val reader = BufferedReader(FileReader(filename))
