@@ -4,6 +4,7 @@
 
 plugins {
     id 'buildlogic.kotlin-application-conventions'
+    id "org.jlleitschuh.gradle.ktlint" version "12.1.1"
 }
 
 dependencies {
@@ -13,5 +14,8 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.example.app.AppKt'
+    mainClass = 'org.gudelker.app.AppKt'
+}
+tasks.named('check') {
+    dependsOn 'ktlintCheck'
 }

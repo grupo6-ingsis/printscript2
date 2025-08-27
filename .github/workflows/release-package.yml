@@ -1,0 +1,23 @@
+name: Java CI
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 21
+        uses: actions/setup-java@v1
+        with:
+          java-version: 21
+      - name: Build with Gradle
+        run: ./gradlew build
+      - name: Publish package
+        run: gradle publish
+        env:
+          GITHUB_ACTOR: ${{ env.GITHUB_ACTOR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

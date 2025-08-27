@@ -17,3 +17,6 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+tasks.named('check') {
+    dependsOn 'ktlintCheck'
+}
