@@ -1,10 +1,11 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id "org.jlleitschuh.gradle.ktlint" version "12.1.1"
+    id 'maven-publish'
 }
 
 group = 'org.gudelker'
-version = 'unspecified'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -19,4 +20,25 @@ test {
 }
 tasks.named('check') {
     dependsOn 'ktlintCheck'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = 'analyzer'
+            version = project.version
+        }
+    }
+    repositories {
+        maven {
+            name = 'GitHubPackages'
+            url = uri("https://maven.pkg.github.com/grupo6-ingsis/printscript2")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
