@@ -1,0 +1,15 @@
+subprojects {
+    afterEvaluate {
+        if (plugins.hasPlugin('maven-publish')) {
+            tasks.matching { it.name == 'publish' }.all {
+                // No-op, just ensures the task exists
+            }
+        }
+    }
+}
+
+task publish {
+    group = 'publishing'
+    description = 'Publishes all subprojects.'
+    dependsOn subprojects.collect { it.tasks.matching { t -> t.name == 'publish' } }
+}
