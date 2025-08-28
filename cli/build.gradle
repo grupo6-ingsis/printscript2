@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'org.example'
+group = 'org.gudelker'
 version = 'unspecified'
 
 repositories {
