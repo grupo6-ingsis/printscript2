@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'org.gudelker'
-version = 'unspecified'
+version = '1.0.0-SNAPSHOT'
 
 
 repositories {
