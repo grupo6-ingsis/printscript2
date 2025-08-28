@@ -1,3 +1,6 @@
+permissions:
+  contents: read
+  packages: write
 name: Java CI
 
 on:
