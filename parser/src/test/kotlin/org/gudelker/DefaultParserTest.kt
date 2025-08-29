@@ -84,7 +84,7 @@ class DefaultParserTest {
         assertTrue(result is Valid)
         val statements = (result as Valid).getStatements()
         assertEquals(1, statements.size)
-        println("1+(5*6/10)")
+        println("1+(5*6/10)") // just to differentiate
         print(statements[0])
     }
 
