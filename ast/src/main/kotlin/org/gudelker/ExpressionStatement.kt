@@ -1,3 +1,3 @@
 package org.gudelker
 
-interface ExpressionStatement : Statement
+sealed interface ExpressionStatement : Statement
