@@ -2,6 +2,6 @@ package org.gudelker.result
 
 class IndexOutOfBounds(
     private val errorMessage: String,
-) : Result {
+) : ParserResult {
     fun getError(): String = errorMessage
 }

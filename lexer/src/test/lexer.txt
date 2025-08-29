@@ -1,7 +1,2 @@
 let 34 boca: == astring  = Hello=World;
-tring;
-jdakdjka;
-"shasaj";
-'sasasa';
-"kaajs
-kjsa";
+println(x);

@@ -4,8 +4,8 @@ import org.gudelker.ExpressionStatement
 import org.gudelker.VariableDeclaration
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class VariableDeclarationRule(
@@ -21,14 +21,14 @@ class VariableDeclarationRule(
         // Consume keyword
         val (keywordToken, streamAfterKeyword) = tokenStream.consume(TokenType.KEYWORD)
         if (keywordToken == null) {
-            return ParseResult(SyntaxError("Se esperaba una palabra clave al inicio de la declaración"), tokenStream)
+            return ParseResult(ParserSyntaxError("Se esperaba una palabra clave al inicio de la declaración"), tokenStream)
         }
 
         // Consume identifier
         val (identifierToken, streamAfterIdentifier) = streamAfterKeyword.consume(TokenType.IDENTIFIER)
         if (identifierToken == null) {
             return ParseResult(
-                SyntaxError("Se esperaba un identificador después de '${keywordToken.getValue()}'"),
+                ParserSyntaxError("Se esperaba un identificador después de '${keywordToken.getValue()}'"),
                 streamAfterKeyword,
             )
         }
@@ -42,36 +42,36 @@ class VariableDeclarationRule(
         // Assignation
         val (assignToken, streamAfterAssign) = streamAfterType.consume(TokenType.ASSIGNATION)
         if (assignToken == null) {
-            return ParseResult(SyntaxError("Se esperaba '=' después de la declaración"), streamAfterType)
+            return ParseResult(ParserSyntaxError("Se esperaba '=' después de la declaración"), streamAfterType)
         }
 
         // Expression
         val expressionResult = expressionRule.parse(streamAfterAssign)
-        if (expressionResult.result !is ValidStatementResult) {
-            return ParseResult(SyntaxError("Error al parsear la expresión"), expressionResult.tokenStream)
+        if (expressionResult.parserResult !is ValidStatementParserResult) {
+            return ParseResult(ParserSyntaxError("Error al parsear la expresión"), expressionResult.tokenStream)
         }
 
-        val expressionStatement = expressionResult.result.getStatement() as ExpressionStatement
+        val expressionStatement = expressionResult.parserResult.getStatement() as ExpressionStatement
 
         // Semicolon
         val (semicolonToken, finalStream) = expressionResult.tokenStream.consume(TokenType.SEMICOLON)
         if (semicolonToken == null) {
             return ParseResult(
-                SyntaxError("Se esperaba un punto y coma al final de la declaración"),
+                ParserSyntaxError("Se esperaba un punto y coma al final de la declaración"),
                 expressionResult.tokenStream,
             )
         }
 
         val statement = VariableDeclaration(identifierToken.getValue(), type.first, expressionStatement)
-        return ParseResult(ValidStatementResult(statement), finalStream)
+        return ParseResult(ValidStatementParserResult(statement), finalStream)
     }
 
-    private fun parseOptionalType(stream: TokenStream): Pair<Pair<String?, SyntaxError?>, TokenStream> {
+    private fun parseOptionalType(stream: TokenStream): Pair<Pair<String?, ParserSyntaxError?>, TokenStream> {
         return if (stream.check(TokenType.COLON)) {
             val (_, streamAfterColon) = stream.consume(TokenType.COLON)
             val (typeToken, streamAfterType) = streamAfterColon.consume(TokenType.TYPE)
             if (typeToken == null) {
-                (null to SyntaxError("Se esperaba un tipo después de ':'")) to streamAfterColon
+                (null to ParserSyntaxError("Se esperaba un tipo después de ':'")) to streamAfterColon
             } else {
                 (typeToken.getValue() to null) to streamAfterType
             }

@@ -8,30 +8,39 @@ import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 
 class BinaryEvaluator(
-    private val evaluators: List<Evaluator<Any>>,
+    private val evaluators: List<Evaluator<out Any>>,
 ) : Evaluator<Any> {
-    override fun evaluate(statement: Statement): Any {
+    override fun evaluate(
+        statement: Statement,
+        context: VariableContext,
+    ): EvaluationResult {
         return when (statement) {
             is Binary -> {
-                val leftValue = findAndEvaluate(statement.leftExpression)
-                val rightValue = findAndEvaluate(statement.rightExpression)
+                val leftResult = findAndEvaluate(statement.leftExpression, context)
+                val rightResult = findAndEvaluate(statement.rightExpression, leftResult.context)
 
-                when (statement.operator) {
-                    is AdditionOperator -> performAddition(leftValue, rightValue)
-                    is MinusOperator -> performSubtraction(leftValue, rightValue)
-                    is MultiplyOperator -> performMultiplication(leftValue, rightValue)
-                    is DivisionOperator -> performDivision(leftValue, rightValue)
-                    else -> throw UnsupportedOperationException("Operador no soportado: ${statement.operator}")
-                }
+                val result =
+                    when (statement.operator) {
+                        is AdditionOperator -> performAddition(leftResult.value, rightResult.value)
+                        is MinusOperator -> performSubtraction(leftResult.value, rightResult.value)
+                        is MultiplyOperator -> performMultiplication(leftResult.value, rightResult.value)
+                        is DivisionOperator -> performDivision(leftResult.value, rightResult.value)
+                        else -> throw UnsupportedOperationException("Operador no soportado: ${statement.operator}")
+                    }
+
+                EvaluationResult(result, rightResult.context)
             }
             else -> throw IllegalArgumentException("Expected Binary, got ${statement::class.simpleName}")
         }
     }
 
-    private fun findAndEvaluate(statement: Statement): Any {
+    private fun findAndEvaluate(
+        statement: Statement,
+        context: VariableContext,
+    ): EvaluationResult {
         for (evaluator in evaluators) {
             try {
-                return evaluator.evaluate(statement)
+                return evaluator.evaluate(statement, context)
             } catch (e: IllegalArgumentException) {
                 continue
             }
@@ -39,6 +48,7 @@ class BinaryEvaluator(
         throw IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}")
     }
 
+    // Métodos de operaciones sin cambios...
     private fun performAddition(
         left: Any,
         right: Any,

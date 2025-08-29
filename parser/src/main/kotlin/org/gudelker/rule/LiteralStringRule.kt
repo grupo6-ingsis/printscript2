@@ -3,8 +3,8 @@ package org.gudelker.rule
 import org.gudelker.LiteralString
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class LiteralStringRule : SyntaxRule {
@@ -16,14 +16,14 @@ class LiteralStringRule : SyntaxRule {
         val token = tokenStream.current()
         if (token?.getType() != TokenType.STRING) {
             val currentIndex = tokenStream.getCurrentIndex()
-            return ParseResult(SyntaxError("Se esperaba un string en la posición $currentIndex"), tokenStream)
+            return ParseResult(ParserSyntaxError("Se esperaba un string en la posición $currentIndex"), tokenStream)
         }
         val value = token.getValue()
         val literalString = LiteralString(value.substring(1, value.length - 1))
 
         val (type, tokenStream) = tokenStream.consume(TokenType.STRING)
         return ParseResult(
-            ValidStatementResult(literalString),
+            ValidStatementParserResult(literalString),
             tokenStream,
         )
     }

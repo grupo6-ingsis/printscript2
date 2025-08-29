@@ -1,7 +1,7 @@
 package org.gudelker.result
 
-class SyntaxError(
+class ParserSyntaxError(
     private val errorMessage: String,
-) : Result {
+) : ParserResult {
     fun getError(): String = errorMessage
 }

@@ -4,10 +4,16 @@ import org.gudelker.LiteralIdentifier
 import org.gudelker.Statement
 
 class LiteralIdentifierEvaluator : Evaluator<Any> {
-    override fun evaluate(statement: Statement): Any {
-        when (statement) {
-            is LiteralIdentifier -> return statement.value
-            else -> throw IllegalArgumentException("Expected LiteralNumber, got ${statement::class.simpleName}")
+    override fun evaluate(
+        statement: Statement,
+        context: VariableContext,
+    ): EvaluationResult {
+        return when (statement) {
+            is LiteralIdentifier -> {
+                val value = context.getVariable(statement.value)
+                EvaluationResult(value, context)
+            }
+            else -> throw IllegalArgumentException("Expected LiteralIdentifier, got ${statement::class.simpleName}")
         }
     }
 }

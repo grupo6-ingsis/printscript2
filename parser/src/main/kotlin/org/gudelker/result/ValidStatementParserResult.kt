@@ -2,8 +2,8 @@ package org.gudelker.result
 
 import org.gudelker.Statement
 
-class ValidStatementResult(
+class ValidStatementParserResult(
     private val statement: Statement,
-) : Result {
+) : ParserResult {
     fun getStatement(): Statement = statement
 }

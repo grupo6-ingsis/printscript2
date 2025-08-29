@@ -2,8 +2,8 @@ package org.gudelker.result
 
 import org.gudelker.Token
 
-class Valid(
+class ValidTokens(
     val value: List<Token>,
-) : Result {
+) : LexerResult {
     fun getList(): List<Token> = value
 }

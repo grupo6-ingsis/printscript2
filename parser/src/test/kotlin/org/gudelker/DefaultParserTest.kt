@@ -1,15 +1,8 @@
 package org.gudelker
 
 import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.parser.DefaultParser
+import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.result.Valid
-import org.gudelker.rule.BinaryRule
-import org.gudelker.rule.CallableRule
-import org.gudelker.rule.ExpressionRule
-import org.gudelker.rule.GroupingRule
-import org.gudelker.rule.LiteralNumberRule
-import org.gudelker.rule.UnaryRule
-import org.gudelker.rule.VariableDeclarationRule
 import org.gudelker.tokenstream.TokenStream
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -30,13 +23,11 @@ class DefaultParserTest {
                 Token(TokenType.SEMICOLON, ";", Position()),
                 Token(TokenType.EOF, "", Position()),
             )
-//        assertTrue(false) // testing hoo
-        val variableDeclarationRule = VariableDeclarationRule(setOf("let"), ExpressionRule(listOf(LiteralNumberRule())))
 
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -65,19 +56,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val binaryRule = BinaryRule(literalNumberRule)
-        val expressionRule = ExpressionRule(listOf(binaryRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                expressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -102,20 +84,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val unaryRule = UnaryRule(literalNumberRule)
-//        val binaryRule = BinaryRule(literalNumberRule)
-        val expressionRule = ExpressionRule(listOf(unaryRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                expressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -141,21 +113,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val unaryRule = UnaryRule(literalNumberRule)
-        val expressionRuleForBinary = ExpressionRule(listOf(unaryRule, literalNumberRule))
-        val binaryRule = BinaryRule(expressionRuleForBinary)
-        val fullExpressionRule = ExpressionRule(listOf(binaryRule, unaryRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                fullExpressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -185,19 +146,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val binaryRule = BinaryRule(literalNumberRule)
-        val expressionRule = ExpressionRule(listOf(binaryRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                expressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -226,20 +178,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val binaryRule = BinaryRule(literalNumberRule)
-        val groupingRule = GroupingRule(ExpressionRule(listOf(binaryRule, literalNumberRule)))
-        val expressionRule = ExpressionRule(listOf(groupingRule, binaryRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                expressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -252,12 +194,9 @@ class DefaultParserTest {
 
     @Test
     fun `should parse callable statement`() {
-        // Crear tokens de prueba para: let x = println(42);
+        // Crear tokens de prueba para: println(42);
         val tokens =
             listOf(
-                Token(TokenType.KEYWORD, "let", Position()),
-                Token(TokenType.IDENTIFIER, "x", Position()),
-                Token(TokenType.ASSIGNATION, "=", Position()),
                 Token(TokenType.FUNCTION, "println", Position()),
                 Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
                 Token(TokenType.NUMBER, "42", Position()),
@@ -266,19 +205,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val callableRule = CallableRule(ExpressionRule(listOf(literalNumberRule)))
-        val expressionRule = ExpressionRule(listOf(callableRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                expressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -294,9 +224,6 @@ class DefaultParserTest {
         // Crear tokens de prueba para: let x = read();
         val tokens =
             listOf(
-                Token(TokenType.KEYWORD, "let", Position()),
-                Token(TokenType.IDENTIFIER, "x", Position()),
-                Token(TokenType.ASSIGNATION, "=", Position()),
                 Token(TokenType.FUNCTION, "println", Position()),
                 Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
                 Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
@@ -304,19 +231,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val callableRule = CallableRule(ExpressionRule(listOf(literalNumberRule)))
-        val expressionRule = ExpressionRule(listOf(callableRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                expressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -348,22 +266,10 @@ class DefaultParserTest {
                 Token(TokenType.EOF, "", Position()),
             )
 
-        val literalNumberRule = LiteralNumberRule()
-        val unaryRule = UnaryRule(literalNumberRule)
-        val expressionRuleForBinary = ExpressionRule(listOf(unaryRule, literalNumberRule))
-        val binaryRule = BinaryRule(expressionRuleForBinary)
-        val callableRule = CallableRule(ExpressionRule(listOf(binaryRule, unaryRule, literalNumberRule)))
-        val fullExpressionRule = ExpressionRule(listOf(callableRule, binaryRule, unaryRule, literalNumberRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                fullExpressionRule,
-            )
-
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule))
+        val parser = DefaultParserFactory.createParser(tokenStream)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -371,5 +277,109 @@ class DefaultParserTest {
         val statements = (result as Valid).getStatements()
         assertEquals(1, statements.size)
         print(statements[0])
+    }
+
+    @Test
+    fun `should parse binary string statement`() {
+        // Crear tokens de prueba
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.STRING, "\"Hello\"", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.STRING, "\"World!\"", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(tokenStream)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        print(statements[0])
+    }
+
+    @Test
+    fun `should parse simple statement with reassignation`() {
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.COLON, ":", Position()),
+                Token(TokenType.TYPE, "Number", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "4", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(tokenStream)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(2, statements.size)
+        println(statements[0])
+        print(statements[1])
+    }
+
+    @Test
+    fun `should parse this statements`() {
+        //  let x = -10;
+        //            let y = +5;
+        //            println(x + y);
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.OPERATOR, "-", Position()),
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.FUNCTION, "println", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(tokenStream)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(3, statements.size)
+        println(statements[0])
+        println(statements[1])
+        println(statements[2])
     }
 }

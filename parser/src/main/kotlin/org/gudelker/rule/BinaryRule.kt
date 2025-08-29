@@ -9,8 +9,8 @@ import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 import org.gudelker.operator.Operator
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class BinaryRule(
@@ -28,12 +28,12 @@ class BinaryRule(
     // Maneja operadores de suma/resta (menor precedencia)
     private fun parseAddition(stream: TokenStream): ParseResult {
         val leftResult = parseMultiplication(stream)
-        if (leftResult.result !is ValidStatementResult) {
+        if (leftResult.parserResult !is ValidStatementParserResult) {
             return leftResult
         }
 
         return parseAdditionContinuation(
-            leftResult.result.getStatement() as ExpressionStatement,
+            leftResult.parserResult.getStatement() as ExpressionStatement,
             leftResult.tokenStream,
         )
     }
@@ -50,14 +50,14 @@ class BinaryRule(
             val operator =
                 createOperator(currentToken.getValue())
                     ?: return ParseResult(
-                        SyntaxError("Operador no válido: ${currentToken.getValue()}"),
+                        ParserSyntaxError("Operador no válido: ${currentToken.getValue()}"),
                         stream,
                     )
 
             val (_, streamAfterOperator) = stream.next()
             val rightResult = parseMultiplication(streamAfterOperator)
 
-            if (rightResult.result !is ValidStatementResult) {
+            if (rightResult.parserResult !is ValidStatementParserResult) {
                 return rightResult
             }
 
@@ -65,26 +65,26 @@ class BinaryRule(
                 Binary(
                     leftExpression = leftExpression,
                     operator = operator,
-                    rightExpression = rightResult.result.getStatement() as ExpressionStatement,
+                    rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement,
                 )
 
             // Recursivamente continuar parseando más operadores del mismo nivel
             parseAdditionContinuation(binaryExpression, rightResult.tokenStream)
         } else {
             // No hay más operadores de suma/resta, devolver la expresión actual
-            ParseResult(ValidStatementResult(leftExpression), stream)
+            ParseResult(ValidStatementParserResult(leftExpression), stream)
         }
     }
 
     // Maneja operadores de multiplicación/división (mayor precedencia)
     private fun parseMultiplication(stream: TokenStream): ParseResult {
         val leftResult = expressionRule.parse(stream)
-        if (leftResult.result !is ValidStatementResult) {
+        if (leftResult.parserResult !is ValidStatementParserResult) {
             return leftResult
         }
 
         return parseMultiplicationContinuation(
-            leftResult.result.getStatement() as ExpressionStatement,
+            leftResult.parserResult.getStatement() as ExpressionStatement,
             leftResult.tokenStream,
         )
     }
@@ -102,14 +102,14 @@ class BinaryRule(
             val operator =
                 createOperator(currentToken.getValue())
                     ?: return ParseResult(
-                        SyntaxError("Operador no válido: ${currentToken.getValue()}"),
+                        ParserSyntaxError("Operador no válido: ${currentToken.getValue()}"),
                         stream,
                     )
 
             val (_, streamAfterOperator) = stream.next()
             val rightResult = expressionRule.parse(streamAfterOperator)
 
-            if (rightResult.result !is ValidStatementResult) {
+            if (rightResult.parserResult !is ValidStatementParserResult) {
                 return rightResult
             }
 
@@ -117,14 +117,14 @@ class BinaryRule(
                 Binary(
                     leftExpression = leftExpression,
                     operator = operator,
-                    rightExpression = rightResult.result.getStatement() as ExpressionStatement,
+                    rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement,
                 )
 
             // Recursivamente continuar parseando más operadores del mismo nivel
             parseMultiplicationContinuation(binaryExpression, rightResult.tokenStream)
         } else {
             // No hay más operadores de multiplicación/división, devolver la expresión actual
-            ParseResult(ValidStatementResult(leftExpression), stream)
+            ParseResult(ValidStatementParserResult(leftExpression), stream)
         }
     }
 

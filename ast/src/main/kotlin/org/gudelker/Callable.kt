@@ -1,6 +1,10 @@
 package org.gudelker
 
 class Callable(
-    value: String,
-    expression: ExpressionStatement,
-) : ExpressionStatement
+    val functionName: String,
+    val expression: ExpressionStatement,
+) : CallableStatement {
+    override fun toString(): String {
+        return "Callable($functionName($expression))"
+    }
+}
