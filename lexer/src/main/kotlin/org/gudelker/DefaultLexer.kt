@@ -1,23 +1,23 @@
 package org.gudelker
 
 import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.result.Result
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.Valid
+import org.gudelker.result.LexerResult
+import org.gudelker.result.LexerSyntaxError
+import org.gudelker.result.ValidTokens
 import org.gudelker.sourcereader.SourceReader
 
 class DefaultLexer(
     private val rules: List<RuleTokenizer>,
 ) : Lexer {
-    override fun lex(sourceReader: SourceReader): Result {
+    override fun lex(sourceReader: SourceReader): LexerResult {
         fun lexRecursive(
             actualWord: String,
             tokensList: List<Token>,
             startPos: Position,
-        ): Result {
+        ): LexerResult {
             if (sourceReader.isEOF()) {
                 val finalTokens = tokensList + Token(TokenType.EOF, "EOF", startPos)
-                return Valid(finalTokens)
+                return ValidTokens(finalTokens)
             }
             val newChar = sourceReader.next().toString()
             val updatedWord = actualWord + newChar
@@ -38,7 +38,7 @@ class DefaultLexer(
                 val newTokens = matchingRule.generateToken(tokensList, updatedWord, pos)
                 val lastToken = newTokens.last()
                 if (lastToken.getType() == TokenType.UNKNOWN) {
-                    SyntaxError("Syntax error in line: ${lastToken.getPosition().startLine}")
+                    LexerSyntaxError("Syntax error in line: ${lastToken.getPosition().startLine}")
                 } else {
                     lexRecursive("", newTokens, advancePosition(posWithNewOffset, nextChar))
                 }

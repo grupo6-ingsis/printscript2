@@ -3,8 +3,8 @@ package org.gudelker.rule
 import org.gudelker.LiteralNumber
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class LiteralNumberRule : SyntaxRule {
@@ -16,7 +16,7 @@ class LiteralNumberRule : SyntaxRule {
         val token = tokenStream.current()
         if (token?.getType() != TokenType.NUMBER) {
             val currentIndex = tokenStream.getCurrentIndex()
-            return ParseResult(SyntaxError("Se esperaba un número en la posición $currentIndex"), tokenStream)
+            return ParseResult(ParserSyntaxError("Se esperaba un número en la posición $currentIndex"), tokenStream)
         }
         val value =
             if (token.getValue().contains(".")) {
@@ -29,7 +29,7 @@ class LiteralNumberRule : SyntaxRule {
 
         val (type, tokenStream) = tokenStream.consume(TokenType.NUMBER)
         return ParseResult(
-            ValidStatementResult(literalNumber),
+            ValidStatementParserResult(literalNumber),
             tokenStream,
         )
     }

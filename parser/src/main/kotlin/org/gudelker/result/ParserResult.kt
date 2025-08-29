@@ -1,5 +1,5 @@
 package org.gudelker.result
 
-interface Result {
+sealed interface ParserResult {
     fun isValid(): Boolean = this is Valid
 }

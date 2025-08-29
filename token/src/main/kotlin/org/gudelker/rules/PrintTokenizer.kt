@@ -6,11 +6,14 @@ import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
 class PrintTokenizer : RuleTokenizer {
+    private val functions = setOf("println", "read")
+
     override fun matches(
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return actualWord == "println"
+        return functions.contains(actualWord) &&
+            (nextChar == null || (!nextChar.isLetterOrDigit() && nextChar != '_'))
     }
 
     override fun generateToken(
@@ -18,7 +21,6 @@ class PrintTokenizer : RuleTokenizer {
         actualWord: String,
         position: Position,
     ): List<Token> {
-        val newList = tokens + Token(TokenType.FUNCTION, actualWord, position)
-        return newList
+        return tokens + Token(TokenType.FUNCTION, actualWord, position)
     }
 }

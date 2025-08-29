@@ -1,7 +1,7 @@
 package org.gudelker.rule
 
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
+import org.gudelker.result.ParserSyntaxError
 import org.gudelker.tokenstream.TokenStream
 
 class ExpressionRule(
@@ -17,7 +17,7 @@ class ExpressionRule(
             return result
         } else {
             return ParseResult(
-                SyntaxError("No se encontró una expresión válida en la posición ${tokenStream.getCurrentIndex()}"),
+                ParserSyntaxError("No se encontró una expresión válida en la posición ${tokenStream.getCurrentIndex()}"),
                 tokenStream,
             )
         }

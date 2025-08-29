@@ -3,7 +3,7 @@ package org.gudelker.rule
 import org.gudelker.LiteralIdentifier
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class LiteralIdentifierRule : SyntaxRule {
@@ -17,7 +17,7 @@ class LiteralIdentifierRule : SyntaxRule {
         val literalIdentifier = LiteralIdentifier(value)
         val (newToken, tokenStream) = tokenStream.consume(TokenType.IDENTIFIER)
         return ParseResult(
-            ValidStatementResult(literalIdentifier),
+            ValidStatementParserResult(literalIdentifier),
             tokenStream,
         )
     }

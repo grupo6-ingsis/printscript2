@@ -1,7 +1,7 @@
 package org.gudelker
 
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.Valid
+import org.gudelker.result.LexerSyntaxError
+import org.gudelker.result.ValidTokens
 import org.gudelker.sourcereader.FileSourceReader
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
@@ -20,9 +20,9 @@ class LexerTests {
         val reader = FileSourceReader("src/test/lexer.txt")
         val tokens = lexer.lex(reader)
         when (tokens) {
-            is Valid ->
+            is ValidTokens ->
                 for (token in tokens.getList()) println(token)
-            is SyntaxError ->
+            is LexerSyntaxError ->
                 println(tokens.getError())
         }
     }

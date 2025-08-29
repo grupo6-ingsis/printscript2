@@ -1,7 +1,7 @@
 package org.gudelker.result
 
-class SyntaxError(
+class LexerSyntaxError(
     val messageError: String,
-) : Result {
+) : LexerResult {
     fun getError(): String = messageError
 }

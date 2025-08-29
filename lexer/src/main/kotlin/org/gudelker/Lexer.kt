@@ -1,8 +1,8 @@
 package org.gudelker
 
-import org.gudelker.result.Result
+import org.gudelker.result.LexerResult
 import org.gudelker.sourcereader.SourceReader
 
 interface Lexer {
-    fun lex(sourceReader: SourceReader): Result
+    fun lex(sourceReader: SourceReader): LexerResult
 }

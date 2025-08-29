@@ -2,11 +2,11 @@ package org.gudelker.rule
 
 import org.gudelker.Callable
 import org.gudelker.ExpressionStatement
-import org.gudelker.Grouping
+import org.gudelker.LiteralNumber
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class CallableRule(private val expressionRule: SyntaxRule) : SyntaxRule {
@@ -17,39 +17,40 @@ class CallableRule(private val expressionRule: SyntaxRule) : SyntaxRule {
     override fun parse(tokenStream: TokenStream): ParseResult {
         val (functionToken, afterFunction) = tokenStream.consume(TokenType.FUNCTION)
         if (functionToken == null) {
-            return ParseResult(SyntaxError("Expected function name"), tokenStream)
+            return ParseResult(ParserSyntaxError("Expected function name"), tokenStream)
         }
 
         val (openParenToken, afterOpenParen) = afterFunction.consume(TokenType.OPEN_PARENTHESIS)
         if (openParenToken == null) {
-            return ParseResult(SyntaxError("Expected '(' after function name"), afterFunction)
+            return ParseResult(ParserSyntaxError("Expected '(' after function name"), afterFunction)
         }
+
+        val expression: ExpressionStatement
+        val afterExpression: TokenStream
 
         if (afterOpenParen.check(TokenType.CLOSE_PARENTHESIS)) {
-            val (closeParenToken, afterCloseParen) = afterOpenParen.consume(TokenType.CLOSE_PARENTHESIS)
-            val grouping =
-                Grouping(
-                    openParenToken.getValue(),
-                    null,
-                    closeParenToken?.getValue() ?: "",
-                )
-            val callable = Callable(functionToken.getValue(), grouping)
-            return ParseResult(ValidStatementResult(callable), afterCloseParen)
+            expression = LiteralNumber(0)
+            afterExpression = afterOpenParen
+        } else {
+            val exprResult = expressionRule.parse(afterOpenParen)
+            if (exprResult.parserResult !is ValidStatementParserResult) {
+                return ParseResult(ParserSyntaxError("Invalid expression inside function call"), exprResult.tokenStream)
+            }
+            expression = exprResult.parserResult.getStatement() as ExpressionStatement
+            afterExpression = exprResult.tokenStream
         }
 
-        val exprResult = expressionRule.parse(afterOpenParen)
-        if (exprResult.result !is ValidStatementResult) {
-            return ParseResult(SyntaxError("Invalid expression inside function call"), exprResult.tokenStream)
-        }
-        val expr = exprResult.result.getStatement() as ExpressionStatement
-
-        val (closeParenToken, afterCloseParen) = exprResult.tokenStream.consume(TokenType.CLOSE_PARENTHESIS)
+        val (closeParenToken, afterCloseParen) = afterExpression.consume(TokenType.CLOSE_PARENTHESIS)
         if (closeParenToken == null) {
-            return ParseResult(SyntaxError("Expected ')' after function arguments"), exprResult.tokenStream)
+            return ParseResult(ParserSyntaxError("Expected ')' after function arguments"), afterExpression)
         }
 
-        val grouping = Grouping(openParenToken.getValue(), expr, closeParenToken.getValue())
-        val callable = Callable(functionToken.getValue(), grouping)
-        return ParseResult(ValidStatementResult(callable), afterCloseParen)
+        val (semicolonToken, afterSemicolon) = afterCloseParen.consume(TokenType.SEMICOLON)
+        if (semicolonToken == null) {
+            return ParseResult(ParserSyntaxError("Expected ';' after function call"), afterCloseParen)
+        }
+
+        val callable = Callable(functionToken.getValue(), expression)
+        return ParseResult(ValidStatementParserResult(callable), afterSemicolon)
     }
 }

@@ -4,8 +4,8 @@ import org.gudelker.ExpressionStatement
 import org.gudelker.Grouping
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class GroupingRule(private val expressionRule: SyntaxRule) : SyntaxRule {
@@ -16,21 +16,21 @@ class GroupingRule(private val expressionRule: SyntaxRule) : SyntaxRule {
     override fun parse(tokenStream: TokenStream): ParseResult {
         val (openParen, afterOpen) = tokenStream.consume(TokenType.OPEN_PARENTHESIS)
         if (openParen == null) {
-            return ParseResult(SyntaxError("Expected '('"), tokenStream)
+            return ParseResult(ParserSyntaxError("Expected '('"), tokenStream)
         }
 
         val exprResult = expressionRule.parse(afterOpen)
-        if (exprResult.result !is ValidStatementResult) {
-            return ParseResult(SyntaxError("Invalid expression in grouping"), exprResult.tokenStream)
+        if (exprResult.parserResult !is ValidStatementParserResult) {
+            return ParseResult(ParserSyntaxError("Invalid expression in grouping"), exprResult.tokenStream)
         }
-        val expr = exprResult.result.getStatement() as ExpressionStatement
+        val expr = exprResult.parserResult.getStatement() as ExpressionStatement
 
         val (closeParen, afterClose) = exprResult.tokenStream.consume(TokenType.CLOSE_PARENTHESIS)
         if (closeParen == null) {
-            return ParseResult(SyntaxError("Expected ')'"), exprResult.tokenStream)
+            return ParseResult(ParserSyntaxError("Expected ')'"), exprResult.tokenStream)
         }
 
         val grouping = Grouping(openParen.getValue(), expr, closeParen.getValue())
-        return ParseResult(ValidStatementResult(grouping), afterClose)
+        return ParseResult(ValidStatementParserResult(grouping), afterClose)
     }
 }

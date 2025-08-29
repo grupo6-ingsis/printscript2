@@ -7,8 +7,8 @@ import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.Operator
 import org.gudelker.result.ParseResult
-import org.gudelker.result.SyntaxError
-import org.gudelker.result.ValidStatementResult
+import org.gudelker.result.ParserSyntaxError
+import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.tokenstream.TokenStream
 
 class UnaryRule(
@@ -29,7 +29,7 @@ class UnaryRule(
             currentToken.getValue() !in operators
         ) {
             return ParseResult(
-                SyntaxError("Se esperaba un operador unario (+, -)"),
+                ParserSyntaxError("Se esperaba un operador unario (+, -)"),
                 tokenStream,
             )
         }
@@ -37,22 +37,22 @@ class UnaryRule(
         val operator =
             createUnaryOperator(currentToken.getValue())
                 ?: return ParseResult(
-                    SyntaxError("Operador unario no válido: ${currentToken.getValue()}"),
+                    ParserSyntaxError("Operador unario no válido: ${currentToken.getValue()}"),
                     tokenStream,
                 )
 
         val (_, streamAfterOperator) = tokenStream.next()
         val expressionResult = expressionRule.parse(streamAfterOperator)
 
-        if (expressionResult.result !is ValidStatementResult) {
+        if (expressionResult.parserResult !is ValidStatementParserResult) {
             return expressionResult
         }
 
-        val expression = expressionResult.result.getStatement() as ExpressionStatement
+        val expression = expressionResult.parserResult.getStatement() as ExpressionStatement
         val unaryExpression = Unary(expression, operator)
 
         return ParseResult(
-            ValidStatementResult(unaryExpression),
+            ValidStatementParserResult(unaryExpression),
             expressionResult.tokenStream,
         )
     }
