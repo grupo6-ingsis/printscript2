@@ -1,0 +1,10 @@
+
+{
+  "rules": {
+    "spaceBeforeColon": false,
+    "spaceAfterColon": true,
+    "spaceBeforeEquals": true,
+    "spaceAfterEquals": true,
+    "newlinesBeforePrintln": 1
+  }
+}
