@@ -17,23 +17,61 @@ object DefaultParserFactory {
         val literalNumberRule = LiteralNumberRule()
         val literalStringRule = LiteralStringRule()
         val literalIdentifierRule = LiteralIdentifierRule()
-        val unaryRule = UnaryRule(ExpressionRule(listOf(literalNumberRule, literalStringRule, literalIdentifierRule)))
-        val expressionRuleForBinary = ExpressionRule(listOf(unaryRule, literalNumberRule, literalStringRule, literalIdentifierRule))
-        val binaryRule = BinaryRule(expressionRuleForBinary)
-        val groupingRule =
-            GroupingRule(ExpressionRule(listOf(binaryRule, unaryRule, literalNumberRule, literalStringRule, literalIdentifierRule)))
-        val callableRule =
-            CallableRule(
-                ExpressionRule(listOf(groupingRule, binaryRule, unaryRule, literalNumberRule, literalStringRule, literalIdentifierRule)),
+
+        // Crear reglas base sin dependencias circulares
+        val baseExpressionRule = ExpressionRule(listOf(literalNumberRule, literalStringRule, literalIdentifierRule))
+
+        // UnaryRule que puede acceder a literales
+        val unaryRule = UnaryRule(baseExpressionRule)
+
+        // Crear un placeholder para la expresión completa
+        val fullExpressionRule: ExpressionRule
+
+        // GroupingRule que usará la expresión completa
+        val groupingRule = GroupingRule(baseExpressionRule) // temporal
+
+        // BinaryRule con acceso a unary, grouping y literales
+        val binaryExpressionRule =
+            ExpressionRule(listOf(unaryRule, groupingRule, literalNumberRule, literalStringRule, literalIdentifierRule))
+        val binaryRule = BinaryRule(binaryExpressionRule)
+
+        // Expresión completa con todas las reglas
+        fullExpressionRule =
+            ExpressionRule(
+                listOf(
+                    binaryRule,
+                    unaryRule,
+                    groupingRule,
+                    literalNumberRule,
+                    literalStringRule,
+                    literalIdentifierRule,
+                ),
             )
-        val fullExpressionRule =
-            ExpressionRule(listOf(groupingRule, binaryRule, unaryRule, literalNumberRule, literalStringRule, literalIdentifierRule))
-        val variableDeclarationRule =
-            VariableDeclarationRule(
-                setOf("let"),
-                fullExpressionRule,
+
+        // GroupingRule con la expresión completa
+        val finalGroupingRule = GroupingRule(fullExpressionRule)
+
+        // BinaryRule con acceso completo
+        val finalBinaryExpressionRule =
+            ExpressionRule(listOf(unaryRule, finalGroupingRule, literalNumberRule, literalStringRule, literalIdentifierRule))
+        val finalBinaryRule = BinaryRule(finalBinaryExpressionRule)
+
+        // Expresión final con todas las reglas actualizadas
+        val completeExpressionRule =
+            ExpressionRule(
+                listOf(
+                    finalBinaryRule,
+                    unaryRule,
+                    finalGroupingRule,
+                    literalNumberRule,
+                    literalStringRule,
+                    literalIdentifierRule,
+                ),
             )
-        val variableReassignmentRule = VariableReassignmentRule(fullExpressionRule)
+
+        val callableRule = CallableRule(completeExpressionRule)
+        val variableDeclarationRule = VariableDeclarationRule(setOf("let"), completeExpressionRule)
+        val variableReassignmentRule = VariableReassignmentRule(completeExpressionRule)
 
         return DefaultParser(tokenStream, emptyList(), listOf(variableDeclarationRule, variableReassignmentRule, callableRule))
     }
