@@ -7,17 +7,15 @@ import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 
-class BinaryEvaluator(
-    private val evaluators: List<Evaluator<out Any>>,
-) : Evaluator<Any> {
+class BinaryEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
     ): EvaluationResult {
         return when (statement) {
             is Binary -> {
-                val leftResult = findAndEvaluate(statement.leftExpression, context)
-                val rightResult = findAndEvaluate(statement.rightExpression, leftResult.context)
+                val leftResult = Analyzer.analyze(statement.leftExpression, context)
+                val rightResult = Analyzer.analyze(statement.rightExpression, leftResult.context)
 
                 val result =
                     when (statement.operator) {
@@ -34,27 +32,13 @@ class BinaryEvaluator(
         }
     }
 
-    private fun findAndEvaluate(
-        statement: Statement,
-        context: VariableContext,
-    ): EvaluationResult {
-        for (evaluator in evaluators) {
-            try {
-                return evaluator.evaluate(statement, context)
-            } catch (e: IllegalArgumentException) {
-                continue
-            }
-        }
-        throw IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}")
-    }
-
-    // Métodos de operaciones sin cambios...
     private fun performAddition(
         left: Any,
         right: Any,
     ): Any {
         return when {
             left is Number && right is Number -> left.toDouble() + right.toDouble()
+            left is String || right is String -> left.toString() + right.toString()
             else -> throw IllegalArgumentException("Tipos incompatibles para suma")
         }
     }

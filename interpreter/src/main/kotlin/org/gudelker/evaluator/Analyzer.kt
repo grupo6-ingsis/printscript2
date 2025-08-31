@@ -9,20 +9,11 @@ object Analyzer {
             LiteralStringEvaluator(),
             LiteralIdentifierEvaluator(),
             UnaryEvaluator(),
-            BinaryEvaluator(getBinaryEvaluators()),
+            BinaryEvaluator(),
             GroupingEvaluator(),
             VariableDeclarationEvaluator(),
             VariableReassignmentEvaluator(),
             CallableEvaluator(),
-        )
-
-    private fun getBinaryEvaluators(): List<Evaluator<out Any>> =
-        listOf(
-            LiteralNumberEvaluator(),
-            LiteralStringEvaluator(),
-            LiteralIdentifierEvaluator(),
-            UnaryEvaluator(),
-            GroupingEvaluator(),
         )
 
     fun analyze(

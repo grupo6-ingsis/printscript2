@@ -58,19 +58,20 @@ class IntegrationTest {
         assertEquals(Unit, result[2]) // -10 + 5
     }
 
-//    @Test
-//    fun `should process grouping expressions`() {
-//        val code = """
-//            let x = (5 + 3) * 2;
-//            println(x);
-//        """.trimIndent()
-//
-//        val result = processCode(code)
-//
-//        assertEquals(2, result.size)
-//        assertEquals(Unit, result[0]) // declaración
-//        assertEquals(Unit, result[1]) // (5 + 3) * 2 = 16
-//    }
+    @Test
+    fun `should process grouping expressions`() {
+        val code =
+            """
+            let x = (5 + 3) * 2;
+            println(x);
+            """.trimIndent()
+
+        val result = processCode(code)
+
+        assertEquals(2, result.size)
+        assertEquals(Unit, result[0]) // declaración
+        assertEquals(Unit, result[1]) // (5 + 3) * 2 = 16
+    }
 
     @Test
     fun `should process variable reassignment`() {
@@ -131,38 +132,36 @@ class IntegrationTest {
             """
             let greeting = "Hello";
             let name = "World";
-            println(greeting);
-            println(name);
+            println(greeting + " " + name);
             """.trimIndent()
 
         val result = processCode(code)
 
-        assertEquals(4, result.size)
+        assertEquals(3, result.size)
         assertEquals(Unit, result[0]) // let greeting
         assertEquals(Unit, result[1]) // let name
         assertEquals(Unit, result[2]) // println greeting
-        assertEquals(Unit, result[3]) // println name
     }
 
-//    @Test
-//    fun `should process mixed operations`() {
-//        val code = """
-//            let x = 5;
-//            let y = - x + 10;
-//            let z = y * (2 + 3);
-//            println(z);
-//            println(z / 5);
-//        """.trimIndent()
-//
-//        val result = processCode(code)
-//
-//        assertEquals(5, result.size)
-//        assertEquals(Unit, result[0]) // let x = 5
-//        assertEquals(Unit, result[1]) // let y = 5 (-5 + 10)
-//        assertEquals(Unit, result[2]) // let z = 25 (5 * 5)
-//        assertEquals(Unit, result[3]) // println(25)
-//        assertEquals(Unit, result[4]) // println(5)
-//    }
+    @Test
+    fun `should process mixed operations`() {
+        val code =
+            """
+            let x = 5;
+            let y = - x + 10;
+            let z = y * (x - 2);
+            println(z);
+            println(z / 5);
+            """.trimIndent()
+
+        val result = processCode(code)
+
+        assertEquals(5, result.size)
+        assertEquals(Unit, result[0]) // let x = 5
+        assertEquals(Unit, result[1]) // let y = 5 (-5 + 10)
+        assertEquals(Unit, result[2]) // println(y)
+        assertEquals(Unit, result[3]) // println(y / 5)
+    }
 
     @Test
     fun `should handle division operations`() {
