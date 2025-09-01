@@ -1,0 +1,6 @@
+{
+  "rules": {
+    "identifierFormat": "camelCase",
+    "restrictPrintlnExpressions": true
+  }
+}
