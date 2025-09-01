@@ -4,7 +4,7 @@ import org.gudelker.result.CompoundResult
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 
-class DefaultLinter(private val linters: List<LinterAnalyzer>, private val linterConfigLoader: LinterConfigLoader) : Linter {
+class DefaultLinter(private val linters: List<LinterAnalyzer>) : Linter {
     override fun lint(
         statementStream: StatementStream,
         ruleMap: Map<String, LinterConfig>,
