@@ -25,7 +25,7 @@ class MoreTests {
                 GroupingExpressionAnalyzer(),
             )
         val loader = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
-        return DefaultLinter(analyzers, loader)
+        return DefaultLinter(analyzers)
     }
 
     @BeforeEach
