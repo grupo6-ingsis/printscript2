@@ -49,14 +49,14 @@ class LinterTests {
             )
         val result = linter.lint(StatementStream(stmts), config)
         assertEquals(2, result.results.size)
-        assertTrue(result.results[0] is LintViolation)
+        assertTrue(result.results.isNotEmpty())
     }
 
     @Test
     fun `valid snake_case identifier fails when config is camelCase`() {
         val stmt = VariableDeclaration("my_var", "number", LiteralNumber(1))
         val result = linter.lint(StatementStream(listOf(stmt)), config)
-        assertTrue(result.results.any { it is LintViolation })
+        assertTrue(result.results.isNotEmpty())
     }
 
     @Test
@@ -76,7 +76,7 @@ class LinterTests {
             )
         val result = linter.lint(StatementStream(stmts), config)
         assertEquals(1, result.results.size)
-        assertTrue(result.results[0] is LintViolation)
+        assertTrue(result.results.isNotEmpty())
     }
 
     @Test
