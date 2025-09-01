@@ -15,6 +15,6 @@ class LiteralStringAnalyzer : Analyzer {
         ruleMap: Map<String, Rule>,
         formatter: DefaultFormatter,
     ): String {
-        return (statement as LiteralString).value
+        return "\"${(statement as LiteralString).value}\""
     }
 }

@@ -2,7 +2,7 @@ package org.gudelker.utils
 
 import org.gudelker.rules.Rule
 
-object Utils {
+object FormatterUtils {
     fun getDeclarationSpaces(
         ruleName: String,
         map: Map<String, Rule>,
@@ -25,7 +25,18 @@ object Utils {
         }
     }
 
-    fun generateSpaces(quantity: Int): String {
+    private fun generateSpaces(quantity: Int): String {
         return " ".repeat(quantity)
+    }
+
+    fun generateNewLines(
+        ruleName: String,
+        map: Map<String, Rule>,
+    ): String {
+        return if (map.containsKey(ruleName) && map[ruleName]!!.on) {
+            "\n".repeat(map[ruleName]!!.quantity)
+        } else {
+            "\n"
+        }
     }
 }

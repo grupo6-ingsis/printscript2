@@ -4,6 +4,7 @@ import org.gudelker.Callable
 import org.gudelker.DefaultFormatter
 import org.gudelker.Statement
 import org.gudelker.rules.Rule
+import org.gudelker.utils.FormatterUtils
 
 class CallableAnalyzer : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
@@ -16,6 +17,9 @@ class CallableAnalyzer : Analyzer {
         formatter: DefaultFormatter,
     ): String {
         val callable = statement as Callable
-        return ""
+        val name = callable.functionName
+        val formattedExpression = formatter.format(callable.expression, ruleMap)
+        val newLines = FormatterUtils.generateNewLines("println", ruleMap)
+        return "$newLines$name($formattedExpression);"
     }
 }

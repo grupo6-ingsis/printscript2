@@ -20,6 +20,6 @@ class GroupingAnalyzer : Analyzer {
         val expression = grouping.expression
         val rightParen = grouping.closingParenthesis
         val formattedExpression = expression?.let { formatter.formatNode(it, ruleMap) }
-        return "$leftParen$formattedExpression}$rightParen"
+        return "$leftParen$formattedExpression$rightParen"
     }
 }
