@@ -9,21 +9,22 @@ class DefaultLinter(private val linters: List<LinterAnalyzer>) : Linter {
         statementStream: StatementStream,
         ruleMap: Map<String, LinterConfig>,
     ): CompoundResult {
-        var linterResults: List<LinterResult> = emptyList()
+        var linterResults: List<LintViolation> = emptyList()
         var stream = statementStream
 
         while (!stream.isAtEnd()) {
             val (statement, nextStream) = stream.next()
             if (statement != null) {
                 val result = lintNode(statement, ruleMap)
-                linterResults = linterResults + result
+                if (result is LintViolation) {
+                    linterResults = linterResults + result
+                }
             }
             stream = nextStream
         }
-        val linterErrors: List<LintViolation> = linterResults.filter { it is LintViolation } as List<LintViolation>
 
-        if (linterErrors.isNotEmpty()) {
-            val compoundResult = CompoundResult(linterErrors, "You have some linter errors")
+        if (linterResults.isNotEmpty()) {
+            val compoundResult = CompoundResult(linterResults, "You have some linter errors")
             return compoundResult
         }
         return CompoundResult(listOf(), "All statements passed")

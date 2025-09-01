@@ -28,15 +28,18 @@ class LinterTests {
                 UnaryExpressionAnalyzer(),
                 GroupingExpressionAnalyzer(),
             )
-        val loader = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
-        config = loader.loadConfig()
         linter = DefaultLinter(analyzers)
     }
 
     @Test
     fun `valid camelCase identifier passes`() {
         val stmt = VariableDeclaration("myVar", "number", LiteralNumber(1))
-        val result = linter.lint(StatementStream(listOf(stmt)), config)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = false),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = false),
+            )
+        val result = linter.lint(StatementStream(listOf(stmt)), rules)
         assertEquals(result.results, emptyList<LintViolation>())
     }
 
@@ -47,7 +50,12 @@ class LinterTests {
                 VariableDeclaration("my_var", "number", LiteralNumber(1)),
                 Callable("println", Binary(LiteralNumber(1), AdditionOperator("+"), LiteralNumber(2))),
             )
-        val result = linter.lint(StatementStream(stmts), config)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(2, result.results.size)
         assertTrue(result.results.isNotEmpty())
     }
@@ -55,14 +63,24 @@ class LinterTests {
     @Test
     fun `valid snake_case identifier fails when config is camelCase`() {
         val stmt = VariableDeclaration("my_var", "number", LiteralNumber(1))
-        val result = linter.lint(StatementStream(listOf(stmt)), config)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(listOf(stmt)), rules)
         assertTrue(result.results.isNotEmpty())
     }
 
     @Test
     fun `println with literal argument passes when restrictPrintlnExpressions is true`() {
         val stmt = Callable("println", LiteralNumber(42))
-        val result = linter.lint(StatementStream(listOf(stmt)), config)
+        val rules =
+            mapOf(
+                "camelCase" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(listOf(stmt)), rules)
         assertEquals(emptyList<LintViolation>(), result.results)
     }
 
@@ -74,7 +92,12 @@ class LinterTests {
                 VariableDeclaration("my_var", "number", LiteralNumber(2)),
                 VariableDeclaration("anotherVar", "number", LiteralNumber(3)),
             )
-        val result = linter.lint(StatementStream(stmts), config)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(1, result.results.size)
         assertTrue(result.results.isNotEmpty())
     }
@@ -82,7 +105,12 @@ class LinterTests {
     @Test
     fun `empty statement stream passes with no violations`() {
         val stmts = emptyList<Statement>()
-        val result = linter.lint(StatementStream(stmts), config)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(emptyList<LintViolation>(), result.results)
     }
 }

@@ -6,10 +6,12 @@ import org.gudelker.analyzers.GroupingExpressionAnalyzer
 import org.gudelker.analyzers.LiteralNumberAnalyzer
 import org.gudelker.analyzers.UnaryExpressionAnalyzer
 import org.gudelker.analyzers.VariableDeclarationAnalyzer
-import org.gudelker.result.ValidLint
+import org.gudelker.operator.AdditionOperator
+import org.gudelker.operator.MinusOperator
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.collections.mapOf
 
 class MoreTests {
     private lateinit var linter: Linter
@@ -24,7 +26,6 @@ class MoreTests {
                 UnaryExpressionAnalyzer(),
                 GroupingExpressionAnalyzer(),
             )
-        val loader = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
         return DefaultLinter(analyzers)
     }
 
@@ -36,6 +37,7 @@ class MoreTests {
     @Test
     fun `test camelCase identifier format - valid`() {
         val statement = VariableDeclaration("myVariable", "Number", LiteralNumber(3))
+        val list = listOf(statement)
         val config =
             mapOf(
                 "rules" to
@@ -45,8 +47,101 @@ class MoreTests {
                     ),
             )
 
-        val result = linter.lintNode(statement, config)
-        assertTrue(result is ValidLint)
+        val result = linter.lint(StatementStream(list), config)
+        val resultList = result.results
+        assertTrue(resultList.isEmpty())
+    }
+
+    @Test
+    fun `snake_case variable and println with expression yields one violation with snake_case config`() {
+        val stmts =
+            listOf(
+                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.size == 1)
+    }
+
+    @Test
+    fun `println with expression and snake_case variable yields one violation with snake_case config`() {
+        val stmts =
+            listOf(
+                Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
+                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.size == 1)
+    }
+
+    @Test
+    fun `snake_case variable and println with expression yields two violations with camelCase config`() {
+        val stmts =
+            listOf(
+                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.size == 2)
+    }
+
+    @Test
+    fun `println with expression and snake_case variable yields two violations with camelCase config`() {
+        val stmts =
+            listOf(
+                Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
+                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.size == 2)
+    }
+
+    @Test
+    fun `all analyzers are exercised with a diverse statement list`() {
+        val stmts =
+            listOf(
+                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                Callable("println", LiteralNumber(2)),
+                Callable(
+                    "println",
+                    Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2)),
+                ),
+                Callable(
+                    "println",
+                    Grouping("(", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2)), ")"),
+                ),
+                Callable(
+                    "println",
+                    Unary(LiteralNumber(3), MinusOperator()),
+                ),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.size >= 1)
     }
 //
 //    @Test
