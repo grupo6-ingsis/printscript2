@@ -30,7 +30,7 @@ class LinterTests {
             )
         val loader = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
         config = loader.loadConfig()
-        linter = DefaultLinter(analyzers, loader)
+        linter = DefaultLinter(analyzers)
     }
 
     @Test
