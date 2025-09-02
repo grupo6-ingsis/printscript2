@@ -5,6 +5,7 @@ import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.Valid
 import org.gudelker.result.ValidTokens
 import org.gudelker.sourcereader.StringSourceReader
+import org.gudelker.tokenstream.TokenStream
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -194,7 +195,7 @@ class IntegrationTest {
                     val tokens = tokenResult.getList()
 
                     // 2. Syntax Analysis
-                    val tokenStream = org.gudelker.tokenstream.TokenStream(tokens)
+                    val tokenStream = TokenStream(tokens)
                     val parser = DefaultParserFactory.createParser(tokenStream)
                     val parseResult = parser.parse(tokenStream)
 
@@ -209,5 +210,10 @@ class IntegrationTest {
                     return interpreter.interpret(statements)
                 }
         }
+    }
+
+    @Test
+    fun `app test for rest of coverage`() {
+        main()
     }
 }

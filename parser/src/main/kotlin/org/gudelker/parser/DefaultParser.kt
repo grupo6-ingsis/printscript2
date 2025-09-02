@@ -41,6 +41,4 @@ class DefaultParser(
 
         return ParserSyntaxError("No se encontró regla válida para token: ${currentStream.current()?.getValue()}")
     }
-
-    fun getRoot(): List<Statement> = root
 }
