@@ -74,7 +74,7 @@ class DefaultInterpreterTest {
     fun `should interpret variable declaration`() {
         val statements =
             listOf(
-                VariableDeclaration("x", null, LiteralNumber(42.0)),
+                VariableDeclaration("let", "x", null, LiteralNumber(42.0)),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
@@ -88,7 +88,7 @@ class DefaultInterpreterTest {
     fun `should interpret variable declaration and access`() {
         val statements =
             listOf(
-                VariableDeclaration("x", null, LiteralNumber(42.0)),
+                VariableDeclaration("let", "x", null, LiteralNumber(42.0)),
                 LiteralIdentifier("x"),
             )
 
@@ -104,7 +104,7 @@ class DefaultInterpreterTest {
     fun `should interpret variable reassignment`() {
         val statements =
             listOf(
-                VariableDeclaration("x", null, LiteralNumber(10.0)),
+                VariableDeclaration("let", "x", null, LiteralNumber(10.0)),
                 VariableReassignment("x", LiteralNumber(20.0)),
                 LiteralIdentifier("x"),
             )
@@ -158,8 +158,8 @@ class DefaultInterpreterTest {
     fun `should interpret complex expression with variables`() {
         val statements =
             listOf(
-                VariableDeclaration("x", null, LiteralNumber(5.0)),
-                VariableDeclaration("y", null, LiteralNumber(3.0)),
+                VariableDeclaration("let", "x", null, LiteralNumber(5.0)),
+                VariableDeclaration("let", "y", null, LiteralNumber(3.0)),
                 Binary(
                     LiteralIdentifier("x"),
                     MultiplyOperator(),

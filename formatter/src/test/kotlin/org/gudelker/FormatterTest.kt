@@ -34,7 +34,7 @@ class FormatterTest {
 
     @Test
     fun `test espacio antes de dos puntos en declaracion - con espacio`() {
-        val statement = VariableDeclaration("x", "Int", LiteralNumber(5))
+        val statement = VariableDeclaration("let", "x", "Int", LiteralNumber(5))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 1),
@@ -50,7 +50,7 @@ class FormatterTest {
 
     @Test
     fun `test espacio antes de dos puntos en declaracion - sin espacio`() {
-        val statement = VariableDeclaration("x", "Int", LiteralNumber(5))
+        val statement = VariableDeclaration("let", "x", "Int", LiteralNumber(5))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 0),
@@ -66,7 +66,7 @@ class FormatterTest {
 
     @Test
     fun `test espacio despues de dos puntos en declaracion - con espacio`() {
-        val statement = VariableDeclaration("y", "String", LiteralString("hello"))
+        val statement = VariableDeclaration("let", "y", "String", LiteralString("hello"))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 0),
@@ -82,7 +82,7 @@ class FormatterTest {
 
     @Test
     fun `test espacio despues de dos puntos en declaracion - sin espacio`() {
-        val statement = VariableDeclaration("y", "String", LiteralString("hello"))
+        val statement = VariableDeclaration("let", "y", "String", LiteralString("hello"))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 0),
@@ -98,7 +98,7 @@ class FormatterTest {
 
     @Test
     fun `test espacio antes y despues del igual en asignacion - con espacios`() {
-        val statement = VariableDeclaration("x", "Int", LiteralNumber(10))
+        val statement = VariableDeclaration("let", "x", "Int", LiteralNumber(10))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 0),
@@ -114,7 +114,7 @@ class FormatterTest {
 
     @Test
     fun `test espacio antes y despues del igual en asignacion - sin espacios`() {
-        val statement = VariableDeclaration("x", "Int", LiteralNumber(10))
+        val statement = VariableDeclaration("let", "x", "Int", LiteralNumber(10))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 0),
@@ -209,8 +209,8 @@ class FormatterTest {
     fun `test formato completo con todas las reglas`() {
         val statements =
             listOf(
-                VariableDeclaration("x", "Int", LiteralNumber(5)),
-                VariableDeclaration("name", "String", LiteralString("John")),
+                VariableDeclaration("let", "x", "Int", LiteralNumber(5)),
+                VariableDeclaration("let", "name", "String", LiteralString("John")),
                 Binary(LiteralIdentifier("x"), AdditionOperator(), LiteralNumber(10)),
             )
 
@@ -236,7 +236,7 @@ class FormatterTest {
 
     @Test
     fun `test declaracion sin tipo`() {
-        val statement = VariableDeclaration("x", null, LiteralNumber(42))
+        val statement = VariableDeclaration("let", "x", null, LiteralNumber(42))
         val rules =
             mapOf(
                 "assignDeclaration" to Rule(on = true, quantity = 1),
@@ -250,7 +250,7 @@ class FormatterTest {
 
     @Test
     fun `test multiples espacios configurables`() {
-        val statement = VariableDeclaration("variable", "Boolean", LiteralString("true"))
+        val statement = VariableDeclaration("let", "variable", "Boolean", LiteralString("true"))
         val rules =
             mapOf(
                 "beforeDeclaration" to Rule(on = true, quantity = 3),
