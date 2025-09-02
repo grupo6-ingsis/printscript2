@@ -11,7 +11,6 @@ enum class TokenType {
 
     STRING,
     NUMBER,
-    BOOLEAN,
     CHARACTER,
 
     OPERATOR,
@@ -20,8 +19,11 @@ enum class TokenType {
     NEWLINE,
     OPEN_PARENTHESIS,
     CLOSE_PARENTHESIS,
-    BRACKET,
+    OPEN_BRACKET,
+    CLOSE_BRACKET,
     COMPARATOR, // <, >, <=, >=, ==, !=
+    IF_KEYWORD, // if
+    ELSE_KEYWORD, // else
 
     IDENTIFIER, // variable name
     UNKNOWN, // Error
