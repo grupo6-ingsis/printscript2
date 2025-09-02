@@ -237,8 +237,8 @@ class DefaultInterpreterTest {
     fun `should interpret complex binary division with variables`() {
         val statements =
             listOf(
-                VariableDeclaration("dividend", null, LiteralNumber(20.0)),
-                VariableDeclaration("divisor", null, LiteralNumber(4.0)),
+                VariableDeclaration("let", "dividend", null, LiteralNumber(20.0)),
+                VariableDeclaration("let", "divisor", null, LiteralNumber(4.0)),
                 Binary(
                     LiteralIdentifier("dividend"),
                     DivisionOperator(),
@@ -312,7 +312,7 @@ class DefaultInterpreterTest {
     fun `should interpret unary plus with variable`() {
         val statements =
             listOf(
-                VariableDeclaration("x", null, LiteralNumber(-25.0)),
+                VariableDeclaration("let", "x", null, LiteralNumber(-25.0)),
                 Unary(
                     LiteralIdentifier("x"),
                     AdditionOperator(),
