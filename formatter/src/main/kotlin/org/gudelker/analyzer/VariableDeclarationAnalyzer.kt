@@ -18,6 +18,8 @@ class VariableDeclarationAnalyzer : Analyzer {
     ): String {
         val declaration = statement as VariableDeclaration
 
+        val keyword = statement.keyword
+
         val spacesBefore = FormatterUtils.getDeclarationSpaces("beforeDeclaration", ruleMap)
         val spacesAfter = FormatterUtils.getDeclarationSpaces("afterDeclaration", ruleMap)
 
@@ -27,6 +29,6 @@ class VariableDeclarationAnalyzer : Analyzer {
 
         val valueFormatted = formatter.formatNode(declaration.value, ruleMap)
 
-        return "let ${declaration.identifier}${typeStr}$assignSpaces=${assignSpaces}$valueFormatted;"
+        return "$keyword ${declaration.identifier}${typeStr}$assignSpaces=${assignSpaces}$valueFormatted;"
     }
 }
