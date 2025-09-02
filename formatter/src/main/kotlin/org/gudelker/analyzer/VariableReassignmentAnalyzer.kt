@@ -4,9 +4,11 @@ import org.gudelker.DefaultFormatter
 import org.gudelker.Statement
 import org.gudelker.VariableReassignment
 import org.gudelker.rules.Rule
-import org.gudelker.utils.FormatterUtils
+import org.gudelker.rulevalidator.RuleValidatorFormatter
 
-class VariableReassignmentAnalyzer : Analyzer {
+class VariableReassignmentAnalyzer(
+    private val ruleValidators: List<RuleValidatorFormatter>,
+) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
         return statement is VariableReassignment
     }
@@ -19,8 +21,13 @@ class VariableReassignmentAnalyzer : Analyzer {
         val reassignment = statement as VariableReassignment
         val identifier = reassignment.identifier
         val value = formatter.format(reassignment.value, ruleMap)
-        val assignSpaces = FormatterUtils.getAssignationSpaces("assignDeclaration", ruleMap)
+        var string = "$identifier=$value;"
+        ruleValidators.forEach { validator ->
+            if (validator.matches(ruleMap)) {
+                string = validator.applyRule(string, statement, ruleMap)
+            }
+        }
 
-        return "$identifier$assignSpaces=$assignSpaces$value;"
+        return string
     }
 }
