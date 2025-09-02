@@ -14,22 +14,38 @@ import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 import org.gudelker.rules.Rule
+import org.gudelker.rulevalidator.SpaceAfterColon
+import org.gudelker.rulevalidator.SpaceBeforeColon
+import org.gudelker.rulevalidator.SpacesAroundAssignation
+import org.gudelker.rulevalidator.SpacesPrintln
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FormatterTest {
     private fun createFormatter(): DefaultFormatter {
+        val ruleValidors =
+            listOf(
+                SpaceBeforeColon(),
+                SpaceAfterColon(),
+                SpacesAroundAssignation(),
+            )
         return DefaultFormatter(
             listOf(
-                VariableDeclarationAnalyzer(),
+                VariableDeclarationAnalyzer(
+                    ruleValidors,
+                ),
                 LiteralNumberAnalyzer(),
                 LiteralIdentifierAnalyzer(),
                 LiteralStringAnalyzer(),
                 GroupingAnalyzer(),
                 UnaryAnalyzer(),
-                CallableAnalyzer(),
+                CallableAnalyzer(
+                    listOf(SpacesPrintln()),
+                ),
                 BinaryAnalyzer(),
-                VariableReassignmentAnalyzer(),
+                VariableReassignmentAnalyzer(
+                    listOf(SpacesAroundAssignation()),
+                ),
             ),
         )
     }

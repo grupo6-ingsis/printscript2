@@ -4,9 +4,9 @@ import org.gudelker.Callable
 import org.gudelker.DefaultFormatter
 import org.gudelker.Statement
 import org.gudelker.rules.Rule
-import org.gudelker.utils.FormatterUtils
+import org.gudelker.rulevalidator.RuleValidatorFormatter
 
-class CallableAnalyzer : Analyzer {
+class CallableAnalyzer(private val ruleValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
         return statement is Callable
     }
@@ -19,7 +19,14 @@ class CallableAnalyzer : Analyzer {
         val callable = statement as Callable
         val name = callable.functionName
         val formattedExpression = formatter.format(callable.expression, ruleMap)
-        val newLines = FormatterUtils.generateNewLines("println", ruleMap)
-        return "$newLines$name($formattedExpression);"
+        var string = "$name($formattedExpression);"
+
+        ruleValidators.forEach { rule ->
+            if (rule.matches(ruleMap)) {
+                string = rule.applyRule(string, statement, ruleMap)
+            }
+        }
+
+        return string
     }
 }
