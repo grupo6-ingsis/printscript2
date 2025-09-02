@@ -33,7 +33,7 @@ class LinterTests {
 
     @Test
     fun `valid camelCase identifier passes`() {
-        val stmt = VariableDeclaration("myVar", "number", LiteralNumber(1))
+        val stmt = VariableDeclaration("let", "myVar", "number", LiteralNumber(1))
         val rules =
             mapOf(
                 "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = false),
@@ -47,7 +47,7 @@ class LinterTests {
     fun `snake_case variable and println with expression argument yields only one violation`() {
         val stmts =
             listOf(
-                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
                 Callable("println", Binary(LiteralNumber(1), AdditionOperator("+"), LiteralNumber(2))),
             )
         val rules =
@@ -62,7 +62,7 @@ class LinterTests {
 
     @Test
     fun `valid snake_case identifier fails when config is camelCase`() {
-        val stmt = VariableDeclaration("my_var", "number", LiteralNumber(1))
+        val stmt = VariableDeclaration("let", "my_var", "number", LiteralNumber(1))
         val rules =
             mapOf(
                 "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
@@ -88,9 +88,9 @@ class LinterTests {
     fun `multiple variable declarations with mixed formats yield correct violations`() {
         val stmts =
             listOf(
-                VariableDeclaration("myVar", "number", LiteralNumber(1)),
-                VariableDeclaration("my_var", "number", LiteralNumber(2)),
-                VariableDeclaration("anotherVar", "number", LiteralNumber(3)),
+                VariableDeclaration("let", "myVar", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(2)),
+                VariableDeclaration("let", "anotherVar", "number", LiteralNumber(3)),
             )
         val rules =
             mapOf(

@@ -62,7 +62,7 @@ class VariableDeclarationRule(
             )
         }
 
-        val statement = VariableDeclaration(identifierToken.getValue(), type.first, expressionStatement)
+        val statement = VariableDeclaration(keywordToken.getValue(), identifierToken.getValue(), type.first, expressionStatement)
         return ParseResult(ValidStatementParserResult(statement), finalStream)
     }
 

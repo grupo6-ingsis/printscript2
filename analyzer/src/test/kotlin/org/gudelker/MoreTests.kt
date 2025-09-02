@@ -36,7 +36,7 @@ class MoreTests {
 
     @Test
     fun `test camelCase identifier format - valid`() {
-        val statement = VariableDeclaration("myVariable", "Number", LiteralNumber(3))
+        val statement = VariableDeclaration("let", "myVariable", "Number", LiteralNumber(3))
         val list = listOf(statement)
         val config =
             mapOf(
@@ -56,7 +56,7 @@ class MoreTests {
     fun `snake_case variable and println with expression yields one violation with snake_case config`() {
         val stmts =
             listOf(
-                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
                 Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
             )
         val config =
@@ -73,7 +73,7 @@ class MoreTests {
         val stmts =
             listOf(
                 Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
-                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
             )
         val config =
             mapOf(
@@ -88,7 +88,7 @@ class MoreTests {
     fun `snake_case variable and println with expression yields two violations with camelCase config`() {
         val stmts =
             listOf(
-                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
                 Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
             )
         val config =
@@ -105,7 +105,7 @@ class MoreTests {
         val stmts =
             listOf(
                 Callable("println", Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2))),
-                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
             )
         val config =
             mapOf(
@@ -120,7 +120,7 @@ class MoreTests {
     fun `all analyzers are exercised with a diverse statement list`() {
         val stmts =
             listOf(
-                VariableDeclaration("my_var", "number", LiteralNumber(1)),
+                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
                 Callable("println", LiteralNumber(2)),
                 Callable(
                     "println",
