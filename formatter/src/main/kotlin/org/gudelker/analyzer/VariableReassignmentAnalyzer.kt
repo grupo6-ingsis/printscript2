@@ -19,9 +19,8 @@ class VariableReassignmentAnalyzer : Analyzer {
         val reassignment = statement as VariableReassignment
         val identifier = reassignment.identifier
         val value = formatter.format(reassignment.value, ruleMap)
-        val spacesBefore = FormatterUtils.getDeclarationSpaces("beforeDeclaration", ruleMap)
-        val spacesAfter = FormatterUtils.getDeclarationSpaces("afterDeclaration", ruleMap)
+        val assignSpaces = FormatterUtils.getAssignationSpaces("assignDeclaration", ruleMap)
 
-        return "$identifier$spacesBefore=$spacesAfter$value;"
+        return "$identifier$assignSpaces=$assignSpaces$value;"
     }
 }
