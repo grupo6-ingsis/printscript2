@@ -6,7 +6,9 @@ import org.gudelker.analyzers.GroupingExpressionAnalyzer
 import org.gudelker.analyzers.LiteralNumberAnalyzer
 import org.gudelker.analyzers.UnaryExpressionAnalyzer
 import org.gudelker.analyzers.VariableDeclarationAnalyzer
+import org.gudelker.analyzers.VariableReassginationAnalyzer
 import org.gudelker.operator.AdditionOperator
+import org.gudelker.operator.MinusOperator
 import org.gudelker.result.LintViolation
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -27,6 +29,7 @@ class LinterTests {
                 BinaryExpressionAnalyzer(),
                 UnaryExpressionAnalyzer(),
                 GroupingExpressionAnalyzer(),
+                VariableReassginationAnalyzer(),
             )
         linter = DefaultLinter(analyzers)
     }
@@ -112,5 +115,53 @@ class LinterTests {
             )
         val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(emptyList<LintViolation>(), result.results)
+    }
+
+    @Test
+    fun `covers VariableDeclaration, LiteralNumber, and Callable analyzers`() {
+        val stmts =
+            listOf(
+                VariableDeclaration("let", "myVar", "number", LiteralNumber(1)),
+                Callable("println", LiteralNumber(2)),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.size <= 1)
+    }
+
+    @Test
+    fun `covers Binary, Unary, and Grouping analyzers`() {
+        val stmts =
+            listOf(
+                Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2)),
+                Unary(LiteralNumber(3), MinusOperator()),
+                Grouping("(", LiteralNumber(4), ")"),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.isEmpty())
+    }
+
+    @Test
+    fun `covers VariableReassignment analyzer`() {
+        val stmts =
+            listOf(
+                VariableReassignment("myVar", LiteralNumber(5)),
+            )
+        val config =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), config)
+        assertTrue(result.results.isEmpty())
     }
 }
