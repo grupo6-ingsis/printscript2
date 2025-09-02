@@ -8,7 +8,7 @@ class JsonLinterConfigLoaderTest {
     fun `loads config from existing linterconfig json`() {
         val loader =
             JsonLinterConfigLoaderToMap(
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+                "src/main/kotlin/org/gudelker/linterconfig.json",
             )
         val configMap = loader.loadConfig()
 
