@@ -8,6 +8,7 @@ import org.gudelker.analyzer.LiteralNumberAnalyzer
 import org.gudelker.analyzer.LiteralStringAnalyzer
 import org.gudelker.analyzer.UnaryAnalyzer
 import org.gudelker.analyzer.VariableDeclarationAnalyzer
+import org.gudelker.analyzer.VariableReassignmentAnalyzer
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
@@ -28,6 +29,7 @@ class FormatterTest {
                 UnaryAnalyzer(),
                 CallableAnalyzer(),
                 BinaryAnalyzer(),
+                VariableReassignmentAnalyzer(),
             ),
         )
     }
@@ -262,5 +264,73 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
 
         assertEquals("let variable   :  Boolean    =    \"true\";", result)
+    }
+
+    @Test
+    fun `test variable reassignment con espacios`() {
+        val statement = VariableReassignment("x", LiteralNumber(42))
+        val rules =
+            mapOf(
+                "assignDeclaration" to Rule(on = true, quantity = 1),
+            )
+
+        val formatter = createFormatter()
+        val result = formatter.format(statement, rules)
+
+        assertEquals("x = 42;", result)
+    }
+
+    @Test
+    fun `test variable reassignment sin espacios`() {
+        val statement = VariableReassignment("variable", LiteralString("newValue"))
+        val rules =
+            mapOf(
+                "assignDeclaration" to Rule(on = true, quantity = 0),
+            )
+
+        val formatter = createFormatter()
+        val result = formatter.format(statement, rules)
+
+        assertEquals("variable=\"newValue\";", result)
+    }
+
+    @Test
+    fun `test variable reassignment con multiples espacios`() {
+        val statement =
+            VariableReassignment(
+                "count",
+                Binary(LiteralIdentifier("count"), AdditionOperator(), LiteralNumber(1)),
+            )
+        val rules =
+            mapOf(
+                "assignDeclaration" to Rule(on = true, quantity = 3),
+            )
+
+        val formatter = createFormatter()
+        val result = formatter.format(statement, rules)
+
+        assertEquals("count   =   count + 1;", result)
+    }
+
+    @Test
+    fun `test unary minus operator`() {
+        val statement = Unary(LiteralNumber(10), MinusOperator())
+        val rules = emptyMap<String, Rule>()
+
+        val formatter = createFormatter()
+        val result = formatter.format(statement, rules)
+
+        assertEquals("-10", result)
+    }
+
+    @Test
+    fun `test unary plus operator`() {
+        val statement = Unary(LiteralNumber(5), AdditionOperator())
+        val rules = emptyMap<String, Rule>()
+
+        val formatter = createFormatter()
+        val result = formatter.format(statement, rules)
+
+        assertEquals("+5", result)
     }
 }
