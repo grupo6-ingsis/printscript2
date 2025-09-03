@@ -3,31 +3,23 @@ package org.gudelker.evaluator
 import org.gudelker.Statement
 
 object Analyzer {
-    private val evaluators: List<Evaluator<out Any>> =
-        listOf(
-            LiteralNumberEvaluator(),
-            LiteralStringEvaluator(),
-            LiteralIdentifierEvaluator(),
-            UnaryEvaluator(),
-            BinaryEvaluator(),
-            GroupingEvaluator(),
-            VariableDeclarationEvaluator(),
-            VariableReassignmentEvaluator(),
-            CallableEvaluator(),
-//            CanBeCallEvaluator()
-        )
-
     fun analyze(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         for (evaluator in evaluators) {
             try {
-                return evaluator.evaluate(statement, context)
+                return evaluator.evaluate(statement, context, evaluators)
             } catch (e: IllegalArgumentException) {
                 continue
             }
         }
         throw IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}")
     }
+
+    private fun checkVersion(
+        list: List<Evaluator<out Any>>,
+        version: String,
+    ) {}
 }

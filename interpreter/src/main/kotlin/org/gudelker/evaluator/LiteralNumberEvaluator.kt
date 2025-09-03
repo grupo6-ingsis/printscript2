@@ -7,6 +7,7 @@ class LiteralNumberEvaluator : Evaluator<Number> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is LiteralNumber -> EvaluationResult(statement.value.value, context)

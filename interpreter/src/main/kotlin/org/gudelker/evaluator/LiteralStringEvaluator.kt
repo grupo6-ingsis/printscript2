@@ -7,6 +7,7 @@ class LiteralStringEvaluator : Evaluator<String> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is LiteralString -> EvaluationResult(statement.value.value, context)

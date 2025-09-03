@@ -7,11 +7,12 @@ class GroupingEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is Grouping -> {
                 if (statement.expression != null) {
-                    Analyzer.analyze(statement.expression!!, context)
+                    Analyzer.analyze(statement.expression!!, context, evaluators)
                 } else {
                     EvaluationResult(Unit, context)
                 }
