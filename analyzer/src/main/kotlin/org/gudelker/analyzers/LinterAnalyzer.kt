@@ -1,5 +1,7 @@
-package org.gudelker
-
+package org.gudelker.analyzers
+import org.gudelker.Linter
+import org.gudelker.LinterConfig
+import org.gudelker.Statement
 import org.gudelker.result.LinterResult
 
 interface LinterAnalyzer {
@@ -9,5 +11,6 @@ interface LinterAnalyzer {
         statement: Statement,
         ruleMap: Map<String, LinterConfig>,
         linter: Linter,
-    ): LinterResult
+        results: List<LinterResult>,
+    ): List<LinterResult>
 }

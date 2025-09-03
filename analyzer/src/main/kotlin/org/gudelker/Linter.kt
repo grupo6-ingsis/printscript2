@@ -12,5 +12,6 @@ interface Linter {
     fun lintNode(
         statement: Statement,
         ruleMap: Map<String, LinterConfig>,
-    ): LinterResult
+        results: List<LinterResult>,
+    ): List<LinterResult>
 }

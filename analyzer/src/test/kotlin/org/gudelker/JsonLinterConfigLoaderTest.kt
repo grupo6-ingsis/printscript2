@@ -1,5 +1,6 @@
 package org.gudelker
 
+import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

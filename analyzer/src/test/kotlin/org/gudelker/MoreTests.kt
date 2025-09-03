@@ -1,13 +1,17 @@
 package org.gudelker
 
+import org.example.org.gudelker.rulelinter.CamelCaseRule
 import org.gudelker.analyzers.BinaryExpressionAnalyzer
 import org.gudelker.analyzers.CallableAnalyzer
 import org.gudelker.analyzers.GroupingExpressionAnalyzer
 import org.gudelker.analyzers.LiteralNumberAnalyzer
 import org.gudelker.analyzers.UnaryExpressionAnalyzer
 import org.gudelker.analyzers.VariableDeclarationAnalyzer
+import org.gudelker.analyzers.VariableReassginationAnalyzer
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
+import org.gudelker.rulelinter.RestrictPrintLnExpressions
+import org.gudelker.rulelinter.SnakeCaseRule
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,12 +23,23 @@ class MoreTests {
     private fun createLinter(): DefaultLinter {
         val analyzers =
             listOf(
-                VariableDeclarationAnalyzer(),
-                CallableAnalyzer(),
-                LiteralNumberAnalyzer(),
-                BinaryExpressionAnalyzer(),
-                UnaryExpressionAnalyzer(),
-                GroupingExpressionAnalyzer(),
+                VariableDeclarationAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                CallableAnalyzer(
+                    listOf(
+                        RestrictPrintLnExpressions(
+                            listOf(
+                                LiteralString::class,
+                                LiteralNumber::class,
+                                LiteralIdentifier::class,
+                            ),
+                        ),
+                    ),
+                ),
+                LiteralNumberAnalyzer(emptyList()),
+                BinaryExpressionAnalyzer(emptyList()),
+                UnaryExpressionAnalyzer(emptyList()),
+                GroupingExpressionAnalyzer(emptyList()),
+                VariableReassginationAnalyzer(emptyList()),
             )
         return DefaultLinter(analyzers)
     }
