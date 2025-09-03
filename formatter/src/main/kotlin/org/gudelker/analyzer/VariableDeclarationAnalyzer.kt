@@ -4,9 +4,9 @@ import org.gudelker.DefaultFormatter
 import org.gudelker.Statement
 import org.gudelker.VariableDeclaration
 import org.gudelker.rules.Rule
-import org.gudelker.utils.FormatterUtils
+import org.gudelker.rulevalidator.RuleValidatorFormatter
 
-class VariableDeclarationAnalyzer : Analyzer {
+class VariableDeclarationAnalyzer(private val rulesValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
         return statement is VariableDeclaration
     }
@@ -17,18 +17,24 @@ class VariableDeclarationAnalyzer : Analyzer {
         formatter: DefaultFormatter,
     ): String {
         val declaration = statement as VariableDeclaration
-
         val keyword = statement.keywordCombo
-
-        val spacesBefore = FormatterUtils.getDeclarationSpaces("beforeDeclaration", ruleMap)
-        val spacesAfter = FormatterUtils.getDeclarationSpaces("afterDeclaration", ruleMap)
-
-        val typeStr = declaration.type?.let { "$spacesBefore:${spacesAfter}$it" } ?: ""
-
-        val assignSpaces = FormatterUtils.getAssignationSpaces("assignDeclaration", ruleMap)
-
+        val identifier = declaration.identifier
+        val typeStr = statement.type
         val valueFormatted = formatter.formatNode(declaration.value, ruleMap)
 
-        return "$keyword ${declaration.identifier}${typeStr}$assignSpaces=${assignSpaces}$valueFormatted;"
+        var string =
+            if (typeStr == null) {
+                "$keyword $identifier=$valueFormatted;"
+            } else {
+                "$keyword $identifier:$typeStr=$valueFormatted;"
+            }
+
+        rulesValidators.forEach { validator ->
+            if (validator.matches(ruleMap)) {
+                string = validator.applyRule(string, statement, ruleMap)
+            }
+        }
+
+        return string
     }
 }
