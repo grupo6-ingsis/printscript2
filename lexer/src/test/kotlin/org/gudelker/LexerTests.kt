@@ -8,7 +8,8 @@ import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 
 class LexerTests {
-    val lexer = LexerFactory.createFileLexer()
+    val lexerV1 = LexerFactory.createLexer(Version.V1)
+    val lexerV2 = LexerFactory.createLexer(Version.V2)
 
     @BeforeEach
     fun setUp() {
@@ -19,7 +20,33 @@ class LexerTests {
         // Usar ruta relativa desde la raíz del proyecto
         // Ahora no hay que cambiarlo constantemente
         val reader = FileSourceReader("src/test/lexer.txt")
-        val tokens = lexer.lex(reader)
+        val tokens = lexerV1.lex(reader)
+        when (tokens) {
+            is ValidTokens ->
+                for (token in tokens.getList()) println(token)
+            is LexerSyntaxError ->
+                println(tokens.getError())
+        }
+    }
+
+    @Test
+    fun `test token rules with if`() {
+        // Se buguea no más el parser me va a tirar el error
+        val reader = FileSourceReader("src/test/lexer2.txt")
+        val tokens = lexerV1.lex(reader)
+        when (tokens) {
+            is ValidTokens ->
+                for (token in tokens.getList()) println(token)
+            is LexerSyntaxError ->
+                println(tokens.getError())
+        }
+    }
+
+    @Test
+    fun `test token rules with if v2`() {
+        // Se buguea no más el parser me va a tirar el error
+        val reader = FileSourceReader("src/test/lexer2.txt")
+        val tokens = lexerV2.lex(reader)
         when (tokens) {
             is ValidTokens ->
                 for (token in tokens.getList()) println(token)
@@ -32,7 +59,7 @@ class LexerTests {
     fun `test lexer with string source reader valid code`() {
         val validCode = "let x: number = 42;"
         val reader = StringSourceReader(validCode)
-        val result = lexer.lex(reader)
+        val result = lexerV1.lex(reader)
 
         assert(result is ValidTokens)
         assert(result.isValid())
@@ -45,7 +72,7 @@ class LexerTests {
     fun `test lexer with empty string`() {
         val emptyCode = ""
         val reader = StringSourceReader(emptyCode)
-        val result = lexer.lex(reader)
+        val result = lexerV1.lex(reader)
 
         assert(result is ValidTokens)
         assert(result.isValid())

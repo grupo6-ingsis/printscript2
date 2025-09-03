@@ -183,7 +183,7 @@ class IntegrationTest {
 
     private fun processCode(code: String): List<Any?> {
         // 1. Lexical Analysis
-        val lexer = LexerFactory.createFileLexer()
+        val lexer = LexerFactory.createLexer(Version.V1)
         val sourceReader = StringSourceReader(code)
         val tokenResult = lexer.lex(sourceReader)
 

@@ -5,13 +5,16 @@ import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 
-class EqualComparativeTokenizer : RuleTokenizer {
+class ComparatorTokenizer : RuleTokenizer {
     override fun matches(
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return actualWord == "==" || actualWord == "!=" ||
-            actualWord == "<=" || actualWord == ">="
+        return (
+            actualWord == ">" ||
+                actualWord == "<"
+        ) &&
+            nextChar != '='
     }
 
     override fun generateToken(
