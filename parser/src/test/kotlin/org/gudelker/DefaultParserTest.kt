@@ -4,6 +4,7 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.result.Valid
 import org.gudelker.tokenstream.TokenStream
+import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -27,7 +28,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -59,7 +60,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -87,7 +88,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -116,7 +117,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -149,7 +150,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -181,7 +182,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -208,7 +209,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -234,7 +235,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -269,7 +270,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -297,7 +298,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -328,7 +329,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -371,7 +372,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream)
+        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado

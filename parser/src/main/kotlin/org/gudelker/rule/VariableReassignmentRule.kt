@@ -6,6 +6,8 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult
+import org.gudelker.smtposition.ComboValuePosition
+import org.gudelker.smtposition.StatementPosition
 import org.gudelker.tokenstream.TokenStream
 
 class VariableReassignmentRule(
@@ -26,6 +28,8 @@ class VariableReassignmentRule(
         if (identifierToken == null) {
             return ParseResult(ParserSyntaxError("Se esperaba un identificador"), tokenStream)
         }
+        val tokenPosition = identifierToken.getPosition()
+        val position = StatementPosition(tokenPosition.startLine, tokenPosition.startColumn, tokenPosition.endLine, tokenPosition.endColumn)
 
         // Assignation
         val (assignToken, streamAfterAssign) = streamAfterIdentifier.consume(TokenType.ASSIGNATION)
@@ -51,7 +55,7 @@ class VariableReassignmentRule(
         }
 
         // Crear VariableReassignment
-        val statement = VariableReassignment(identifierToken.getValue(), expressionStatement)
+        val statement = VariableReassignment(ComboValuePosition(identifierToken.getValue(), position), expressionStatement)
         return ParseResult(ValidStatementParserResult(statement), finalStream)
     }
 }

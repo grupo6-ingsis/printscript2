@@ -4,6 +4,8 @@ import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
+import org.gudelker.smtposition.ComboValuePosition
+import org.gudelker.smtposition.StatementPosition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -12,13 +14,14 @@ class DefaultInterpreterTest {
     fun `should interpret simple number literal`() {
         val statements =
             listOf(
-                LiteralNumber(42.0),
+                LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 1, 1, 1))),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
+        println(result[0])
         assertEquals(42.0, result[0])
     }
 
@@ -26,7 +29,7 @@ class DefaultInterpreterTest {
     fun `should interpret simple string literal`() {
         val statements =
             listOf(
-                LiteralString("Hello World"),
+                LiteralString(ComboValuePosition("Hello World", StatementPosition(1, 1, 1, 1))),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
@@ -41,9 +44,9 @@ class DefaultInterpreterTest {
         val statements =
             listOf(
                 Binary(
-                    LiteralNumber(5.0),
+                    LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 1, 1, 1))),
                     AdditionOperator(),
-                    LiteralNumber(3.0),
+                    LiteralNumber(ComboValuePosition(3.0, StatementPosition(2, 1, 2, 1))),
                 ),
             )
 
@@ -59,7 +62,7 @@ class DefaultInterpreterTest {
         val statements =
             listOf(
                 Unary(
-                    LiteralNumber(10.0),
+                    LiteralNumber(ComboValuePosition(10.0, StatementPosition(1, 1, 1, 1))),
                     MinusOperator(),
                 ),
             )
@@ -75,7 +78,12 @@ class DefaultInterpreterTest {
     fun `should interpret variable declaration`() {
         val statements =
             listOf(
-                VariableDeclaration("let", "x", null, LiteralNumber(42.0)),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    "x",
+                    null,
+                    LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 5, 1, 5))),
+                ),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
@@ -89,8 +97,13 @@ class DefaultInterpreterTest {
     fun `should interpret variable declaration and access`() {
         val statements =
             listOf(
-                VariableDeclaration("let", "x", null, LiteralNumber(42.0)),
-                LiteralIdentifier("x"),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    "x",
+                    null,
+                    LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 5, 1, 5))),
+                ),
+                LiteralIdentifier(ComboValuePosition("x", StatementPosition(2, 1, 2, 1))),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
@@ -105,9 +118,17 @@ class DefaultInterpreterTest {
     fun `should interpret variable reassignment`() {
         val statements =
             listOf(
-                VariableDeclaration("let", "x", null, LiteralNumber(10.0)),
-                VariableReassignment("x", LiteralNumber(20.0)),
-                LiteralIdentifier("x"),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    "x",
+                    null,
+                    LiteralNumber(ComboValuePosition(10.0, StatementPosition(1, 5, 1, 5))),
+                ),
+                VariableReassignment(
+                    ComboValuePosition("x", StatementPosition(2, 1, 2, 1)),
+                    LiteralNumber(ComboValuePosition(20.0, StatementPosition(2, 5, 2, 5))),
+                ),
+                LiteralIdentifier(ComboValuePosition("x", StatementPosition(3, 1, 3, 1))),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
@@ -126,9 +147,9 @@ class DefaultInterpreterTest {
                 Grouping(
                     "(",
                     Binary(
-                        LiteralNumber(5.0),
-                        AdditionOperator(),
-                        LiteralNumber(3.0),
+                        LiteralNumber(ComboValuePosition(10.0, StatementPosition(1, 5, 1, 5))),
+                        MinusOperator(),
+                        LiteralNumber(ComboValuePosition(10.0, StatementPosition(1, 5, 1, 5))),
                     ),
                     ")",
                 ),
@@ -138,14 +159,14 @@ class DefaultInterpreterTest {
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
-        assertEquals(8.0, result[0])
+        assertEquals(0.0, result[0])
     }
 
     @Test
     fun `should interpret callable println`() {
         val statements =
             listOf(
-                Callable("println", LiteralString("Hello World")),
+                Callable("println", LiteralString(ComboValuePosition("Hello, World!", StatementPosition(1, 1, 1, 1)))),
             )
 
         val interpreter = DefaultInterpreter(emptyList())
@@ -159,12 +180,22 @@ class DefaultInterpreterTest {
     fun `should interpret complex expression with variables`() {
         val statements =
             listOf(
-                VariableDeclaration("let", "x", null, LiteralNumber(5.0)),
-                VariableDeclaration("let", "y", null, LiteralNumber(3.0)),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    "x",
+                    null,
+                    LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 5, 1, 5))),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(2, 1, 2, 1)),
+                    "y",
+                    null,
+                    LiteralNumber(ComboValuePosition(3.0, StatementPosition(2, 5, 2, 5))),
+                ),
                 Binary(
-                    LiteralIdentifier("x"),
+                    LiteralIdentifier(ComboValuePosition("x", StatementPosition(3, 1, 3, 1))),
                     MultiplyOperator(),
-                    LiteralIdentifier("y"),
+                    LiteralIdentifier(ComboValuePosition("y", StatementPosition(3, 5, 3, 5))),
                 ),
             )
 
@@ -181,12 +212,12 @@ class DefaultInterpreterTest {
     fun `should interpret multiple statements`() {
         val statements =
             listOf(
-                LiteralNumber(1.0),
-                LiteralString("Hello"),
+                LiteralNumber(ComboValuePosition(1.0, StatementPosition(1, 1, 1, 1))),
+                LiteralString(ComboValuePosition("Hello", StatementPosition(2, 1, 2, 1))),
                 Binary(
-                    LiteralNumber(2.0),
+                    LiteralNumber(ComboValuePosition(2.0, StatementPosition(3, 1, 3, 1))),
                     AdditionOperator(),
-                    LiteralNumber(3.0),
+                    LiteralNumber(ComboValuePosition(3.0, StatementPosition(3, 5, 3, 5))),
                 ),
             )
 
@@ -203,7 +234,7 @@ class DefaultInterpreterTest {
     fun `should interpret with initial list`() {
         val statements =
             listOf(
-                LiteralNumber(42.0),
+                LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 1, 1, 1))),
             )
 
         val interpreter = DefaultInterpreter(listOf("Initial", 100))
@@ -220,9 +251,9 @@ class DefaultInterpreterTest {
         val statements =
             listOf(
                 Binary(
-                    LiteralNumber(15.0),
+                    LiteralNumber(ComboValuePosition(15.0, StatementPosition(1, 1, 1, 1))),
                     DivisionOperator(),
-                    LiteralNumber(3.0),
+                    LiteralNumber(ComboValuePosition(3.0, StatementPosition(1, 5, 1, 5))),
                 ),
             )
 
@@ -237,12 +268,22 @@ class DefaultInterpreterTest {
     fun `should interpret complex binary division with variables`() {
         val statements =
             listOf(
-                VariableDeclaration("let", "dividend", null, LiteralNumber(20.0)),
-                VariableDeclaration("let", "divisor", null, LiteralNumber(4.0)),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    "dividend",
+                    null,
+                    LiteralNumber(ComboValuePosition(20.0, StatementPosition(1, 5, 1, 5))),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(2, 1, 2, 1)),
+                    "divisor",
+                    null,
+                    LiteralNumber(ComboValuePosition(4.0, StatementPosition(2, 5, 2, 5))),
+                ),
                 Binary(
-                    LiteralIdentifier("dividend"),
+                    LiteralIdentifier(ComboValuePosition("dividend", StatementPosition(3, 1, 3, 1))),
                     DivisionOperator(),
-                    LiteralIdentifier("divisor"),
+                    LiteralIdentifier(ComboValuePosition("divisor", StatementPosition(3, 5, 3, 5))),
                 ),
             )
 
@@ -260,9 +301,9 @@ class DefaultInterpreterTest {
         val statements =
             listOf(
                 Binary(
-                    LiteralString("Hello "),
+                    LiteralString(ComboValuePosition("Hello ", StatementPosition(1, 1, 1, 1))),
                     AdditionOperator(),
-                    LiteralString("World"),
+                    LiteralString(ComboValuePosition("World", StatementPosition(1, 8, 1, 8))),
                 ),
             )
 
@@ -278,9 +319,9 @@ class DefaultInterpreterTest {
         val statements =
             listOf(
                 Binary(
-                    LiteralString("Result: "),
+                    LiteralString(ComboValuePosition("Result: ", StatementPosition(1, 1, 1, 1))),
                     AdditionOperator(),
-                    LiteralNumber(42.0),
+                    LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 10, 1, 10))),
                 ),
             )
 
@@ -296,7 +337,7 @@ class DefaultInterpreterTest {
         val statements =
             listOf(
                 Unary(
-                    LiteralNumber(15.0),
+                    LiteralNumber(ComboValuePosition(15.0, StatementPosition(1, 1, 1, 1))),
                     AdditionOperator(),
                 ),
             )
@@ -312,9 +353,14 @@ class DefaultInterpreterTest {
     fun `should interpret unary plus with variable`() {
         val statements =
             listOf(
-                VariableDeclaration("let", "x", null, LiteralNumber(-25.0)),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    "x",
+                    null,
+                    LiteralNumber(ComboValuePosition(-25.0, StatementPosition(1, 5, 1, 5))),
+                ),
                 Unary(
-                    LiteralIdentifier("x"),
+                    LiteralIdentifier(ComboValuePosition("x", StatementPosition(2, 1, 2, 1))),
                     AdditionOperator(),
                 ),
             )

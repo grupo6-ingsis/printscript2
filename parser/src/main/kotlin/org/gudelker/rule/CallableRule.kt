@@ -7,6 +7,8 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult
+import org.gudelker.smtposition.ComboValuePosition
+import org.gudelker.smtposition.StatementPosition
 import org.gudelker.tokenstream.TokenStream
 
 class CallableRule(private val expressionRule: SyntaxRule) : SyntaxRule {
@@ -19,17 +21,19 @@ class CallableRule(private val expressionRule: SyntaxRule) : SyntaxRule {
         if (functionToken == null) {
             return ParseResult(ParserSyntaxError("Expected function name"), tokenStream)
         }
+        val tokenPosition = functionToken.getPosition()
+        val position = StatementPosition(tokenPosition.startLine, tokenPosition.startColumn, tokenPosition.endLine, tokenPosition.endColumn)
 
         val (openParenToken, afterOpenParen) = afterFunction.consume(TokenType.OPEN_PARENTHESIS)
         if (openParenToken == null) {
             return ParseResult(ParserSyntaxError("Expected '(' after function name"), afterFunction)
         }
 
-        val expression: ExpressionStatement
+        val expression: ExpressionStatement?
         val afterExpression: TokenStream
 
         if (afterOpenParen.check(TokenType.CLOSE_PARENTHESIS)) {
-            expression = LiteralNumber(0)
+            expression = LiteralNumber(ComboValuePosition(0, position))
             afterExpression = afterOpenParen
         } else {
             val exprResult = expressionRule.parse(afterOpenParen)

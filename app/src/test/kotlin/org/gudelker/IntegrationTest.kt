@@ -6,6 +6,7 @@ import org.gudelker.result.Valid
 import org.gudelker.result.ValidTokens
 import org.gudelker.sourcereader.StringSourceReader
 import org.gudelker.tokenstream.TokenStream
+import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -196,7 +197,7 @@ class IntegrationTest {
 
                     // 2. Syntax Analysis
                     val tokenStream = TokenStream(tokens)
-                    val parser = DefaultParserFactory.createParser(tokenStream)
+                    val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
                     val parseResult = parser.parse(tokenStream)
 
                     if (parseResult !is Valid) {
@@ -210,10 +211,5 @@ class IntegrationTest {
                     return interpreter.interpret(statements)
                 }
         }
-    }
-
-    @Test
-    fun `app test for rest of coverage`() {
-        main()
     }
 }

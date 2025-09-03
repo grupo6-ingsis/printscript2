@@ -15,6 +15,7 @@ repositories {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test'
     implementation project(':ast')
+    implementation project(':utilities')
 
 }
 

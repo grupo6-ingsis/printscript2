@@ -11,9 +11,13 @@ import org.gudelker.rule.UnaryRule
 import org.gudelker.rule.VariableDeclarationRule
 import org.gudelker.rule.VariableReassignmentRule
 import org.gudelker.tokenstream.TokenStream
+import org.gudelker.utilities.Version
 
 object DefaultParserFactory {
-    fun createParser(tokenStream: TokenStream): DefaultParser {
+    fun createParser(
+        tokenStream: TokenStream,
+        version: Version,
+    ): DefaultParser {
         val literalNumberRule = LiteralNumberRule()
         val literalStringRule = LiteralStringRule()
         val literalIdentifierRule = LiteralIdentifierRule()

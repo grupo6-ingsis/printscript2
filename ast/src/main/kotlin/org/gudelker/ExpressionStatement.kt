@@ -1,3 +1,3 @@
 package org.gudelker
 
-sealed interface ExpressionStatement : Statement
+sealed interface ExpressionStatement : CanBeCallStatement

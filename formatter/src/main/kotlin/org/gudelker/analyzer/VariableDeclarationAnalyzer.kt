@@ -17,7 +17,7 @@ class VariableDeclarationAnalyzer(private val rulesValidators: List<RuleValidato
         formatter: DefaultFormatter,
     ): String {
         val declaration = statement as VariableDeclaration
-        val keyword = statement.keyword
+        val keyword = statement.keywordCombo
         val identifier = declaration.identifier
         val typeStr = statement.type
         val valueFormatted = formatter.formatNode(declaration.value, ruleMap)

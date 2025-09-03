@@ -11,7 +11,7 @@ class VariableReassignmentEvaluator : Evaluator<Unit> {
         return when (statement) {
             is VariableReassignment -> {
                 val valueResult = Analyzer.analyze(statement.value, context)
-                val newContext = valueResult.context.updateVariable(statement.identifier, valueResult.value)
+                val newContext = valueResult.context.updateVariable(statement.identifier.value, valueResult.value)
                 EvaluationResult(Unit, newContext)
             }
             else -> throw IllegalArgumentException("Expected VariableReassignment, got ${statement::class.simpleName}")
