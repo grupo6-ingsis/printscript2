@@ -9,10 +9,11 @@ class UnaryEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is Unary -> {
-                val valueResult = Analyzer.analyze(statement.value, context)
+                val valueResult = Analyzer.analyze(statement.value, context, evaluators)
                 val result =
                     when (statement.operator) {
                         is AdditionOperator -> performUnaryAddition(valueResult.value)

@@ -7,6 +7,7 @@ class LiteralIdentifierEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is LiteralIdentifier -> {

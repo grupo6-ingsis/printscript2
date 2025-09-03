@@ -6,6 +6,7 @@ import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 import org.gudelker.smtposition.ComboValuePosition
 import org.gudelker.smtposition.StatementPosition
+import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -17,7 +18,7 @@ class DefaultInterpreterTest {
                 LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 1, 1, 1))),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -32,7 +33,7 @@ class DefaultInterpreterTest {
                 LiteralString(ComboValuePosition("Hello World", StatementPosition(1, 1, 1, 1))),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -50,7 +51,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -67,7 +68,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -86,7 +87,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -106,7 +107,7 @@ class DefaultInterpreterTest {
                 LiteralIdentifier(ComboValuePosition("x", StatementPosition(2, 1, 2, 1))),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(2, result.size)
@@ -131,7 +132,7 @@ class DefaultInterpreterTest {
                 LiteralIdentifier(ComboValuePosition("x", StatementPosition(3, 1, 3, 1))),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(3, result.size)
@@ -155,7 +156,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -169,7 +170,7 @@ class DefaultInterpreterTest {
                 Callable("println", LiteralString(ComboValuePosition("Hello, World!", StatementPosition(1, 1, 1, 1)))),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -199,7 +200,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(3, result.size)
@@ -221,29 +222,13 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(3, result.size)
         assertEquals(1.0, result[0])
         assertEquals("Hello", result[1])
         assertEquals(5.0, result[2])
-    }
-
-    @Test
-    fun `should interpret with initial list`() {
-        val statements =
-            listOf(
-                LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 1, 1, 1))),
-            )
-
-        val interpreter = DefaultInterpreter(listOf("Initial", 100))
-        val result = interpreter.interpret(statements)
-
-        assertEquals(3, result.size)
-        assertEquals("Initial", result[0])
-        assertEquals(100, result[1])
-        assertEquals(42.0, result[2])
     }
 
     @Test
@@ -257,7 +242,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -287,7 +272,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(3, result.size)
@@ -307,7 +292,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -325,7 +310,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -342,7 +327,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
@@ -365,7 +350,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = DefaultInterpreter(emptyList())
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
         val result = interpreter.interpret(statements)
 
         assertEquals(2, result.size)

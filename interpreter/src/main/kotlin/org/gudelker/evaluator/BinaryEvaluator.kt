@@ -11,11 +11,12 @@ class BinaryEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is Binary -> {
-                val leftResult = Analyzer.analyze(statement.leftExpression, context)
-                val rightResult = Analyzer.analyze(statement.rightExpression, leftResult.context)
+                val leftResult = Analyzer.analyze(statement.leftExpression, context, evaluators)
+                val rightResult = Analyzer.analyze(statement.rightExpression, leftResult.context, evaluators)
 
                 val result =
                     when (statement.operator) {

@@ -7,10 +7,11 @@ class CallableEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: VariableContext,
+        evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is Callable -> {
-                val argumentResult = Analyzer.analyze(statement.expression, context)
+                val argumentResult = Analyzer.analyze(statement.expression, context, evaluators)
                 when (statement.functionName) {
                     "println" -> {
                         println(argumentResult.value)

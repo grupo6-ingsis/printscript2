@@ -207,7 +207,7 @@ class IntegrationTest {
                     val statements = parseResult.getStatements()
 
                     // 3. Interpretation
-                    val interpreter = DefaultInterpreter(emptyList())
+                    val interpreter = InterpreterFactory.createInterpreter(Version.V1)
                     return interpreter.interpret(statements)
                 }
         }
