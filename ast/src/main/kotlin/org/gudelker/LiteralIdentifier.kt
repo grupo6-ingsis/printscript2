@@ -1,3 +1,7 @@
 package org.gudelker
 
-data class LiteralIdentifier(val value: String) : ExpressionStatement
+import org.gudelker.smtposition.ComboValuePosition
+
+data class LiteralIdentifier(
+    val value: ComboValuePosition<String>,
+) : ExpressionStatement

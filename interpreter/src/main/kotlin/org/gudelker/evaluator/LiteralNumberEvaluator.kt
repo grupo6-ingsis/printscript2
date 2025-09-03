@@ -9,7 +9,7 @@ class LiteralNumberEvaluator : Evaluator<Number> {
         context: VariableContext,
     ): EvaluationResult {
         return when (statement) {
-            is LiteralNumber -> EvaluationResult(statement.value, context)
+            is LiteralNumber -> EvaluationResult(statement.value.value, context)
             else -> throw IllegalArgumentException("Expected LiteralNumber, got ${statement::class.simpleName}")
         }
     }

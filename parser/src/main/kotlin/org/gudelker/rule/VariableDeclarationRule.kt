@@ -6,6 +6,8 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult
+import org.gudelker.smtposition.ComboValuePosition
+import org.gudelker.smtposition.StatementPosition
 import org.gudelker.tokenstream.TokenStream
 
 class VariableDeclarationRule(
@@ -20,9 +22,12 @@ class VariableDeclarationRule(
     override fun parse(tokenStream: TokenStream): ParseResult {
         // Consume keyword
         val (keywordToken, streamAfterKeyword) = tokenStream.consume(TokenType.KEYWORD)
+
         if (keywordToken == null) {
             return ParseResult(ParserSyntaxError("Se esperaba una palabra clave al inicio de la declaración"), tokenStream)
         }
+        val tokenPosition = keywordToken.getPosition()
+        val position = StatementPosition(tokenPosition.startLine, tokenPosition.startColumn, tokenPosition.endLine, tokenPosition.endColumn)
 
         // Consume identifier
         val (identifierToken, streamAfterIdentifier) = streamAfterKeyword.consume(TokenType.IDENTIFIER)
@@ -62,7 +67,13 @@ class VariableDeclarationRule(
             )
         }
 
-        val statement = VariableDeclaration(keywordToken.getValue(), identifierToken.getValue(), type.first, expressionStatement)
+        val statement =
+            VariableDeclaration(
+                ComboValuePosition(keywordToken.getValue(), position),
+                identifierToken.getValue(),
+                type.first,
+                expressionStatement,
+            )
         return ParseResult(ValidStatementParserResult(statement), finalStream)
     }
 

@@ -1,5 +1,7 @@
 package org.gudelker
 
+import org.gudelker.smtposition.ComboValuePosition
+
 data class LiteralNumber(
-    val value: Number,
+    val value: ComboValuePosition<Number>,
 ) : ExpressionStatement

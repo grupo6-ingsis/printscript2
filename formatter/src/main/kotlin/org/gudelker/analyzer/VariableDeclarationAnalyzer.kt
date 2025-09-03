@@ -18,7 +18,7 @@ class VariableDeclarationAnalyzer : Analyzer {
     ): String {
         val declaration = statement as VariableDeclaration
 
-        val keyword = statement.keyword
+        val keyword = statement.keywordCombo
 
         val spacesBefore = FormatterUtils.getDeclarationSpaces("beforeDeclaration", ruleMap)
         val spacesAfter = FormatterUtils.getDeclarationSpaces("afterDeclaration", ruleMap)

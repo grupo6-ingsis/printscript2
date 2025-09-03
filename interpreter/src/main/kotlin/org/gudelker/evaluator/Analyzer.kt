@@ -14,6 +14,7 @@ object Analyzer {
             VariableDeclarationEvaluator(),
             VariableReassignmentEvaluator(),
             CallableEvaluator(),
+//            CanBeCallEvaluator()
         )
 
     fun analyze(

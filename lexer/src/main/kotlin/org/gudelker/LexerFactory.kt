@@ -25,6 +25,7 @@ import org.gudelker.rules.SemicolonTokenizer
 import org.gudelker.rules.StringTokenizer
 import org.gudelker.rules.StringTypeTokenizer
 import org.gudelker.rules.WhitespaceTokenizer
+import org.gudelker.utilities.Version
 
 object LexerFactory {
     fun createLexer(version: Version): DefaultLexer {

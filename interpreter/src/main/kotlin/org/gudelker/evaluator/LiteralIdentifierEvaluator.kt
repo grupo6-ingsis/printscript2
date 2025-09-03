@@ -10,7 +10,7 @@ class LiteralIdentifierEvaluator : Evaluator<Any> {
     ): EvaluationResult {
         return when (statement) {
             is LiteralIdentifier -> {
-                val value = context.getVariable(statement.value)
+                val value = context.getVariable(statement.value.value)
                 EvaluationResult(value, context)
             }
             else -> throw IllegalArgumentException("Expected LiteralIdentifier, got ${statement::class.simpleName}")

@@ -1,5 +1,6 @@
 package org.gudelker
 
+import org.example.org.gudelker.Version
 import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.ValidTokens
 import org.gudelker.sourcereader.FileSourceReader
