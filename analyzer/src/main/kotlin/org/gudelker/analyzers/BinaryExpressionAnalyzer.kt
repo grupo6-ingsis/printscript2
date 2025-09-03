@@ -2,13 +2,12 @@ package org.gudelker.analyzers
 
 import org.gudelker.Binary
 import org.gudelker.Linter
-import org.gudelker.LinterAnalyzer
 import org.gudelker.LinterConfig
 import org.gudelker.Statement
 import org.gudelker.result.LinterResult
-import org.gudelker.result.ValidLint
+import org.gudelker.rulelinter.RuleLinter
 
-class BinaryExpressionAnalyzer : LinterAnalyzer {
+class BinaryExpressionAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
     override fun canHandle(statement: Statement): Boolean {
         return statement is Binary
     }
@@ -17,17 +16,17 @@ class BinaryExpressionAnalyzer : LinterAnalyzer {
         statement: Statement,
         ruleMap: Map<String, LinterConfig>,
         linter: Linter,
-    ): LinterResult {
+        results: List<LinterResult>,
+    ): List<LinterResult> {
         if (statement is Binary) {
-            for ((ruleName, config) in ruleMap) {
-                when (ruleName) {
+            val newList =
+                linterRules.fold(results) { acc, rule ->
+                    if (rule.matches(ruleMap)) acc + rule.validate(statement) else acc
                 }
-            }
-            linter.lintNode(statement.leftExpression, ruleMap)
-            linter.lintNode(statement.rightExpression, ruleMap)
-            return ValidLint("Binary expression passed")
-        } else {
-            throw IllegalArgumentException("Unsupported statement type: ${statement::class.java}")
+            val leftResults = linter.lintNode(statement.leftExpression, ruleMap, newList)
+            val rightResults = linter.lintNode(statement.rightExpression, ruleMap, leftResults)
+            return rightResults
         }
+        return results
     }
 }

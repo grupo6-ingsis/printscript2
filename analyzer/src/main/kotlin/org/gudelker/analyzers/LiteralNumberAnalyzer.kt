@@ -1,14 +1,13 @@
 package org.gudelker.analyzers
 
 import org.gudelker.Linter
-import org.gudelker.LinterAnalyzer
 import org.gudelker.LinterConfig
 import org.gudelker.LiteralNumber
 import org.gudelker.Statement
 import org.gudelker.result.LinterResult
-import org.gudelker.result.ValidLint
+import org.gudelker.rulelinter.RuleLinter
 
-class LiteralNumberAnalyzer : LinterAnalyzer {
+class LiteralNumberAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
     override fun canHandle(statement: Statement): Boolean {
         return statement is LiteralNumber
     }
@@ -17,7 +16,15 @@ class LiteralNumberAnalyzer : LinterAnalyzer {
         statement: Statement,
         ruleMap: Map<String, LinterConfig>,
         linter: Linter,
-    ): LinterResult {
-        return ValidLint("Literal number is valid")
+        results: List<LinterResult>,
+    ): List<LinterResult> {
+        if (statement is LiteralNumber) {
+            val newList =
+                linterRules.fold(results) { acc, rule ->
+                    if (rule.matches(ruleMap)) acc + rule.validate(statement) else acc
+                }
+            return newList
+        }
+        return results
     }
 }

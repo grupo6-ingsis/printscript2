@@ -1,14 +1,12 @@
 package org.gudelker.analyzers
-
 import org.gudelker.Linter
-import org.gudelker.LinterAnalyzer
 import org.gudelker.LinterConfig
 import org.gudelker.Statement
 import org.gudelker.Unary
 import org.gudelker.result.LinterResult
-import org.gudelker.result.ValidLint
+import org.gudelker.rulelinter.RuleLinter
 
-class UnaryExpressionAnalyzer : LinterAnalyzer {
+class UnaryExpressionAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
     override fun canHandle(statement: Statement): Boolean {
         return statement is Unary
     }
@@ -17,16 +15,15 @@ class UnaryExpressionAnalyzer : LinterAnalyzer {
         statement: Statement,
         ruleMap: Map<String, LinterConfig>,
         linter: Linter,
-    ): LinterResult {
+        results: List<LinterResult>,
+    ): List<LinterResult> {
         if (statement is Unary) {
-            for ((ruleName, config) in ruleMap) {
-                when (ruleName) {
+            val newList =
+                linterRules.fold(results) { acc, rule ->
+                    if (rule.matches(ruleMap)) acc + rule.validate(statement) else acc
                 }
-            }
-            linter.lintNode(statement.value, ruleMap)
-            return ValidLint("Grouping expression passed")
-        } else {
-            throw IllegalArgumentException("Unsupported statement type: ${statement::class.java}")
+            return linter.lintNode(statement.value, ruleMap, newList)
         }
+        return results
     }
 }

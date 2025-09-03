@@ -1,10 +1,11 @@
 package org.gudelker
 
+import org.gudelker.analyzers.LinterAnalyzer
 import org.gudelker.result.CompoundResult
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 
-class DefaultLinter(private val linters: List<LinterAnalyzer>) : Linter {
+class DefaultLinter(private val astLinters: List<LinterAnalyzer>) : Linter {
     override fun lint(
         statementStream: StatementStream,
         ruleMap: Map<String, LinterConfig>,
@@ -15,10 +16,8 @@ class DefaultLinter(private val linters: List<LinterAnalyzer>) : Linter {
         while (!stream.isAtEnd()) {
             val (statement, nextStream) = stream.next()
             if (statement != null) {
-                val result = lintNode(statement, ruleMap)
-                if (result is LintViolation) {
-                    linterResults = linterResults + result
-                }
+                val result = lintNode(statement, ruleMap, emptyList())
+                linterResults = linterResults + result.filterIsInstance<LintViolation>()
             }
             stream = nextStream
         }
@@ -33,11 +32,12 @@ class DefaultLinter(private val linters: List<LinterAnalyzer>) : Linter {
     override fun lintNode(
         statement: Statement,
         ruleMap: Map<String, LinterConfig>,
-    ): LinterResult {
+        results: List<LinterResult>,
+    ): List<LinterResult> {
         val linter =
-            linters.firstOrNull { it.canHandle(statement) }
+            astLinters.firstOrNull { it.canHandle(statement) }
                 ?: throw IllegalArgumentException("No analyzer found for ${statement::class.simpleName}")
 
-        return linter.lint(statement, ruleMap, this)
+        return linter.lint(statement, ruleMap, this, results)
     }
 }
