@@ -1,5 +1,4 @@
 package org.gudelker.rulelinter
-
 import org.gudelker.Callable
 import org.gudelker.LinterConfig
 import org.gudelker.Statement
@@ -17,13 +16,13 @@ class RestrictPrintLnExpressions(
     }
 
     override fun validate(statement: Statement): LinterResult {
-        if (statement is Callable && statement.functionName == "println") {
+        if (statement is Callable && statement.functionName.value == "println") {
             val arg = statement.expression
             val allowed = allowedTypes.any { it.isInstance(arg) }
             return if (allowed) {
                 ValidLint("println usage is valid")
             } else {
-                LintViolation("Argument not allowed in println")
+                LintViolation("Argument not allowed in println", statement.functionName.position)
             }
         }
         return ValidLint("Not a println statement")

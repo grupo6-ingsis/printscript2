@@ -12,7 +12,7 @@ class VariableDeclarationEvaluator : Evaluator<Unit> {
         return when (statement) {
             is VariableDeclaration -> {
                 val valueResult = Analyzer.analyze(statement.value, context, evaluators)
-                val newContext = valueResult.context.setVariable(statement.identifier, valueResult.value)
+                val newContext = valueResult.context.setVariable(statement.identifierCombo.value, valueResult.value)
                 EvaluationResult(Unit, newContext)
             }
             else -> throw IllegalArgumentException("Expected VariableDeclaration, got ${statement::class.simpleName}")

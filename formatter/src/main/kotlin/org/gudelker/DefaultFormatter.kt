@@ -1,20 +1,20 @@
 package org.gudelker
 import org.gudelker.analyzer.Analyzer
-import org.gudelker.rules.Rule
+import org.gudelker.rules.FormatterRule
 
 class DefaultFormatter(
     private val analyzers: List<Analyzer>,
 ) : Formatter {
     override fun format(
         statement: Statement,
-        rules: Map<String, Rule>,
+        rules: Map<String, FormatterRule>,
     ): String {
         return formatNode(statement, rules)
     }
 
     fun formatNode(
         node: Statement,
-        rules: Map<String, Rule>,
+        rules: Map<String, FormatterRule>,
     ): String {
         val analyzer =
             analyzers.firstOrNull { it.canHandle(node) }

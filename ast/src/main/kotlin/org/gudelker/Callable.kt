@@ -1,7 +1,9 @@
 package org.gudelker
 
+import org.gudelker.stmtposition.ComboValuePosition
+
 class Callable(
-    val functionName: String,
+    val functionName: ComboValuePosition<String>,
     val expression: CanBeCallStatement,
 ) : CallableStatement {
     override fun toString(): String {
