@@ -1,5 +1,15 @@
 package org.gudelker.parser
 
+import org.gudelker.comparator.Equals
+import org.gudelker.comparator.Greater
+import org.gudelker.comparator.GreaterEquals
+import org.gudelker.comparator.Lesser
+import org.gudelker.comparator.LesserEquals
+import org.gudelker.comparator.NotEquals
+import org.gudelker.operator.AdditionOperator
+import org.gudelker.operator.DivisionOperator
+import org.gudelker.operator.MinusOperator
+import org.gudelker.operator.MultiplyOperator
 import org.gudelker.rule.BinaryParRule
 import org.gudelker.rule.BooleanExpressionParRule
 import org.gudelker.rule.CallableParRule
@@ -29,25 +39,29 @@ object DefaultParserFactory {
         val literalStringParRule = LiteralStringParRule()
         val literalIdentifierParRule = LiteralIdentifierParRule()
 
-        // Crear reglas base sin dependencias circulares
         val baseExpressionParRule = ExpressionParRule(listOf(literalNumberParRule, literalStringParRule, literalIdentifierParRule))
-
-        // UnaryRule que puede acceder a literales
         val unaryParRule = UnaryParRule(baseExpressionParRule)
+        val groupingParRule = GroupingParRule(baseExpressionParRule)
 
-        // Crear un placeholder para la expresión completa
-        val fullExpressionParRule: ExpressionParRule
-
-        // GroupingRule que usará la expresión completa
-        val groupingParRule = GroupingParRule(baseExpressionParRule) // temporal
-
-        // BinaryRule con acceso a unary, grouping y literales
         val binaryExpressionParRule =
             ExpressionParRule(listOf(unaryParRule, groupingParRule, literalNumberParRule, literalStringParRule, literalIdentifierParRule))
-        val binaryParRule = BinaryParRule(binaryExpressionParRule)
 
-        // Expresión completa con todas las reglas
-        fullExpressionParRule =
+        val binaryParRule =
+            BinaryParRule(
+                binaryExpressionParRule,
+                additionOperators =
+                    mapOf(
+                        "+" to { AdditionOperator() },
+                        "-" to { MinusOperator() },
+                    ),
+                multiplicationOperators =
+                    mapOf(
+                        "*" to { MultiplyOperator() },
+                        "/" to { DivisionOperator() },
+                    ),
+            )
+
+        val fullExpressionParRule =
             ExpressionParRule(
                 listOf(
                     binaryParRule,
@@ -59,17 +73,28 @@ object DefaultParserFactory {
                 ),
             )
 
-        // GroupingRule con la expresión completa
         val finalGroupingParRule = GroupingParRule(fullExpressionParRule)
 
-        // BinaryRule con acceso completo
         val finalBinaryExpressionParRule =
             ExpressionParRule(
                 listOf(unaryParRule, finalGroupingParRule, literalNumberParRule, literalStringParRule, literalIdentifierParRule),
             )
-        val finalBinaryParRule = BinaryParRule(finalBinaryExpressionParRule)
 
-        // Expresión final con todas las reglas actualizadas
+        val finalBinaryParRule =
+            BinaryParRule(
+                finalBinaryExpressionParRule,
+                additionOperators =
+                    mapOf(
+                        "+" to { AdditionOperator() },
+                        "-" to { MinusOperator() },
+                    ),
+                multiplicationOperators =
+                    mapOf(
+                        "*" to { MultiplyOperator() },
+                        "/" to { DivisionOperator() },
+                    ),
+            )
+
         val completeExpressionParRule =
             ExpressionParRule(
                 listOf(
@@ -95,20 +120,30 @@ object DefaultParserFactory {
         val literalIdentifierParRule = LiteralIdentifierParRule()
         val literalBooleanParRule = LiteralBooleanParRule()
 
-        // Crear reglas base sin dependencias circulares
         val baseExpressionParRule =
             ExpressionParRule(listOf(literalNumberParRule, literalStringParRule, literalIdentifierParRule, literalBooleanParRule))
 
-        // UnaryRule que puede acceder a literales
         val unaryParRule = UnaryParRule(baseExpressionParRule)
+        val groupingParRule = GroupingParRule(baseExpressionParRule)
 
-        // GroupingRule que usará la expresión completa
-        val groupingParRule = GroupingParRule(baseExpressionParRule) // temporal
-
-        // BinaryRule con acceso a unary, grouping y literales
         val binaryExpressionParRule =
             ExpressionParRule(listOf(unaryParRule, groupingParRule, literalNumberParRule, literalStringParRule, literalIdentifierParRule))
-        val binaryParRule = BinaryParRule(binaryExpressionParRule)
+
+        val binaryParRule =
+            BinaryParRule(
+                binaryExpressionParRule,
+                additionOperators =
+                    mapOf(
+                        "+" to { AdditionOperator() },
+                        "-" to { MinusOperator() },
+                    ),
+                multiplicationOperators =
+                    mapOf(
+                        "*" to { MultiplyOperator() },
+                        "/" to { DivisionOperator() },
+                    ),
+            )
+
         val booleanExpression =
             ExpressionParRule(
                 listOf(
@@ -121,9 +156,21 @@ object DefaultParserFactory {
                     literalBooleanParRule,
                 ),
             )
-        val booleanExpressionParRule = BooleanExpressionParRule(booleanExpression)
 
-        // Expresión completa con todas las reglas
+        val booleanExpressionParRule =
+            BooleanExpressionParRule(
+                booleanExpression,
+                comparisonOperators =
+                    mapOf(
+                        "==" to { Equals() },
+                        "!=" to { NotEquals() },
+                        "<" to { Lesser() },
+                        ">" to { Greater() },
+                        "<=" to { LesserEquals() },
+                        ">=" to { GreaterEquals() },
+                    ),
+            )
+
         val fullExpressionParRule =
             ExpressionParRule(
                 listOf(
@@ -137,15 +184,28 @@ object DefaultParserFactory {
                 ),
             )
 
-        // GroupingRule con la expresión completa
         val finalGroupingParRule = GroupingParRule(fullExpressionParRule)
 
-        // BinaryRule con acceso completo
         val finalBinaryExpressionParRule =
             ExpressionParRule(
                 listOf(unaryParRule, finalGroupingParRule, literalNumberParRule, literalStringParRule, literalIdentifierParRule),
             )
-        val finalBinaryParRule = BinaryParRule(finalBinaryExpressionParRule)
+
+        val finalBinaryParRule =
+            BinaryParRule(
+                finalBinaryExpressionParRule,
+                additionOperators =
+                    mapOf(
+                        "+" to { AdditionOperator() },
+                        "-" to { MinusOperator() },
+                    ),
+                multiplicationOperators =
+                    mapOf(
+                        "*" to { MultiplyOperator() },
+                        "/" to { DivisionOperator() },
+                    ),
+            )
+
         val finalBooleanExpression =
             ExpressionParRule(
                 listOf(
@@ -158,9 +218,21 @@ object DefaultParserFactory {
                     literalBooleanParRule,
                 ),
             )
-        val finalBooleanRule = BooleanExpressionParRule(finalBooleanExpression)
 
-        // Expresión final con todas las reglas actualizadas
+        val finalBooleanRule =
+            BooleanExpressionParRule(
+                finalBooleanExpression,
+                comparisonOperators =
+                    mapOf(
+                        "==" to { Equals() },
+                        "!=" to { NotEquals() },
+                        "<" to { Lesser() },
+                        ">" to { Greater() },
+                        "<=" to { LesserEquals() },
+                        ">=" to { GreaterEquals() },
+                    ),
+            )
+
         val completeExpressionParRule =
             ExpressionParRule(
                 listOf(
@@ -179,7 +251,6 @@ object DefaultParserFactory {
         val variableReassignmentParRule = VariableReassignmentParRule(completeExpressionParRule)
         val constantDeclarationRule = ConstDeclarationParRule(setOf("const"), completeExpressionParRule)
 
-        // Lista de statement rules para el conditional (sin incluir el conditional mismo para evitar recursión)
         val statementRules =
             listOf(
                 variableDeclarationParRule,
@@ -188,7 +259,6 @@ object DefaultParserFactory {
                 callableParRule,
             )
 
-        // Crear ConditionalParRule
         val conditionalParRule = ConditionalParRule(finalBooleanRule, statementRules)
 
         return DefaultParser(

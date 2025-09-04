@@ -11,7 +11,7 @@ plugins {
 }
 
 rootProject.name = 'printscript2'
-include('app', 'list', 'utilities')
+include('app', 'utilities')
 
 include 'lexer'
 include 'token'

@@ -3,10 +3,6 @@ package org.gudelker.rule
 import org.gudelker.Binary
 import org.gudelker.ExpressionStatement
 import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.operator.AdditionOperator
-import org.gudelker.operator.DivisionOperator
-import org.gudelker.operator.MinusOperator
-import org.gudelker.operator.MultiplyOperator
 import org.gudelker.operator.Operator
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
@@ -15,7 +11,8 @@ import org.gudelker.tokenstream.TokenStream
 
 class BinaryParRule(
     private val expressionRule: SyntaxParRule,
-    private val operatorTypes: Set<TokenType> = setOf(TokenType.OPERATOR),
+    private val additionOperators: Map<String, () -> Operator> = emptyMap(),
+    private val multiplicationOperators: Map<String, () -> Operator> = emptyMap(),
 ) : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {
         return expressionRule.matches(tokenStream)
@@ -25,7 +22,6 @@ class BinaryParRule(
         return parseAddition(tokenStream)
     }
 
-    // Maneja operadores de suma/resta (menor precedencia)
     private fun parseAddition(stream: TokenStream): ParseResult {
         val leftResult = parseMultiplication(stream)
         if (leftResult.parserResult !is ValidStatementParserResult) {
@@ -45,10 +41,10 @@ class BinaryParRule(
         val currentToken = stream.current()
 
         return if (currentToken?.getType() == TokenType.OPERATOR &&
-            currentToken.getValue() in setOf("+", "-")
+            currentToken.getValue() in additionOperators.keys
         ) {
             val operator =
-                createOperator(currentToken.getValue())
+                additionOperators[currentToken.getValue()]?.invoke()
                     ?: return ParseResult(
                         ParserSyntaxError("Operador no válido: ${currentToken.getValue()}"),
                         stream,
@@ -68,15 +64,12 @@ class BinaryParRule(
                     rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement,
                 )
 
-            // Recursivamente continuar parseando más operadores del mismo nivel
             parseAdditionContinuation(binaryExpression, rightResult.tokenStream)
         } else {
-            // No hay más operadores de suma/resta, devolver la expresión actual
             ParseResult(ValidStatementParserResult(leftExpression), stream)
         }
     }
 
-    // Maneja operadores de multiplicación/división (mayor precedencia)
     private fun parseMultiplication(stream: TokenStream): ParseResult {
         val leftResult = expressionRule.parse(stream)
         if (leftResult.parserResult !is ValidStatementParserResult) {
@@ -93,14 +86,13 @@ class BinaryParRule(
         leftExpression: ExpressionStatement,
         stream: TokenStream,
     ): ParseResult {
-        println(leftExpression)
         val currentToken = stream.current()
 
         return if (currentToken?.getType() == TokenType.OPERATOR &&
-            currentToken.getValue() in setOf("*", "/")
+            currentToken.getValue() in multiplicationOperators.keys
         ) {
             val operator =
-                createOperator(currentToken.getValue())
+                multiplicationOperators[currentToken.getValue()]?.invoke()
                     ?: return ParseResult(
                         ParserSyntaxError("Operador no válido: ${currentToken.getValue()}"),
                         stream,
@@ -120,21 +112,9 @@ class BinaryParRule(
                     rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement,
                 )
 
-            // Recursivamente continuar parseando más operadores del mismo nivel
             parseMultiplicationContinuation(binaryExpression, rightResult.tokenStream)
         } else {
-            // No hay más operadores de multiplicación/división, devolver la expresión actual
             ParseResult(ValidStatementParserResult(leftExpression), stream)
-        }
-    }
-
-    private fun createOperator(operatorValue: String): Operator? {
-        return when (operatorValue) {
-            "+" -> AdditionOperator()
-            "-" -> MinusOperator()
-            "*" -> MultiplyOperator()
-            "/" -> DivisionOperator()
-            else -> null
         }
     }
 }
