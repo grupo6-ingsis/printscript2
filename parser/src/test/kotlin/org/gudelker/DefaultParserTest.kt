@@ -28,7 +28,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -60,7 +60,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -88,7 +88,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -117,7 +117,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -150,7 +150,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V2)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -182,7 +182,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -209,7 +209,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -235,7 +235,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -270,7 +270,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -298,7 +298,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -329,7 +329,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -372,7 +372,7 @@ class DefaultParserTest {
         val tokenStream = TokenStream(tokens)
 
         // Crear el parser y ejecutar
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         // Verificar resultado
@@ -382,5 +382,72 @@ class DefaultParserTest {
         println(statements[0])
         println(statements[1])
         println(statements[2])
+    }
+
+    @Test
+    fun `should with more than one statement v2`() {
+        // Crear tokens de prueba
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.BOOLEAN, "true", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.KEYWORD, "const", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(2, statements.size)
+        for (statement in statements) {
+            println(statement)
+        }
+    }
+
+    @Test
+    fun `should parse boolean`() {
+        // Crear tokens de prueba
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "const", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "1", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.OPERATOR, "*", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.COMPARATOR, "!=", Position()),
+                Token(TokenType.NUMBER, "40", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        for (statement in statements) {
+            println(statement)
+        }
     }
 }

@@ -182,6 +182,24 @@ class IntegrationTest {
         assertEquals(Unit, result[2]) // 20 / 4
     }
 
+    @Test
+    fun `should handle number and string`() {
+        val code =
+            """
+            let x = 6;
+            let y = "hola";
+            let pepe = x + y;
+            println(pepe);
+            """.trimIndent()
+
+        val result = processCode(code)
+
+        assertEquals(4, result.size)
+        assertEquals(Unit, result[0]) // let x = 20
+        assertEquals(Unit, result[1]) // let y = 4
+        assertEquals(Unit, result[2]) // 20 / 4
+    }
+
     private fun processCode(code: String): List<Any?> {
         // 1. Lexical Analysis
         val lexer = LexerFactory.createLexer(Version.V1)
@@ -197,7 +215,7 @@ class IntegrationTest {
 
                     // 2. Syntax Analysis
                     val tokenStream = TokenStream(tokens)
-                    val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+                    val parser = DefaultParserFactory.createParser(Version.V1)
                     val parseResult = parser.parse(tokenStream)
 
                     if (parseResult !is Valid) {

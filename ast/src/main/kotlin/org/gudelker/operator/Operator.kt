@@ -1,5 +1,5 @@
 package org.gudelker.operator
 
-interface Operator {
+sealed interface Operator {
     fun getValue(): String
 }

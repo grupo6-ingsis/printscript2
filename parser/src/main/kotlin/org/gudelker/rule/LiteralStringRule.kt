@@ -5,8 +5,8 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult
-import org.gudelker.smtposition.ComboValuePosition
-import org.gudelker.smtposition.StatementPosition
+import org.gudelker.stmtposition.ComboValuePosition
+import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.tokenstream.TokenStream
 
 class LiteralStringRule : SyntaxRule {
@@ -26,10 +26,10 @@ class LiteralStringRule : SyntaxRule {
 
         val literalString = LiteralString(ComboValuePosition(value.substring(1, value.length - 1), position))
 
-        val (type, tokenStream) = tokenStream.consume(TokenType.STRING)
+        val (_, newTokenStream) = tokenStream.consume(TokenType.STRING)
         return ParseResult(
             ValidStatementParserResult(literalString),
-            tokenStream,
+            newTokenStream,
         )
     }
 }

@@ -5,3 +5,4 @@ if (x > 3) {
 println(x);
 }
 println(x);
+true;

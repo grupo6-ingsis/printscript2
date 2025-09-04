@@ -1,7 +1,7 @@
 package org.gudelker.rule
 
+import org.gudelker.ConstDeclaration
 import org.gudelker.ExpressionStatement
-import org.gudelker.VariableDeclaration
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
@@ -10,7 +10,7 @@ import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.tokenstream.TokenStream
 
-class VariableDeclarationRule(
+class ConstDeclarationRule(
     private val keywords: Set<String>,
     private val expressionRule: SyntaxRule,
 ) : SyntaxRule {
@@ -24,10 +24,19 @@ class VariableDeclarationRule(
         val (keywordToken, streamAfterKeyword) = tokenStream.consume(TokenType.KEYWORD)
 
         if (keywordToken == null) {
-            return ParseResult(ParserSyntaxError("Se esperaba una palabra clave al inicio de la declaración"), tokenStream)
+            return ParseResult(
+                ParserSyntaxError("Se esperaba una palabra clave al inicio de la declaración"),
+                tokenStream,
+            )
         }
         val tokenPosition = keywordToken.getPosition()
-        val position = StatementPosition(tokenPosition.startLine, tokenPosition.startColumn, tokenPosition.endLine, tokenPosition.endColumn)
+        val position =
+            StatementPosition(
+                tokenPosition.startLine,
+                tokenPosition.startColumn,
+                tokenPosition.endLine,
+                tokenPosition.endColumn,
+            )
 
         // Consume identifier
         val (identifierToken, streamAfterIdentifier) = streamAfterKeyword.consume(TokenType.IDENTIFIER)
@@ -68,7 +77,7 @@ class VariableDeclarationRule(
         }
 
         val statement =
-            VariableDeclaration(
+            ConstDeclaration(
                 ComboValuePosition(keywordToken.getValue(), position),
                 identifierToken.getValue(),
                 type.first,
