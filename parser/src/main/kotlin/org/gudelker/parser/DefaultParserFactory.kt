@@ -3,6 +3,7 @@ package org.gudelker.parser
 import org.gudelker.rule.BinaryParRule
 import org.gudelker.rule.BooleanExpressionParRule
 import org.gudelker.rule.CallableParRule
+import org.gudelker.rule.ConditionalParRule
 import org.gudelker.rule.ConstDeclarationParRule
 import org.gudelker.rule.ExpressionParRule
 import org.gudelker.rule.GroupingParRule
@@ -101,9 +102,6 @@ object DefaultParserFactory {
         // UnaryRule que puede acceder a literales
         val unaryParRule = UnaryParRule(baseExpressionParRule)
 
-        // Crear un placeholder para la expresión completa
-        val fullExpressionParRule: ExpressionParRule
-
         // GroupingRule que usará la expresión completa
         val groupingParRule = GroupingParRule(baseExpressionParRule) // temporal
 
@@ -126,7 +124,7 @@ object DefaultParserFactory {
         val booleanExpressionParRule = BooleanExpressionParRule(booleanExpression)
 
         // Expresión completa con todas las reglas
-        fullExpressionParRule =
+        val fullExpressionParRule =
             ExpressionParRule(
                 listOf(
                     booleanExpressionParRule,
@@ -181,6 +179,26 @@ object DefaultParserFactory {
         val variableReassignmentParRule = VariableReassignmentParRule(completeExpressionParRule)
         val constantDeclarationRule = ConstDeclarationParRule(setOf("const"), completeExpressionParRule)
 
-        return DefaultParser(listOf(variableDeclarationParRule, variableReassignmentParRule, constantDeclarationRule, callableParRule))
+        // Lista de statement rules para el conditional (sin incluir el conditional mismo para evitar recursión)
+        val statementRules =
+            listOf(
+                variableDeclarationParRule,
+                variableReassignmentParRule,
+                constantDeclarationRule,
+                callableParRule,
+            )
+
+        // Crear ConditionalParRule
+        val conditionalParRule = ConditionalParRule(finalBooleanRule, statementRules)
+
+        return DefaultParser(
+            listOf(
+                conditionalParRule,
+                variableDeclarationParRule,
+                variableReassignmentParRule,
+                constantDeclarationRule,
+                callableParRule,
+            ),
+        )
     }
 }

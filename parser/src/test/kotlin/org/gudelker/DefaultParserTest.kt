@@ -450,4 +450,177 @@ class DefaultParserTest {
             println(statement)
         }
     }
+
+    @Test
+    fun `should parse if statement without else`() {
+        // Crear tokens de prueba para: if (true) { let x = 5; }
+        val tokens =
+            listOf(
+                Token(TokenType.IF_KEYWORD, "if", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.BOOLEAN, "true", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.OPEN_BRACKET, "{", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.CLOSE_BRACKET, "}", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("If without else:")
+        println(statements[0])
+    }
+
+    @Test
+    fun `should parse if statement with else`() {
+        // Crear tokens de prueba para: if (x == 10) { let y = 20; } else { let y = 30; }
+        val tokens =
+            listOf(
+                Token(TokenType.IF_KEYWORD, "if", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.COMPARATOR, "==", Position()),
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.OPEN_BRACKET, "{", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "20", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.CLOSE_BRACKET, "}", Position()),
+                Token(TokenType.ELSE_KEYWORD, "else", Position()),
+                Token(TokenType.OPEN_BRACKET, "{", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "30", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.CLOSE_BRACKET, "}", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("If with else:")
+        println(statements[0])
+    }
+
+    @Test
+    fun `should parse if statement with multiple statements in blocks`() {
+        // Crear tokens de prueba para: if (true) { let x = 5; const y = 10; println(x); } else { x = 0; }
+        val tokens =
+            listOf(
+                Token(TokenType.IF_KEYWORD, "if", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.BOOLEAN, "true", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.OPEN_BRACKET, "{", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.KEYWORD, "const", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.FUNCTION, "println", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.CLOSE_BRACKET, "}", Position()),
+                Token(TokenType.ELSE_KEYWORD, "else", Position()),
+                Token(TokenType.OPEN_BRACKET, "{", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "0", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.CLOSE_BRACKET, "}", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("If with multiple statements:")
+        println(statements[0])
+    }
+
+    @Test
+    fun `should parse if statement with complex boolean expression`() {
+        // Crear tokens de prueba para: if (x * (y + 3) - 4 <= 30 * 6 + 5) { let result = true; }
+        val tokens =
+            listOf(
+                Token(TokenType.IF_KEYWORD, "if", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.OPERATOR, "*", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.NUMBER, "3", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.OPERATOR, "-", Position()),
+                Token(TokenType.NUMBER, "4", Position()),
+                Token(TokenType.COMPARATOR, "<=", Position()),
+                Token(TokenType.NUMBER, "30", Position()),
+                Token(TokenType.OPERATOR, "*", Position()),
+                Token(TokenType.NUMBER, "6", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.OPEN_BRACKET, "{", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "result", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.BOOLEAN, "true", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.CLOSE_BRACKET, "}", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+
+        // Crear el parser y ejecutar
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        // Verificar resultado
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("If with complex boolean expression:")
+        println(statements[0])
+    }
 }
