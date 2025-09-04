@@ -13,6 +13,7 @@ import org.gudelker.evaluator.ConditionalEvaluator
 import org.gudelker.evaluator.ConstDeclarationEvaluator
 import org.gudelker.evaluator.Evaluator
 import org.gudelker.evaluator.GroupingEvaluator
+import org.gudelker.evaluator.LiteralBooleanEvaluator
 import org.gudelker.evaluator.LiteralIdentifierEvaluator
 import org.gudelker.evaluator.LiteralNumberEvaluator
 import org.gudelker.evaluator.LiteralStringEvaluator
@@ -53,6 +54,7 @@ class ListCase {
                         LiteralNumberEvaluator(),
                         LiteralStringEvaluator(),
                         LiteralIdentifierEvaluator(),
+                        LiteralBooleanEvaluator(),
                         UnaryEvaluator(),
                         BinaryEvaluator(
                             setOf(
