@@ -6,15 +6,24 @@ import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
+import org.gudelker.operator.Operator
 
-class BinaryEvaluator : Evaluator<Any> {
+class BinaryEvaluator(
+    private val supportedOperators: Set<Class<out Operator>> = emptySet(),
+) : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
-        context: VariableContext,
+        context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
             is Binary -> {
+                if (supportedOperators.isNotEmpty() &&
+                    !supportedOperators.contains(statement.operator::class.java)
+                ) {
+                    throw UnsupportedOperationException("Operador no soportado: ${statement.operator::class.simpleName}")
+                }
+
                 val leftResult = Analyzer.analyze(statement.leftExpression, context, evaluators)
                 val rightResult = Analyzer.analyze(statement.rightExpression, leftResult.context, evaluators)
 
@@ -24,7 +33,6 @@ class BinaryEvaluator : Evaluator<Any> {
                         is MinusOperator -> performSubtraction(leftResult.value, rightResult.value)
                         is MultiplyOperator -> performMultiplication(leftResult.value, rightResult.value)
                         is DivisionOperator -> performDivision(leftResult.value, rightResult.value)
-                        else -> throw UnsupportedOperationException("Operador no soportado: ${statement.operator}")
                     }
 
                 EvaluationResult(result, rightResult.context)

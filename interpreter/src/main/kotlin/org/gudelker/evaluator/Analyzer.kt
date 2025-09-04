@@ -5,7 +5,7 @@ import org.gudelker.Statement
 object Analyzer {
     fun analyze(
         statement: Statement,
-        context: VariableContext,
+        context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         for (evaluator in evaluators) {

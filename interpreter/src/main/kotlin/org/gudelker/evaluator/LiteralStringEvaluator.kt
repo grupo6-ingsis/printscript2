@@ -6,7 +6,7 @@ import org.gudelker.Statement
 class LiteralStringEvaluator : Evaluator<String> {
     override fun evaluate(
         statement: Statement,
-        context: VariableContext,
+        context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {

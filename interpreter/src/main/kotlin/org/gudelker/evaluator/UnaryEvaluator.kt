@@ -8,7 +8,7 @@ import org.gudelker.operator.MinusOperator
 class UnaryEvaluator : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
-        context: VariableContext,
+        context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): EvaluationResult {
         return when (statement) {
