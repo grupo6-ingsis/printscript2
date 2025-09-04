@@ -32,6 +32,7 @@ class ConditionalEvaluator : Evaluator<Any> {
                     }
 
                 // Evaluar todas las sentencias del bloque seleccionado de forma inmutable
+                // El fold acumulativo permite pasar el contexto actualizado entre sentencias
                 val finalResult =
                     bodyToExecute.fold(
                         EvaluationResult(Unit, conditionResult.context),
