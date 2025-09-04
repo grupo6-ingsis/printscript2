@@ -46,6 +46,14 @@ class ConstDeclarationParRule(
                 streamAfterKeyword,
             )
         }
+        val identifierPosition = identifierToken.getPosition()
+        val identifierPos =
+            StatementPosition(
+                identifierPosition.startLine,
+                identifierPosition.startColumn,
+                identifierPosition.endLine,
+                identifierPosition.endColumn,
+            )
 
         // Optional type declaration
         val (type, streamAfterType) = parseOptionalType(streamAfterIdentifier)
@@ -79,7 +87,7 @@ class ConstDeclarationParRule(
         val statement =
             ConstDeclaration(
                 ComboValuePosition(keywordToken.getValue(), position),
-                identifierToken.getValue(),
+                ComboValuePosition(identifierToken.getValue(), identifierPos),
                 type.first,
                 expressionStatement,
             )

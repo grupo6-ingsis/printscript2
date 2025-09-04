@@ -230,4 +230,89 @@ class IntegrationTest {
                 }
         }
     }
+
+    @Test
+    fun `should process simple if-else statement`() {
+        val code =
+            """
+            let x = 4;
+            if (x > 5) {
+                println("Greater than 5");
+            } else {
+                println("Less or equal to 5");
+            }
+            """.trimIndent()
+
+        val result = processCodeV2(code)
+
+        assertEquals(2, result.size)
+        assertEquals(Unit, result[0]) // let x = 10
+        assertEquals(Unit, result[1]) // conditional result
+    }
+
+    @Test
+    fun `should process if statement without else`() {
+        val code =
+            """
+            let y = 3;
+            if (y < 5) {
+                let result = y * 2;
+                println(result);
+            }
+            """.trimIndent()
+
+        val result = processCodeV2(code)
+
+        assertEquals(2, result.size)
+        assertEquals(Unit, result[0]) // let y = 3
+        assertEquals(Unit, result[1]) // conditional with multiple statements
+    }
+
+    @Test
+    fun `should not process const reassignment`() {
+        val code =
+            """
+            const y = 5;
+            let x = 10;
+            x = 20 + y;
+            println(x);
+            """.trimIndent()
+
+        val result = processCodeV2(code)
+
+        assertEquals(4, result.size)
+        assertEquals(Unit, result[0]) // declaración inicial
+        assertEquals(Unit, result[1]) // reasignación
+        assertEquals(Unit, result[2]) // valor final
+    }
+
+    private fun processCodeV2(code: String): List<Any?> {
+        // 1. Lexical Analysis
+        val lexer = LexerFactory.createLexer(Version.V2)
+        val sourceReader = StringSourceReader(code)
+        val tokenResult = lexer.lex(sourceReader)
+
+        when (tokenResult) {
+            is LexerSyntaxError ->
+                throw RuntimeException("Lexer error: $tokenResult")
+            is ValidTokens -> {
+                val tokens = tokenResult.getList()
+
+                // 2. Syntax Analysis
+                val tokenStream = TokenStream(tokens)
+                val parser = DefaultParserFactory.createParser(Version.V2)
+                val parseResult = parser.parse(tokenStream)
+
+                if (parseResult !is Valid) {
+                    throw RuntimeException("Parser error: $parseResult")
+                }
+
+                val statements = parseResult.getStatements()
+
+                // 3. Interpretation
+                val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+                return interpreter.interpret(statements)
+            }
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package org.gudelker
 
+import org.gudelker.comparator.Greater
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
@@ -359,5 +360,65 @@ class DefaultInterpreterTest {
         assertEquals(2, result.size)
         assertEquals(Unit, result[0])
         assertEquals(-25.0, result[1])
+    }
+
+    @Test
+    fun `should interpret simple if statement with true condition`() {
+        val statements =
+            listOf(
+                ConditionalExpression(
+                    ifKeyword = ComboValuePosition("if", StatementPosition(1, 1, 1, 3)),
+                    condition =
+                        BooleanExpression(
+                            left = LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 5, 1, 5))),
+                            operator = Greater(),
+                            right = LiteralNumber(ComboValuePosition(3.0, StatementPosition(1, 9, 1, 9))),
+                        ),
+                    ifBody =
+                        listOf(
+                            LiteralNumber(ComboValuePosition(42.0, StatementPosition(2, 5, 2, 7))),
+                        ),
+                    elseBody =
+                        listOf(
+                            LiteralNumber(ComboValuePosition(0.0, StatementPosition(4, 5, 4, 5))),
+                        ),
+                ),
+            )
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val result = interpreter.interpret(statements)
+
+        assertEquals(1, result.size)
+        assertEquals(42.0, result[0])
+    }
+
+    @Test
+    fun `should interpret if statement with false condition using else body`() {
+        val statements =
+            listOf(
+                ConditionalExpression(
+                    ifKeyword = ComboValuePosition("if", StatementPosition(1, 1, 1, 3)),
+                    condition =
+                        BooleanExpression(
+                            left = LiteralNumber(ComboValuePosition(2.0, StatementPosition(1, 5, 1, 5))),
+                            operator = Greater(),
+                            right = LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 9, 1, 9))),
+                        ),
+                    ifBody =
+                        listOf(
+                            LiteralString(ComboValuePosition("true path", StatementPosition(2, 5, 2, 15))),
+                        ),
+                    elseBody =
+                        listOf(
+                            LiteralString(ComboValuePosition("false path", StatementPosition(4, 5, 4, 16))),
+                        ),
+                ),
+            )
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val result = interpreter.interpret(statements)
+
+        assertEquals(1, result.size)
+        assertEquals("false path", result[0])
     }
 }

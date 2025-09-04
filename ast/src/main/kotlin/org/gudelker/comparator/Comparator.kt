@@ -1,5 +1,5 @@
 package org.gudelker.comparator
 
-interface Comparator {
+sealed interface Comparator {
     fun getValue(): String
 }
