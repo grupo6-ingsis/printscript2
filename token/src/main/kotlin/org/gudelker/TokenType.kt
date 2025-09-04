@@ -6,24 +6,20 @@ enum class TokenType {
     COLON, // :
     ASSIGNATION, // =
     KEYWORD, // class, import, package, let, const, var, return, etc.
-    FUNCTIONKEYWORD, // if, else, while, for, etc.
     FUNCTION, // printf(), println(), read(), etc.
 
     STRING,
     NUMBER,
-    CHARACTER,
+    BOOLEAN, // true, false
 
     OPERATOR,
     SEMICOLON,
-    WHITESPACE,
-    NEWLINE,
     OPEN_PARENTHESIS,
     CLOSE_PARENTHESIS,
     OPEN_BRACKET,
     CLOSE_BRACKET,
     COMPARATOR, // <, >, <=, >=, ==, !=
 
-    BOOLEAN, // true, false
     IF_KEYWORD, // if
     ELSE_KEYWORD, // else
 

@@ -3,12 +3,6 @@ package org.gudelker.rule
 import org.gudelker.BooleanExpression
 import org.gudelker.ExpressionStatement
 import org.gudelker.comparator.Comparator
-import org.gudelker.comparator.Equals
-import org.gudelker.comparator.Greater
-import org.gudelker.comparator.GreaterEquals
-import org.gudelker.comparator.Lesser
-import org.gudelker.comparator.LesserEquals
-import org.gudelker.comparator.NotEquals
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
@@ -17,7 +11,7 @@ import org.gudelker.tokenstream.TokenStream
 
 class BooleanExpressionParRule(
     private val expressionRule: SyntaxParRule,
-    private val comparisonOperators: Set<String> = setOf("==", "!=", "<", ">", "<=", ">="),
+    private val comparisonOperators: Map<String, () -> Comparator> = emptyMap(),
 ) : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {
         return expressionRule.matches(tokenStream)
@@ -46,10 +40,10 @@ class BooleanExpressionParRule(
         val currentToken = stream.current()
 
         return if (currentToken?.getType() == TokenType.COMPARATOR &&
-            currentToken.getValue() in comparisonOperators
+            currentToken.getValue() in comparisonOperators.keys
         ) {
             val comparator =
-                createComparator(currentToken.getValue())
+                comparisonOperators[currentToken.getValue()]?.invoke()
                     ?: return ParseResult(
                         ParserSyntaxError("Comparador no válido: ${currentToken.getValue()}"),
                         stream,
@@ -69,23 +63,9 @@ class BooleanExpressionParRule(
                     right = rightResult.parserResult.getStatement() as ExpressionStatement,
                 )
 
-            // Recursivamente continuar parseando más comparadores
             parseComparisonContinuation(booleanExpression, rightResult.tokenStream)
         } else {
-            // No hay más comparadores, devolver la expresión actual
             ParseResult(ValidStatementParserResult(leftExpression), stream)
-        }
-    }
-
-    private fun createComparator(operatorValue: String): Comparator? {
-        return when (operatorValue) {
-            "==" -> Equals()
-            "!=" -> NotEquals()
-            "<" -> Lesser()
-            ">" -> Greater()
-            "<=" -> LesserEquals()
-            ">=" -> GreaterEquals()
-            else -> null
         }
     }
 }
