@@ -1,6 +1,7 @@
 package org.gudelker
 
 import org.gudelker.rules.AssignationTokenizer
+import org.gudelker.rules.BooleanTokenizer
 import org.gudelker.rules.BooleanTypeTokenizer
 import org.gudelker.rules.BracketTokenizer
 import org.gudelker.rules.ColonTokenizer
@@ -62,6 +63,7 @@ object LexerFactory {
                     IfTokenizer(),
                     ComparatorTokenizer(),
                     ElseTokenizer(),
+                    BooleanTokenizer(),
                 )
             val listV2: List<RuleTokenizer> = newTokenizers + listOfRules
             return DefaultLexer(listV2)

@@ -17,9 +17,4 @@ object Analyzer {
         }
         throw IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}")
     }
-
-    private fun checkVersion(
-        list: List<Evaluator<out Any>>,
-        version: String,
-    ) {}
 }

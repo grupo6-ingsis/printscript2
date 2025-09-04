@@ -1,4 +1,4 @@
-package org.gudelker.smtposition
+package org.gudelker.stmtposition
 
 data class StatementPosition(
     val startLine: Int,

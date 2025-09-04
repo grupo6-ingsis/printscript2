@@ -23,7 +23,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)
@@ -42,7 +42,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)
@@ -66,7 +66,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)
@@ -85,7 +85,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)
@@ -106,7 +106,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)
@@ -127,7 +127,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)
@@ -146,7 +146,7 @@ class ErrorTests {
             )
 
         val tokenStream = TokenStream(tokens)
-        val parser = DefaultParserFactory.createParser(tokenStream, Version.V1)
+        val parser = DefaultParserFactory.createParser(Version.V1)
         val result = parser.parse(tokenStream)
 
         assertTrue(result is ParserSyntaxError)

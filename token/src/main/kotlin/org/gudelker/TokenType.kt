@@ -22,6 +22,8 @@ enum class TokenType {
     OPEN_BRACKET,
     CLOSE_BRACKET,
     COMPARATOR, // <, >, <=, >=, ==, !=
+
+    BOOLEAN, // true, false
     IF_KEYWORD, // if
     ELSE_KEYWORD, // else
 

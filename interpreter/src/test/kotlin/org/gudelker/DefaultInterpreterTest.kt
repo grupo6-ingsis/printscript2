@@ -4,8 +4,8 @@ import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
-import org.gudelker.smtposition.ComboValuePosition
-import org.gudelker.smtposition.StatementPosition
+import org.gudelker.stmtposition.ComboValuePosition
+import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -356,5 +356,31 @@ class DefaultInterpreterTest {
         assertEquals(2, result.size)
         assertEquals(Unit, result[0])
         assertEquals(-25.0, result[1])
+    }
+
+    @Test
+    fun `p`() {
+        val statements =
+            listOf(
+                VariableDeclaration(
+                    ComboValuePosition(
+                        "let",
+                        StatementPosition(1, 1, 1, 1),
+                    ),
+                    "x",
+                    null,
+                    Binary(
+                        LiteralNumber(ComboValuePosition(6, StatementPosition(1, 5, 1, 5))),
+                        AdditionOperator(),
+                        LiteralString(ComboValuePosition("hola", StatementPosition(1, 9, 1, 9))),
+                    ),
+                ),
+            )
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val result = interpreter.interpret(statements)
+        println(result[0])
+        assertEquals(1, result.size)
+        assertEquals(42.0, result[0])
     }
 }
