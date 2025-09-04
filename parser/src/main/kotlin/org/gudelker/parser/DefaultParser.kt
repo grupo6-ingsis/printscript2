@@ -6,13 +6,13 @@ import org.gudelker.result.ParserResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.Valid
 import org.gudelker.result.ValidStatementParserResult
-import org.gudelker.rule.SyntaxRule
+import org.gudelker.rule.SyntaxParRule
 import org.gudelker.tokenstream.TokenStream
 
 class DefaultParser(
 //    private val tokenStream: TokenStream,
 //    private val root: List<Statement>,
-    private val rules: List<SyntaxRule>,
+    private val rules: List<SyntaxParRule>,
 ) : Parser {
     override fun parse(tokenStream: TokenStream): ParserResult {
         return parseRecursive(tokenStream, emptyList())

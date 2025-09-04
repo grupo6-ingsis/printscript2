@@ -1,10 +1,10 @@
 package org.gudelker
 
-import org.gudelker.rules.Rule
+import org.gudelker.rules.FormatterRule
 
 interface Formatter {
     fun format(
         statement: Statement,
-        rules: Map<String, Rule>,
+        rules: Map<String, FormatterRule>,
     ): String
 }

@@ -10,7 +10,15 @@ class BooleanTokenizer : RuleTokenizer {
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return (actualWord == "true" || actualWord == "false") && (nextChar == null || nextChar.isWhitespace() || nextChar == ',' || nextChar == ';' || nextChar == ')')
+        return (
+            actualWord == "true" ||
+                actualWord == "false"
+        ) &&
+            (
+                nextChar == null || nextChar.isWhitespace() ||
+                    nextChar == ',' ||
+                    nextChar == ';' || nextChar == ')'
+            )
     }
 
     override fun generateToken(

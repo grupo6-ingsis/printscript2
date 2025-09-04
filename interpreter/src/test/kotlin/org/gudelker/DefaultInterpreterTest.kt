@@ -81,7 +81,7 @@ class DefaultInterpreterTest {
             listOf(
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
-                    "x",
+                    ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 5, 1, 5))),
                 ),
@@ -100,7 +100,7 @@ class DefaultInterpreterTest {
             listOf(
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
-                    "x",
+                    ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 5, 1, 5))),
                 ),
@@ -121,7 +121,7 @@ class DefaultInterpreterTest {
             listOf(
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
-                    "x",
+                    ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(10.0, StatementPosition(1, 5, 1, 5))),
                 ),
@@ -167,7 +167,10 @@ class DefaultInterpreterTest {
     fun `should interpret callable println`() {
         val statements =
             listOf(
-                Callable("println", LiteralString(ComboValuePosition("Hello, World!", StatementPosition(1, 1, 1, 1)))),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
+                    LiteralString(ComboValuePosition("Hello, World!", StatementPosition(1, 1, 1, 1))),
+                ),
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
@@ -183,13 +186,13 @@ class DefaultInterpreterTest {
             listOf(
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
-                    "x",
+                    ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 5, 1, 5))),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(2, 1, 2, 1)),
-                    "y",
+                    ComboValuePosition("y", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(3.0, StatementPosition(2, 5, 2, 5))),
                 ),
@@ -255,13 +258,13 @@ class DefaultInterpreterTest {
             listOf(
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
-                    "dividend",
+                    ComboValuePosition("dividend", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(20.0, StatementPosition(1, 5, 1, 5))),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(2, 1, 2, 1)),
-                    "divisor",
+                    ComboValuePosition("divisor", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(4.0, StatementPosition(2, 5, 2, 5))),
                 ),
@@ -340,7 +343,7 @@ class DefaultInterpreterTest {
             listOf(
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
-                    "x",
+                    ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(-25.0, StatementPosition(1, 5, 1, 5))),
                 ),
@@ -356,31 +359,5 @@ class DefaultInterpreterTest {
         assertEquals(2, result.size)
         assertEquals(Unit, result[0])
         assertEquals(-25.0, result[1])
-    }
-
-    @Test
-    fun `p`() {
-        val statements =
-            listOf(
-                VariableDeclaration(
-                    ComboValuePosition(
-                        "let",
-                        StatementPosition(1, 1, 1, 1),
-                    ),
-                    "x",
-                    null,
-                    Binary(
-                        LiteralNumber(ComboValuePosition(6, StatementPosition(1, 5, 1, 5))),
-                        AdditionOperator(),
-                        LiteralString(ComboValuePosition("hola", StatementPosition(1, 9, 1, 9))),
-                    ),
-                ),
-            )
-
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
-        println(result[0])
-        assertEquals(1, result.size)
-        assertEquals(42.0, result[0])
     }
 }

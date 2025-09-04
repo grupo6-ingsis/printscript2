@@ -1,11 +1,11 @@
 package org.gudelker.utils
 
-import org.gudelker.rules.Rule
+import org.gudelker.rules.FormatterRule
 
 object FormatterUtils {
     fun getDeclarationSpaces(
         ruleName: String,
-        map: Map<String, Rule>,
+        map: Map<String, FormatterRule>,
     ): String {
         return if (map.containsKey(ruleName) && map[ruleName]!!.on) {
             generateSpaces(map[ruleName]!!.quantity)
@@ -16,7 +16,7 @@ object FormatterUtils {
 
     fun getAssignationSpaces(
         ruleName: String,
-        map: Map<String, Rule>,
+        map: Map<String, FormatterRule>,
     ): String {
         return if (map.containsKey(ruleName) && map[ruleName]!!.on) {
             generateSpaces(map[ruleName]!!.quantity)
@@ -31,7 +31,7 @@ object FormatterUtils {
 
     fun generateNewLines(
         ruleName: String,
-        map: Map<String, Rule>,
+        map: Map<String, FormatterRule>,
     ): String {
         return if (map.containsKey(ruleName) && map[ruleName]!!.on) {
             "\n".repeat(map[ruleName]!!.quantity)

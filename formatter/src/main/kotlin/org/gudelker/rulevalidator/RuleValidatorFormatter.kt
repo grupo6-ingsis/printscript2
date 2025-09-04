@@ -1,14 +1,14 @@
 package org.gudelker.rulevalidator
 
 import org.gudelker.Statement
-import org.gudelker.rules.Rule
+import org.gudelker.rules.FormatterRule
 
 interface RuleValidatorFormatter {
-    fun matches(ruleMap: Map<String, Rule>): Boolean
+    fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean
 
     fun applyRule(
         string: String,
         statement: Statement,
-        ruleMap: Map<String, Rule>,
+        formatterRuleMap: Map<String, FormatterRule>,
     ): String
 }

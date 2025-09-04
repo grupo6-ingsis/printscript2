@@ -12,7 +12,7 @@ class CallableEvaluator : Evaluator<Any> {
         return when (statement) {
             is Callable -> {
                 val argumentResult = Analyzer.analyze(statement.expression, context, evaluators)
-                when (statement.functionName) {
+                when (statement.functionName.value) {
                     "println" -> {
                         println(argumentResult.value)
                         EvaluationResult(Unit, argumentResult.context)

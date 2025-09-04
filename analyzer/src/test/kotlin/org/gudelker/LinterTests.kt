@@ -1,18 +1,22 @@
 package org.gudelker
 
-import org.example.org.gudelker.rulelinter.CamelCaseRule
-import org.gudelker.analyzers.BinaryExpressionAnalyzer
-import org.gudelker.analyzers.CallableAnalyzer
-import org.gudelker.analyzers.GroupingExpressionAnalyzer
-import org.gudelker.analyzers.LiteralNumberAnalyzer
-import org.gudelker.analyzers.UnaryExpressionAnalyzer
-import org.gudelker.analyzers.VariableDeclarationAnalyzer
-import org.gudelker.analyzers.VariableReassginationAnalyzer
+import org.gudelker.analyzers.BinaryExpressionLintAnalyzer
+import org.gudelker.analyzers.CallableLintAnalyzer
+import org.gudelker.analyzers.GroupingExpressionLintAnalyzer
+import org.gudelker.analyzers.LiteralIdentifierLintAnalyzer
+import org.gudelker.analyzers.LiteralNumberLintAnalyzer
+import org.gudelker.analyzers.LiteralStringLintAnalyzer
+import org.gudelker.analyzers.UnaryExpressionLintAnalyzer
+import org.gudelker.analyzers.VariableDeclarationLintAnalyzer
+import org.gudelker.analyzers.VariableReassginationLintAnalyzer
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.result.LintViolation
+import org.gudelker.rulelinter.CamelCaseRule
 import org.gudelker.rulelinter.RestrictPrintLnExpressions
 import org.gudelker.rulelinter.SnakeCaseRule
+import org.gudelker.stmtposition.ComboValuePosition
+import org.gudelker.stmtposition.StatementPosition
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -26,8 +30,8 @@ class LinterTests {
     fun setup() {
         val analyzers =
             listOf(
-                VariableDeclarationAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
-                CallableAnalyzer(
+                VariableDeclarationLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
                             listOf(
@@ -38,18 +42,26 @@ class LinterTests {
                         ),
                     ),
                 ),
-                LiteralNumberAnalyzer(emptyList()),
-                BinaryExpressionAnalyzer(emptyList()),
-                UnaryExpressionAnalyzer(emptyList()),
-                GroupingExpressionAnalyzer(emptyList()),
-                VariableReassginationAnalyzer(emptyList()),
+                LiteralNumberLintAnalyzer(emptyList()),
+                BinaryExpressionLintAnalyzer(emptyList()),
+                UnaryExpressionLintAnalyzer(emptyList()),
+                GroupingExpressionLintAnalyzer(emptyList()),
+                VariableReassginationLintAnalyzer(emptyList()),
+                LiteralStringLintAnalyzer(emptyList()),
+                LiteralIdentifierLintAnalyzer(emptyList()),
             )
         linter = DefaultLinter(analyzers)
     }
 
     @Test
     fun `valid camelCase identifier passes`() {
-        val stmt = VariableDeclaration("let", "myVar", "number", LiteralNumber(1))
+        val stmt =
+            VariableDeclaration(
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("myVar", StatementPosition(1, 5, 1, 9)),
+                "Number",
+                LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
+            )
         val rules =
             mapOf(
                 "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = false),
@@ -63,8 +75,24 @@ class LinterTests {
     fun `snake_case variable and println with expression argument yields only one violation`() {
         val stmts =
             listOf(
-                VariableDeclaration("let", "my_var", "number", LiteralNumber(1)),
-                Callable("println", Binary(LiteralNumber(1), AdditionOperator("+"), LiteralNumber(2))),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
+                    "Number",
+                    LiteralNumber(
+                        ComboValuePosition(1, StatementPosition(1, 1, 1, 1)),
+                    ),
+                ),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
+                    Binary(
+                        LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
+                        AdditionOperator("+"),
+                        LiteralNumber(
+                            ComboValuePosition(2, StatementPosition(2, 2, 2, 2)),
+                        ),
+                    ),
+                ),
             )
         val rules =
             mapOf(
@@ -78,7 +106,15 @@ class LinterTests {
 
     @Test
     fun `valid snake_case identifier fails when config is camelCase`() {
-        val stmt = VariableDeclaration("let", "my_var", "number", LiteralNumber(1))
+        val stmt =
+            VariableDeclaration(
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
+                "Number",
+                LiteralNumber(
+                    ComboValuePosition(1, StatementPosition(1, 1, 1, 1)),
+                ),
+            )
         val rules =
             mapOf(
                 "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
@@ -90,7 +126,11 @@ class LinterTests {
 
     @Test
     fun `println with literal argument passes when restrictPrintlnExpressions is true`() {
-        val stmt = Callable("println", LiteralNumber(42))
+        val stmt =
+            Callable(
+                ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
+                LiteralNumber(ComboValuePosition(42, StatementPosition(1, 3, 1, 3))),
+            )
         val rules =
             mapOf(
                 "camelCase" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
@@ -104,9 +144,30 @@ class LinterTests {
     fun `multiple variable declarations with mixed formats yield correct violations`() {
         val stmts =
             listOf(
-                VariableDeclaration("let", "myVar", "number", LiteralNumber(1)),
-                VariableDeclaration("let", "my_var", "number", LiteralNumber(2)),
-                VariableDeclaration("let", "anotherVar", "number", LiteralNumber(3)),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("myVar", StatementPosition(1, 5, 1, 9)),
+                    "Number",
+                    LiteralNumber(
+                        ComboValuePosition(1, StatementPosition(1, 1, 1, 1)),
+                    ),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
+                    "Number",
+                    LiteralNumber(
+                        ComboValuePosition(2, StatementPosition(2, 2, 2, 2)),
+                    ),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("anotherVar", StatementPosition(1, 5, 1, 9)),
+                    "Number",
+                    LiteralNumber(
+                        ComboValuePosition(2, StatementPosition(2, 2, 2, 2)),
+                    ),
+                ),
             )
         val rules =
             mapOf(
@@ -134,8 +195,18 @@ class LinterTests {
     fun `covers VariableDeclaration, LiteralNumber, and Callable analyzers`() {
         val stmts =
             listOf(
-                VariableDeclaration("let", "myVar", "number", LiteralNumber(1)),
-                Callable("println", LiteralNumber(2)),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("myVar", StatementPosition(1, 5, 1, 9)),
+                    "Number",
+                    LiteralNumber(
+                        ComboValuePosition(1, StatementPosition(1, 1, 1, 1)),
+                    ),
+                ),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
+                    LiteralNumber(ComboValuePosition(2, StatementPosition(2, 2, 2, 2))),
+                ),
             )
         val config =
             mapOf(
@@ -150,9 +221,15 @@ class LinterTests {
     fun `covers Binary, Unary, and Grouping analyzers`() {
         val stmts =
             listOf(
-                Binary(LiteralNumber(1), AdditionOperator(), LiteralNumber(2)),
-                Unary(LiteralNumber(3), MinusOperator()),
-                Grouping("(", LiteralNumber(4), ")"),
+                Binary(
+                    LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
+                    AdditionOperator(),
+                    LiteralNumber(
+                        ComboValuePosition(2, StatementPosition(2, 2, 2, 2)),
+                    ),
+                ),
+                Unary(LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))), MinusOperator()),
+                Grouping("(", LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))), ")"),
             )
         val config =
             mapOf(
@@ -167,7 +244,10 @@ class LinterTests {
     fun `covers VariableReassignment analyzer`() {
         val stmts =
             listOf(
-                VariableReassignment("myVar", LiteralNumber(5)),
+                VariableReassignment(
+                    ComboValuePosition("myVar", StatementPosition(1, 1, 1, 1)),
+                    LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
+                ),
             )
         val config =
             mapOf(
@@ -176,5 +256,66 @@ class LinterTests {
             )
         val result = linter.lint(StatementStream(stmts), config)
         assertTrue(result.results.isEmpty())
+    }
+
+    @Test
+    fun `full analyzer and rule coverage`() {
+        val stmts =
+            listOf(
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("validCamel", StatementPosition(1, 5, 1, 9)),
+                    "Number",
+                    LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(2, 1, 2, 1)),
+                    ComboValuePosition("invalid_snake", StatementPosition(2, 5, 2, 9)),
+                    "Number",
+                    LiteralNumber(ComboValuePosition(2, StatementPosition(2, 2, 2, 2))),
+                ),
+                VariableReassignment(
+                    ComboValuePosition("validCamel", StatementPosition(3, 1, 3, 1)),
+                    LiteralNumber(ComboValuePosition(3, StatementPosition(3, 3, 3, 3))),
+                ),
+                LiteralNumber(ComboValuePosition(4, StatementPosition(4, 1, 4, 1))),
+                LiteralString(ComboValuePosition("test", StatementPosition(5, 1, 5, 1))),
+                LiteralIdentifier(ComboValuePosition("validCamel", StatementPosition(6, 1, 6, 1))),
+                Binary(
+                    LiteralNumber(ComboValuePosition(5, StatementPosition(7, 1, 7, 1))),
+                    AdditionOperator(),
+                    LiteralNumber(ComboValuePosition(6, StatementPosition(7, 2, 7, 2))),
+                ),
+                Unary(
+                    LiteralNumber(ComboValuePosition(7, StatementPosition(8, 1, 8, 1))),
+                    MinusOperator(),
+                ),
+                Grouping(
+                    "(",
+                    LiteralNumber(ComboValuePosition(8, StatementPosition(9, 1, 9, 1))),
+                    ")",
+                ),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(10, 2, 10, 4)),
+                    LiteralString(ComboValuePosition("allowed", StatementPosition(10, 3, 10, 3))),
+                ),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(11, 2, 11, 4)),
+                    Binary(
+                        LiteralNumber(ComboValuePosition(9, StatementPosition(11, 1, 11, 1))),
+                        AdditionOperator(),
+                        LiteralNumber(ComboValuePosition(10, StatementPosition(11, 2, 11, 2))),
+                    ),
+                ),
+            )
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+        val result = linter.lint(StatementStream(stmts), rules)
+        // Should have violations for snake_case variable and println with expression argument
+        assertTrue(result.results.size >= 2)
+        assertTrue(result.results.any { it is LintViolation })
     }
 }

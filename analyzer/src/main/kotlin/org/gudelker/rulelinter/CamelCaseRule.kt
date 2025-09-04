@@ -1,4 +1,4 @@
-package org.example.org.gudelker.rulelinter
+package org.gudelker.rulelinter
 
 import org.gudelker.LinterConfig
 import org.gudelker.Statement
@@ -6,7 +6,6 @@ import org.gudelker.VariableDeclaration
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 import org.gudelker.result.ValidLint
-import org.gudelker.rulelinter.RuleLinter
 
 class CamelCaseRule : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {
@@ -16,10 +15,13 @@ class CamelCaseRule : RuleLinter {
     override fun validate(statement: Statement): LinterResult {
         val statement = statement as VariableDeclaration
         val camelCaseRegex = "^[a-z]+(?:[A-Z][a-z]*)*$".toRegex()
-        val isValid = camelCaseRegex.matches(statement.identifier)
+        val isValid = camelCaseRegex.matches(statement.identifierCombo.value)
         if (!isValid) {
-            return LintViolation("LintViolation(\"Variable name '${statement.identifier}' does not match camelCase format\")")
+            return LintViolation(
+                "LintViolation(\"Variable name '${statement.identifierCombo.value}' does not match camelCase format\")",
+                statement.identifierCombo.position,
+            )
         }
-        return ValidLint("Variable name '${statement.identifier}' matches camelCase format")
+        return ValidLint("Variable name '${statement.identifierCombo.value}' matches camelCase format")
     }
 }

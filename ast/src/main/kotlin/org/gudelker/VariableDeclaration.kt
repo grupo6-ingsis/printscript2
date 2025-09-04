@@ -4,7 +4,7 @@ import org.gudelker.stmtposition.ComboValuePosition
 
 data class VariableDeclaration(
     val keywordCombo: ComboValuePosition<String>,
-    val identifier: String,
+    val identifierCombo: ComboValuePosition<String>,
     val type: String?,
     val value: ExpressionStatement,
 ) : VariableStatement
