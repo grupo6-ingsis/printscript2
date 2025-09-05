@@ -23,17 +23,10 @@ class DefaultLexer(
             val updatedWord = actualWord + newChar
             val nextChar = sourceReader.peek()
 
-            val updatedPos =
-                if (nextCharIsNewLine(nextChar)) {
-                    advancePosition(startPos, nextChar)
-                } else {
-                    startPos
-                }
-
             val matchingRule = rules.firstOrNull { it.matches(updatedWord, nextChar) }
 
             return if (matchingRule != null) {
-                val posWithNewOffset = changingOffSet(updatedPos, updatedWord)
+                val posWithNewOffset = changingOffSet(startPos, updatedWord)
                 val pos = posWithNewOffset.copy()
                 val newTokens = matchingRule.generateToken(tokensList, updatedWord, pos)
                 val lastToken = newTokens.last()
@@ -43,7 +36,7 @@ class DefaultLexer(
                     lexRecursive("", newTokens, advancePosition(posWithNewOffset, nextChar))
                 }
             } else {
-                lexRecursive(updatedWord, tokensList, updatedPos)
+                lexRecursive(updatedWord, tokensList, startPos)
             }
         }
 
@@ -57,7 +50,8 @@ class DefaultLexer(
         when (char) {
             '\n', '\r' ->
                 position.copy(
-                    endOffset = -1,
+                    startOffset = position.endOffset + 1,
+                    endOffset = position.endOffset + 1,
                     startLine = position.endLine + 1,
                     startColumn = 0,
                     endColumn = 0,

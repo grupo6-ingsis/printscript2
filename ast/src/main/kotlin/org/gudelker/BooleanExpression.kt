@@ -4,6 +4,6 @@ import org.gudelker.comparator.Comparator
 
 data class BooleanExpression(
     val left: ExpressionStatement,
-    val operator: Comparator,
+    val comparator: Comparator,
     val right: ExpressionStatement,
 ) : BooleanExpressionStatement

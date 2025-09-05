@@ -246,8 +246,8 @@ class IntegrationTest {
         val result = processCodeV2(code)
 
         assertEquals(2, result.size)
-        assertEquals(Unit, result[0]) // let x = 10
-        assertEquals(Unit, result[1]) // conditional result
+        assertEquals(Unit, result[0])
+        assertEquals(Unit, result[1])
     }
 
     @Test
@@ -284,6 +284,23 @@ class IntegrationTest {
         assertEquals(Unit, result[0]) // declaración inicial
         assertEquals(Unit, result[1]) // reasignación
         assertEquals(Unit, result[2]) // valor final
+    }
+
+    @Test
+    fun `should process with boolean statement without else`() {
+        val code =
+            """
+            let y = true;
+            if (y) {
+                println("Y is true");
+            }
+            """.trimIndent()
+
+        val result = processCodeV2(code)
+
+        assertEquals(2, result.size)
+        assertEquals(Unit, result[0]) // let y = 3
+        assertEquals(Unit, result[1]) // conditional with multiple statements
     }
 
     private fun processCodeV2(code: String): List<Any?> {
