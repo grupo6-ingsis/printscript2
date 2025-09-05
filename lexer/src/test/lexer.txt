@@ -1,2 +1,2 @@
-let 34 "boca" : = astring  == Hello=World;
+let 34 "boca" : = astring  = Hello=World;
 println(x);
