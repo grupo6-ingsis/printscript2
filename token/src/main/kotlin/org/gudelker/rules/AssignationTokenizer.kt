@@ -10,7 +10,7 @@ class AssignationTokenizer : RuleTokenizer {
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return actualWord == "="
+        return actualWord == "=" && (nextChar != '=')
     }
 
     override fun generateToken(

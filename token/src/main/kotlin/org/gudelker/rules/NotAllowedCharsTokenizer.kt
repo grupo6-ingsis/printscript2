@@ -7,12 +7,14 @@ import org.gudelker.components.org.gudelker.TokenType
 
 class NotAllowedCharsTokenizer(
     private val notAllowedChars: Set<Char>,
+    private val notAllowedWords: Set<String>,
 ) : RuleTokenizer {
     override fun matches(
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return actualWord.length == 1 && actualWord[0] in notAllowedChars
+        return actualWord.length == 1 && actualWord[0] in notAllowedChars ||
+            actualWord in notAllowedWords
     }
 
     override fun generateToken(

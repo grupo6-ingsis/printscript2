@@ -61,6 +61,7 @@ object LexerFactory {
                                 '@', '#', '$', '%', '^', '&', '`', '~',
                                 '|', '{', '}', '[', ']', '>', '<', '!',
                             ),
+                            setOf("=="),
                         ),
                     )
                 val listOfRulesV1 = listOfRules + notAllowed
@@ -74,6 +75,7 @@ object LexerFactory {
                                 '@', '#', '$', '%', '^', '&',
                                 '`', '~', '|', '[', ']',
                             ),
+                            emptySet(),
                         ),
                     )
                 val newTokenizers: List<RuleTokenizer> =
