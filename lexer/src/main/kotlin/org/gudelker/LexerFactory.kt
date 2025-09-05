@@ -15,6 +15,7 @@ import org.gudelker.rules.IfTokenizer
 import org.gudelker.rules.IntegerTokenizer
 import org.gudelker.rules.LetTokenizer
 import org.gudelker.rules.NewLineTokenizer
+import org.gudelker.rules.NotAllowedCharsTokenizer
 import org.gudelker.rules.NotLineAfterSemicolonTokenizer
 import org.gudelker.rules.NotSpaceOperationTokenizer
 import org.gudelker.rules.NumberTypeTokenizer
@@ -51,24 +52,44 @@ object LexerFactory {
                 IntegerTokenizer(),
                 ParenthesisTokenizer(),
             )
-        if (version == Version.V1) {
-            return DefaultLexer(listOfRules)
-        } else if (version == Version.V2) {
-            val newTokenizers: List<RuleTokenizer> =
-                listOf(
-                    ConstTokenizer(),
-                    EqualComparativeTokenizer(),
-                    BracketTokenizer(),
-                    BooleanTypeTokenizer(),
-                    IfTokenizer(),
-                    ComparatorTokenizer(),
-                    ElseTokenizer(),
-                    BooleanTokenizer(),
-                )
-            val listV2: List<RuleTokenizer> = newTokenizers + listOfRules
-            return DefaultLexer(listV2)
-        } else {
-            throw IllegalArgumentException("Versión no soportada: $version")
+        when (version) {
+            Version.V1 -> {
+                val notAllowed =
+                    listOf(
+                        NotAllowedCharsTokenizer(
+                            setOf(
+                                '@', '#', '$', '%', '^', '&', '`', '~',
+                                '|', '{', '}', '[', ']', '>', '<', '!',
+                            ),
+                        ),
+                    )
+                val listOfRulesV1 = listOfRules + notAllowed
+                return DefaultLexer(listOfRulesV1)
+            }
+            Version.V2 -> {
+                val notAllowed =
+                    listOf(
+                        NotAllowedCharsTokenizer(
+                            setOf(
+                                '@', '#', '$', '%', '^', '&',
+                                '`', '~', '|', '[', ']',
+                            ),
+                        ),
+                    )
+                val newTokenizers: List<RuleTokenizer> =
+                    listOf(
+                        ConstTokenizer(),
+                        EqualComparativeTokenizer(),
+                        BracketTokenizer(),
+                        BooleanTypeTokenizer(),
+                        IfTokenizer(),
+                        ComparatorTokenizer(),
+                        ElseTokenizer(),
+                        BooleanTokenizer(),
+                    )
+                val listV2: List<RuleTokenizer> = newTokenizers + listOfRules + notAllowed
+                return DefaultLexer(listV2)
+            }
         }
     }
 }

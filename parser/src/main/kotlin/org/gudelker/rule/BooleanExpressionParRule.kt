@@ -59,7 +59,7 @@ class BooleanExpressionParRule(
             val booleanExpression =
                 BooleanExpression(
                     left = leftExpression,
-                    operator = comparator,
+                    comparator = comparator,
                     right = rightResult.parserResult.getStatement() as ExpressionStatement,
                 )
 

@@ -21,16 +21,16 @@ class BooleanExpressionEvaluator(
         return when (statement) {
             is BooleanExpression -> {
                 if (supportedComparators.isNotEmpty() &&
-                    !supportedComparators.contains(statement.operator::class.java)
+                    !supportedComparators.contains(statement.comparator::class.java)
                 ) {
-                    throw UnsupportedOperationException("Comparador no soportado: ${statement.operator::class.simpleName}")
+                    throw UnsupportedOperationException("Comparador no soportado: ${statement.comparator::class.simpleName}")
                 }
 
                 val leftResult = Analyzer.analyze(statement.left, context, evaluators)
                 val rightResult = Analyzer.analyze(statement.right, leftResult.context, evaluators)
 
                 val result =
-                    when (statement.operator) {
+                    when (statement.comparator) {
                         is Equals -> performEquals(leftResult.value, rightResult.value)
                         is NotEquals -> performNotEquals(leftResult.value, rightResult.value)
                         is Greater -> performGreater(leftResult.value, rightResult.value)

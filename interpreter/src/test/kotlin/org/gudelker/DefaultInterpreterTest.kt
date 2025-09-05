@@ -1,6 +1,11 @@
 package org.gudelker
 
+import org.gudelker.comparator.Equals
 import org.gudelker.comparator.Greater
+import org.gudelker.comparator.GreaterEquals
+import org.gudelker.comparator.Lesser
+import org.gudelker.comparator.LesserEquals
+import org.gudelker.comparator.NotEquals
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
@@ -185,8 +190,8 @@ class DefaultInterpreterTest {
     fun `should interpret complex expression with variables`() {
         val statements =
             listOf(
-                VariableDeclaration(
-                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ConstDeclaration(
+                    ComboValuePosition("const", StatementPosition(1, 1, 1, 1)),
                     ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
                     null,
                     LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 5, 1, 5))),
@@ -204,7 +209,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
         val result = interpreter.interpret(statements)
 
         assertEquals(3, result.size)
@@ -371,7 +376,7 @@ class DefaultInterpreterTest {
                     condition =
                         BooleanExpression(
                             left = LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 5, 1, 5))),
-                            operator = Greater(),
+                            comparator = Lesser(),
                             right = LiteralNumber(ComboValuePosition(3.0, StatementPosition(1, 9, 1, 9))),
                         ),
                     ifBody =
@@ -389,7 +394,7 @@ class DefaultInterpreterTest {
         val result = interpreter.interpret(statements)
 
         assertEquals(1, result.size)
-        assertEquals(42.0, result[0])
+        assertEquals(0.0, result[0])
     }
 
     @Test
@@ -401,7 +406,7 @@ class DefaultInterpreterTest {
                     condition =
                         BooleanExpression(
                             left = LiteralNumber(ComboValuePosition(2.0, StatementPosition(1, 5, 1, 5))),
-                            operator = Greater(),
+                            comparator = Greater(),
                             right = LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 9, 1, 9))),
                         ),
                     ifBody =
@@ -420,5 +425,76 @@ class DefaultInterpreterTest {
 
         assertEquals(1, result.size)
         assertEquals("false path", result[0])
+    }
+
+    @Test
+    fun `should evaluate equals with same numbers`() {
+        val statement =
+            BooleanExpression(
+                LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 1, 1, 1))),
+                LesserEquals(),
+                LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 1, 1, 1))),
+            )
+        val statements = listOf(statement)
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val result = interpreter.interpret(statements)
+
+        assertEquals(1, result.size)
+        assertEquals(true, result[0])
+    }
+
+    @Test
+    fun `should evaluate equals with different numbers`() {
+        val statement =
+            BooleanExpression(
+                LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 1, 1, 1))),
+                Equals(),
+                LiteralNumber(ComboValuePosition(3.0, StatementPosition(1, 1, 1, 1))),
+            )
+
+        val statements = listOf(statement)
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val result = interpreter.interpret(statements)
+
+        assertEquals(1, result.size)
+        assertEquals(false, result[0])
+    }
+
+    @Test
+    fun `should evaluate not equals with different values`() {
+        val statement =
+            BooleanExpression(
+                LiteralString(ComboValuePosition("hello", StatementPosition(1, 1, 1, 1))),
+                NotEquals(),
+                LiteralString(ComboValuePosition("world", StatementPosition(1, 1, 1, 1))),
+            )
+
+        val statements = listOf(statement)
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val result = interpreter.interpret(statements)
+
+        assertEquals(1, result.size)
+        assertEquals(true, result[0])
+    }
+
+    @Test
+    fun `should throw exception for unsupported comparator`() {
+        val statement =
+            BooleanExpression(
+                LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 1, 1, 1))),
+                GreaterEquals(),
+                LiteralNumber(ComboValuePosition(3.0, StatementPosition(1, 1, 1, 1))),
+            )
+
+        val statements = listOf(statement)
+
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val result = interpreter.interpret(statements)
+
+        assertEquals(1, result.size)
+        assertEquals(true, result[0])
     }
 }

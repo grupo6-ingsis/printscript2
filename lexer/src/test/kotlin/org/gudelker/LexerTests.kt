@@ -31,7 +31,6 @@ class LexerTests {
 
     @Test
     fun `test token rules with if`() {
-        // Se buguea no más el parser me va a tirar el error
         val reader = FileSourceReader("src/test/lexer2.txt")
         when (val tokens = lexerV1.lex(reader)) {
             is ValidTokens ->
@@ -43,7 +42,6 @@ class LexerTests {
 
     @Test
     fun `test token rules with if v2`() {
-        // Se buguea no más el parser me va a tirar el error
         val reader = FileSourceReader("src/test/lexer2.txt")
         when (val tokens = lexerV2.lex(reader)) {
             is ValidTokens ->
