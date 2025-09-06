@@ -4,6 +4,8 @@ import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.TokenResult
+import org.gudelker.result.ValidToken
 
 class ParenthesisTokenizer : RuleTokenizer {
     override fun matches(
@@ -17,12 +19,12 @@ class ParenthesisTokenizer : RuleTokenizer {
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> {
+    ): TokenResult {
         if (actualWord == "(") {
             val newList = tokens + Token(TokenType.OPEN_PARENTHESIS, actualWord, position)
-            return newList
+            return ValidToken(newList)
         }
         val newList = tokens + Token(TokenType.CLOSE_PARENTHESIS, actualWord, position)
-        return newList
+        return ValidToken(newList)
     }
 }

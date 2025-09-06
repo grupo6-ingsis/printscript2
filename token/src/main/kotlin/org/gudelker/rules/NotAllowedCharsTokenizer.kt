@@ -3,7 +3,8 @@ package org.gudelker.rules
 import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.LexerError
+import org.gudelker.result.TokenResult
 
 class NotAllowedCharsTokenizer(
     private val notAllowedChars: Set<Char>,
@@ -21,8 +22,7 @@ class NotAllowedCharsTokenizer(
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> {
-        val newList = tokens + Token(TokenType.UNKNOWN, actualWord, position)
-        return newList
+    ): TokenResult {
+        return LexerError("Character '$actualWord' is not allowed in this version", position)
     }
 }

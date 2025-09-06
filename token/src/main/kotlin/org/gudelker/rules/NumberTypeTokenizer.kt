@@ -4,6 +4,8 @@ import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.TokenResult
+import org.gudelker.result.ValidToken
 
 class NumberTypeTokenizer : RuleTokenizer {
     override fun matches(
@@ -17,9 +19,9 @@ class NumberTypeTokenizer : RuleTokenizer {
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> {
+    ): TokenResult {
         val newToken = Token(TokenType.TYPE, actualWord, position)
         val newList = tokens + newToken
-        return newList
+        return ValidToken(newList)
     }
 }

@@ -1,8 +1,10 @@
 package org.gudelker
 
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.LexerError
 import org.gudelker.result.LexerResult
 import org.gudelker.result.LexerSyntaxError
+import org.gudelker.result.ValidToken
 import org.gudelker.result.ValidTokens
 import org.gudelker.sourcereader.SourceReader
 
@@ -28,12 +30,22 @@ class DefaultLexer(
             return if (matchingRule != null) {
                 val posWithNewOffset = changingOffSet(startPos, updatedWord)
                 val pos = posWithNewOffset.copy()
-                val newTokens = matchingRule.generateToken(tokensList, updatedWord, pos)
-                val lastToken = newTokens.last()
-                if (lastToken.getType() == TokenType.UNKNOWN) {
-                    LexerSyntaxError("Syntax error in line: ${lastToken.getPosition().startLine}")
-                } else {
-                    lexRecursive("", newTokens, advancePosition(posWithNewOffset, nextChar))
+                val tokenResult = matchingRule.generateToken(tokensList, updatedWord, pos)
+
+                when (tokenResult) {
+                    is ValidToken -> {
+                        lexRecursive(
+                            "",
+                            tokenResult.tokens,
+                            advancePosition(
+                                posWithNewOffset,
+                                nextChar,
+                            ),
+                        )
+                    }
+                    is LexerError -> {
+                        LexerSyntaxError(tokenResult.errMessage + ". Error at line ${pos.startLine}")
+                    }
                 }
             } else {
                 lexRecursive(updatedWord, tokensList, startPos)
@@ -73,6 +85,4 @@ class DefaultLexer(
         position.copy(
             endOffset = position.endOffset + actualWord.length,
         )
-
-    private fun nextCharIsNewLine(nextChar: Char?) = nextChar == '\n' || nextChar == '\r'
 }

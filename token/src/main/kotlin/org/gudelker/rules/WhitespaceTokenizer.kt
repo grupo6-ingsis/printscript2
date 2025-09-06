@@ -3,6 +3,8 @@ package org.gudelker.rules
 import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
+import org.gudelker.result.TokenResult
+import org.gudelker.result.ValidToken
 
 class WhitespaceTokenizer : RuleTokenizer {
     override fun matches(
@@ -14,5 +16,5 @@ class WhitespaceTokenizer : RuleTokenizer {
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> = tokens
+    ): TokenResult = ValidToken(tokens)
 }

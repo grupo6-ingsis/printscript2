@@ -1,5 +1,7 @@
 package org.gudelker
 
+import org.gudelker.result.TokenResult
+
 interface RuleTokenizer {
     fun matches(
         actualWord: String,
@@ -10,5 +12,5 @@ interface RuleTokenizer {
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token>
+    ): TokenResult
 }

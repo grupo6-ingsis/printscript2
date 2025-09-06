@@ -1,6 +1,6 @@
-let 34 boca: boolean  = Hello=World;
+let 34 + 1 boca: boolean  = Hello=World;
 constskajsja;
-const ==
+const =
 if (x > 3) {
 println(x);
 }
