@@ -1,11 +1,12 @@
 package org.gudelker
 
 import org.gudelker.analyzers.LinterAnalyzer
+import org.gudelker.linterloader.LinterConfigLoader
 import org.gudelker.result.CompoundResult
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 
-class DefaultLinter(private val astLinters: List<LinterAnalyzer>) : Linter {
+class DefaultLinter(private val astLinters: List<LinterAnalyzer>, private val configLoader: LinterConfigLoader) : Linter {
     override fun lint(
         statementStream: StatementStream,
         ruleMap: Map<String, LinterConfig>,

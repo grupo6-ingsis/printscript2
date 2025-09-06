@@ -6,6 +6,7 @@ import org.gudelker.analyzers.LiteralNumberLintAnalyzer
 import org.gudelker.analyzers.UnaryExpressionLintAnalyzer
 import org.gudelker.analyzers.VariableDeclarationLintAnalyzer
 import org.gudelker.analyzers.VariableReassginationLintAnalyzer
+import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.rulelinter.CamelCaseRule
@@ -42,7 +43,8 @@ class MoreTests {
                 GroupingExpressionLintAnalyzer(emptyList()),
                 VariableReassginationLintAnalyzer(emptyList()),
             )
-        return DefaultLinter(analyzers)
+        val config = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
+        return DefaultLinter(analyzers, config)
     }
 
     @BeforeEach

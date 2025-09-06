@@ -9,6 +9,7 @@ import org.gudelker.analyzers.LiteralStringLintAnalyzer
 import org.gudelker.analyzers.UnaryExpressionLintAnalyzer
 import org.gudelker.analyzers.VariableDeclarationLintAnalyzer
 import org.gudelker.analyzers.VariableReassginationLintAnalyzer
+import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.result.LintViolation
@@ -50,7 +51,8 @@ class LinterTests {
                 LiteralStringLintAnalyzer(emptyList()),
                 LiteralIdentifierLintAnalyzer(emptyList()),
             )
-        linter = DefaultLinter(analyzers)
+        val configLoader = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
+        linter = DefaultLinter(analyzers, configLoader)
     }
 
     @Test
