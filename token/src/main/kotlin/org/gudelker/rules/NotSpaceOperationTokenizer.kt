@@ -3,24 +3,27 @@ package org.gudelker.rules
 import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.LexerError
+import org.gudelker.result.TokenResult
 
 class NotSpaceOperationTokenizer : RuleTokenizer {
     override fun matches(
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        val isNumber = actualWord[actualWord.length - 1].isDigit()
+        val isAdditional =
+            !actualWord[actualWord.length - 1].isWhitespace()
         val nextCharIsOperation = nextChar == '+' || nextChar == '-' || nextChar == '*' || nextChar == '/'
-        return isNumber && nextCharIsOperation
+        val isOperation = actualWord == "+" || actualWord == "-" || actualWord == "*" || actualWord == "/"
+        val nextCharIsDigit: Boolean = !(nextChar?.isWhitespace())!!
+        return (isAdditional && nextCharIsOperation) || (isOperation && nextCharIsDigit)
     }
 
     override fun generateToken(
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> {
-        val newList = tokens + Token(TokenType.UNKNOWN, actualWord, position)
-        return newList
+    ): TokenResult {
+        return LexerError("Missing space between number and operation (necessarily for this version)", position)
     }
 }

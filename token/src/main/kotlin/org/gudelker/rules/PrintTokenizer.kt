@@ -4,6 +4,8 @@ import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.TokenResult
+import org.gudelker.result.ValidToken
 
 class PrintTokenizer : RuleTokenizer {
     private val functions = setOf("println", "read")
@@ -20,7 +22,8 @@ class PrintTokenizer : RuleTokenizer {
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> {
-        return tokens + Token(TokenType.FUNCTION, actualWord, position)
+    ): TokenResult {
+        val newList = tokens + Token(TokenType.FUNCTION, actualWord, position)
+        return ValidToken(newList)
     }
 }

@@ -3,7 +3,8 @@ package org.gudelker.rules
 import org.gudelker.Position
 import org.gudelker.RuleTokenizer
 import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.result.LexerError
+import org.gudelker.result.TokenResult
 
 class ProhibitedSymbolDoubleTokenizer : RuleTokenizer {
     override fun matches(
@@ -20,8 +21,7 @@ class ProhibitedSymbolDoubleTokenizer : RuleTokenizer {
         tokens: List<Token>,
         actualWord: String,
         position: Position,
-    ): List<Token> {
-        val newList = tokens + Token(TokenType.UNKNOWN, actualWord, position)
-        return newList
+    ): TokenResult {
+        return LexerError("Unsupported format: $actualWord", position)
     }
 }
