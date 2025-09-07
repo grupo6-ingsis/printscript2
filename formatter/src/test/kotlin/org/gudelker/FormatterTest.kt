@@ -556,4 +556,33 @@ class FormatterTest {
 
         assertEquals(expected, result2)
     }
+
+    @Test
+    fun `test readInput and readEnv formatted correctly`() {
+        val statement =
+            Callable(
+                ComboValuePosition("readInput", StatementPosition(1, 1, 1, 9)),
+                LiteralString(ComboValuePosition("Enter your name:", StatementPosition(1, 1, 1, 20))),
+            )
+        val statement2 =
+            Callable(
+                ComboValuePosition("readEnv", StatementPosition(1, 1, 1, 7)),
+                LiteralString(ComboValuePosition("PATH", StatementPosition(1, 1, 1, 6))),
+            )
+        val rules =
+            mapOf(
+                "ifIndentation" to FormatterRule(on = true, quantity = 2),
+            )
+
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+
+        val result = formatter.format(statement, rules)
+        val result2 = formatter.format(statement2, rules)
+
+        val expected = "readInput(\"Enter your name:\");"
+        val expected2 = "readEnv(\"PATH\");"
+
+        assertEquals(expected, result)
+        assertEquals(expected2, result2)
+    }
 }
