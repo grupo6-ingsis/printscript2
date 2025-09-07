@@ -91,7 +91,7 @@ object LexerFactory {
                         ElseTokenizer(),
                         BooleanTokenizer(),
                         ReadInputTokenizer(),
-                        ReadEnvTokenizer()
+                        ReadEnvTokenizer(),
                     )
                 val listV2: List<RuleTokenizer> = newTokenizers + listOfRules + notAllowed
                 return DefaultLexer(listV2)
