@@ -14,6 +14,10 @@
   "println": {
     "on": true,
     "quantity": 1
+  },
+  "ifIndentation": {
+    "on": true,
+    "quantity": 1
   }
 
 }
