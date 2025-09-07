@@ -1,7 +1,9 @@
 package org.gudelker
 
 import org.gudelker.parser.DefaultParserFactory
+import org.gudelker.result.CompoundResult
 import org.gudelker.result.LexerSyntaxError
+import org.gudelker.result.LintViolation
 import org.gudelker.result.Valid
 import org.gudelker.result.ValidTokens
 import org.gudelker.rules.FormatterRule
@@ -361,6 +363,56 @@ class IntegrationTest {
         assertEquals(expectedCode, result)
     }
 
+    @Test
+    fun `should lint code with camelCase and snake_case identifiers`() {
+        val code =
+            """
+            const myConst = true;
+            let another_var = 42;
+            println(myConst);
+            """.trimIndent()
+
+        val result = lintCodeV2(code)
+        // myConst (camelCase) and another_var (snake_case) with camelCase rule: one violation
+        assert(result.results.any { it is LintViolation })
+        assertEquals(1, result.results.count { it is LintViolation })
+    }
+
+    @Test
+    fun `should lint code with multiple violations`() {
+        val code =
+            """
+            const bad_var = false;
+            let another_var = 7;
+            println(bad_var);
+            println(another_var);
+            """.trimIndent()
+
+        val result = lintCodeV2(code)
+        // bad_var and another_var (snake_case) with camelCase rule: two violations
+        assert(result.results.any { it is LintViolation })
+        assertEquals(2, result.results.count { it is LintViolation })
+    }
+
+    // File: app/src/test/kotlin/org/gudelker/IntegrationTest.kt
+
+    @Test
+    fun `should lint println allowing only literals in V2`() {
+        val code =
+            """
+            println("hello");
+            println(42);
+            println(true);
+            println(1 + 2);
+            let x = 5;
+            println(x);
+            """.trimIndent()
+
+        val result = lintCodeV2(code)
+        assert(result.results.any { it is LintViolation })
+        assertEquals(1, result.results.count { it is LintViolation })
+    }
+
     private fun formatCodeV2(code: String): String {
         // 1. Lexical Analysis
         val lexer = LexerFactory.createLexer(Version.V2)
@@ -396,6 +448,35 @@ class IntegrationTest {
                     )
 
                 return statements.joinToString("\n") { formatter.format(it, rules) }
+            }
+        }
+    }
+
+    private fun lintCodeV2(code: String): CompoundResult {
+        val lexer = LexerFactory.createLexer(Version.V2)
+        val sourceReader = StringSourceReader(code)
+        val tokenResult = lexer.lex(sourceReader)
+
+        when (tokenResult) {
+            is LexerSyntaxError -> throw RuntimeException("Lexer error: $tokenResult")
+            is ValidTokens -> {
+                val tokens = tokenResult.getList()
+                val tokenStream = TokenStream(tokens)
+                val parser = DefaultParserFactory.createParser(Version.V2)
+                val parseResult = parser.parse(tokenStream)
+
+                if (parseResult !is Valid) {
+                    throw RuntimeException("Parser error: $parseResult")
+                }
+
+                val statements = parseResult.getStatements()
+                val linter = DefaultLinterFactory.createLinter(Version.V2)
+                val rules =
+                    mapOf(
+                        "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                        "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                    )
+                return linter.lint(StatementStream(statements), rules)
             }
         }
     }
