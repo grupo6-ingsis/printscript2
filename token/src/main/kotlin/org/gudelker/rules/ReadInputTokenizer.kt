@@ -7,8 +7,8 @@ import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.TokenResult
 import org.gudelker.result.ValidToken
 
-class PrintTokenizer : RuleTokenizer {
-    private val functions = setOf("println")
+class ReadInputTokenizer : RuleTokenizer {
+    private val functions = setOf("readInput")
 
     override fun matches(
         actualWord: String,
