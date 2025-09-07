@@ -1,20 +1,4 @@
-import org.gudelker.Binary
-import org.gudelker.BooleanExpression
-import org.gudelker.Callable
-import org.gudelker.ConditionalExpression
-import org.gudelker.ConstDeclaration
-import org.gudelker.DefaultLinterFactory
-import org.gudelker.Grouping
-import org.gudelker.Linter
-import org.gudelker.LinterConfig
-import org.gudelker.LiteralBoolean
-import org.gudelker.LiteralIdentifier
-import org.gudelker.LiteralNumber
-import org.gudelker.LiteralString
-import org.gudelker.StatementStream
-import org.gudelker.Unary
-import org.gudelker.VariableDeclaration
-import org.gudelker.VariableReassignment
+package org.gudelker
 import org.gudelker.comparator.Equals
 import org.gudelker.comparator.NotEquals
 import org.gudelker.operator.AdditionOperator
@@ -27,7 +11,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class LinterTestsV2 {
+class LinterV2Test {
     private lateinit var linter: Linter
     private val rules =
         mapOf(
