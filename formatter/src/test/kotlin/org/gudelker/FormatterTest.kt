@@ -1,57 +1,18 @@
 package org.gudelker
 
-import org.gudelker.analyzer.BinaryForAnalyzer
-import org.gudelker.analyzer.CallableForAnalyzer
-import org.gudelker.analyzer.GroupingForAnalyzer
-import org.gudelker.analyzer.LiteralIdentifierForAnalyzer
-import org.gudelker.analyzer.LiteralNumberForAnalyzer
-import org.gudelker.analyzer.LiteralStringForAnalyzer
-import org.gudelker.analyzer.UnaryForAnalyzer
-import org.gudelker.analyzer.VariableDeclarationForAnalyzer
-import org.gudelker.analyzer.VariableReassignmentForAnalyzer
+import org.gudelker.comparator.Greater
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 import org.gudelker.rules.FormatterRule
-import org.gudelker.rulevalidator.SpaceAfterColon
-import org.gudelker.rulevalidator.SpaceBeforeColon
-import org.gudelker.rulevalidator.SpacesAroundAssignation
-import org.gudelker.rulevalidator.SpacesPrintln
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
+import org.gudelker.utilities.Version
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FormatterTest {
-    private fun createFormatter(): DefaultFormatter {
-        val ruleValidors =
-            listOf(
-                SpaceBeforeColon(),
-                SpaceAfterColon(),
-                SpacesAroundAssignation(),
-            )
-        return DefaultFormatter(
-            listOf(
-                VariableDeclarationForAnalyzer(
-                    ruleValidors,
-                ),
-                LiteralNumberForAnalyzer(),
-                LiteralIdentifierForAnalyzer(),
-                LiteralStringForAnalyzer(),
-                GroupingForAnalyzer(),
-                UnaryForAnalyzer(),
-                CallableForAnalyzer(
-                    listOf(SpacesPrintln()),
-                ),
-                BinaryForAnalyzer(),
-                VariableReassignmentForAnalyzer(
-                    listOf(SpacesAroundAssignation()),
-                ),
-            ),
-        )
-    }
-
     @Test
     fun `test espacio antes de dos puntos en declaracion - con espacio`() {
         val statement =
@@ -68,10 +29,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let x : Number = 5;", result)
+        assertEquals("let x : Number = 5;", result2)
     }
 
     @Test
@@ -92,10 +57,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let x: Number = 5;", result)
+        assertEquals("let x: Number = 5;", result2)
     }
 
     @Test
@@ -116,10 +85,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 0),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let y:String=\"hello\";", result)
+        assertEquals("let y:String=\"hello\";", result2)
     }
 
     @Test
@@ -140,10 +113,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let y:String = \"hello\";", result)
+        assertEquals("let y:String = \"hello\";", result2)
     }
 
     @Test
@@ -162,10 +139,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let x:Number = 10;", result)
+        assertEquals("let x:Number = 10;", result2)
     }
 
     @Test
@@ -186,10 +167,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 0),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let x:Number=10;", result)
+        assertEquals("let x:Number=10;", result2)
     }
 
     @Test
@@ -204,10 +189,14 @@ class FormatterTest {
                 "println" to FormatterRule(on = true, quantity = 0),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(printlnStatement, rules)
+        val result2 = formatter2.format(printlnStatement, rules)
 
         assertEquals("println(\"test\");", result)
+        assertEquals("println(\"test\");", result2)
     }
 
     @Test
@@ -222,10 +211,14 @@ class FormatterTest {
                 "println" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(printlnStatement, rules)
+        val result2 = formatter2.format(printlnStatement, rules)
 
         assertEquals("\nprintln(\"test\");", result)
+        assertEquals("\nprintln(\"test\");", result2)
     }
 
     @Test
@@ -240,10 +233,14 @@ class FormatterTest {
                 "println" to FormatterRule(on = true, quantity = 2),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(printlnStatement, rules)
+        val result2 = formatter2.format(printlnStatement, rules)
 
         assertEquals("\n\nprintln(\"test\");", result)
+        assertEquals("\n\nprintln(\"test\");", result2)
     }
 
     @Test
@@ -256,10 +253,14 @@ class FormatterTest {
             )
         val rules = emptyMap<String, FormatterRule>()
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(binaryExpression, rules)
+        val result2 = formatter2.format(binaryExpression, rules)
 
         assertEquals("5 + 3", result)
+        assertEquals("5 + 3", result2)
     }
 
     @Test
@@ -289,13 +290,18 @@ class FormatterTest {
                 ),
             )
         val rules = emptyMap<String, FormatterRule>()
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
 
         val expectedResults = listOf("10 - 5", "4 * 6", "8 / 2")
 
         expressions.forEachIndexed { index, expression ->
             val result = formatter.format(expression, rules)
             assertEquals(expectedResults[index], result)
+        }
+        expressions.forEachIndexed { index, expression ->
+            val result2 = formatter2.format(expression, rules)
+            assertEquals(expectedResults[index], result2)
         }
     }
 
@@ -335,7 +341,9 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val results = statements.map { formatter.format(it, rules) }
 
         val expected =
@@ -346,6 +354,17 @@ class FormatterTest {
             )
 
         assertEquals(expected, results)
+
+        val results2 = statements.map { formatter2.format(it, rules) }
+
+        val expected2 =
+            listOf(
+                "let x : Number = 5;",
+                "let name : String = \"John\";",
+                "x + 10",
+            )
+
+        assertEquals(expected2, results2)
     }
 
     @Test
@@ -364,10 +383,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let x = 42;", result)
+        assertEquals("let x = 42;", result2)
     }
 
     @Test
@@ -388,10 +411,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 4),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("let variable   :  Boolean    =    \"true\";", result)
+        assertEquals("let variable   :  Boolean    =    \"true\";", result2)
     }
 
     @Test
@@ -408,10 +435,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 1),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("x = 42;", result)
+        assertEquals("x = 42;", result2)
     }
 
     @Test
@@ -426,10 +457,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 0),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("variable=\"newValue\";", result)
+        assertEquals("variable=\"newValue\";", result2)
     }
 
     @Test
@@ -450,10 +485,14 @@ class FormatterTest {
                 "assignDeclaration" to FormatterRule(on = true, quantity = 3),
             )
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("count   =   count + 1;", result)
+        assertEquals("count   =   count + 1;", result2)
     }
 
     @Test
@@ -461,10 +500,14 @@ class FormatterTest {
         val statement = Unary(LiteralNumber(ComboValuePosition(10, StatementPosition(1, 2, 3, 4))), MinusOperator())
         val rules = emptyMap<String, FormatterRule>()
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("-10", result)
+        assertEquals("-10", result2)
     }
 
     @Test
@@ -472,9 +515,45 @@ class FormatterTest {
         val statement = Unary(LiteralNumber(ComboValuePosition(5, StatementPosition(1, 2, 3, 4))), AdditionOperator())
         val rules = emptyMap<String, FormatterRule>()
 
-        val formatter = createFormatter()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
         val result = formatter.format(statement, rules)
+        val result2 = formatter2.format(statement, rules)
 
         assertEquals("+5", result)
+        assertEquals("+5", result2)
+    }
+
+    @Test
+    fun `test if indentation - con 2 espacios`() {
+        val statement =
+            ConditionalExpression(
+                ComboValuePosition("if", StatementPosition(1, 1, 1, 3)),
+                BooleanExpression(
+                    LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
+                    Greater(),
+                    LiteralNumber(ComboValuePosition(3, StatementPosition(1, 1, 1, 1))),
+                ),
+                listOf(
+                    Binary(
+                        LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
+                        AdditionOperator(),
+                        LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
+                    ),
+                ),
+            )
+        val rules =
+            mapOf(
+                "ifIndentation" to FormatterRule(on = true, quantity = 2),
+            )
+
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+
+        val result2 = formatter2.format(statement, rules)
+
+        val expected = "if (5 > 3) {\n  5 + 2\n}"
+
+        assertEquals(expected, result2)
     }
 }

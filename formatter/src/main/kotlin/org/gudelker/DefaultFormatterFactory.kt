@@ -1,0 +1,97 @@
+package org.gudelker
+
+import org.gudelker.analyzer.BinaryForAnalyzer
+import org.gudelker.analyzer.BooleanExprForAnalyzer
+import org.gudelker.analyzer.CallableForAnalyzer
+import org.gudelker.analyzer.ConditionalExprForAnalyzer
+import org.gudelker.analyzer.ConstDeclarationForAnalyzer
+import org.gudelker.analyzer.GroupingForAnalyzer
+import org.gudelker.analyzer.LiteralBooleanForAnalyzer
+import org.gudelker.analyzer.LiteralIdentifierForAnalyzer
+import org.gudelker.analyzer.LiteralNumberForAnalyzer
+import org.gudelker.analyzer.LiteralStringForAnalyzer
+import org.gudelker.analyzer.UnaryForAnalyzer
+import org.gudelker.analyzer.VariableDeclarationForAnalyzer
+import org.gudelker.analyzer.VariableReassignmentForAnalyzer
+import org.gudelker.rulevalidator.IfIndentation
+import org.gudelker.rulevalidator.SpaceAfterColon
+import org.gudelker.rulevalidator.SpaceBeforeColon
+import org.gudelker.rulevalidator.SpacesAroundAssignation
+import org.gudelker.rulevalidator.SpacesPrintln
+import org.gudelker.utilities.Version
+
+object DefaultFormatterFactory {
+    fun createFormatter(version: Version): DefaultFormatter {
+        return when (version) {
+            Version.V1 -> createParserV1()
+            Version.V2 -> createParserV2()
+        }
+    }
+
+    private fun createParserV1(): DefaultFormatter {
+        val ruleValidors =
+            listOf(
+                SpaceBeforeColon(),
+                SpaceAfterColon(),
+                SpacesAroundAssignation(),
+            )
+        val analyzers =
+            listOf(
+                VariableDeclarationForAnalyzer(
+                    ruleValidors,
+                ),
+                LiteralNumberForAnalyzer(),
+                LiteralIdentifierForAnalyzer(),
+                LiteralStringForAnalyzer(),
+                GroupingForAnalyzer(),
+                UnaryForAnalyzer(),
+                CallableForAnalyzer(
+                    listOf(SpacesPrintln()),
+                ),
+                BinaryForAnalyzer(),
+                VariableReassignmentForAnalyzer(
+                    listOf(SpacesAroundAssignation()),
+                ),
+            )
+        return DefaultFormatter(analyzers)
+    }
+
+    private fun createParserV2(): DefaultFormatter {
+        val ruleValidators =
+            listOf(
+                SpaceBeforeColon(),
+                SpaceAfterColon(),
+                SpacesAroundAssignation(),
+                IfIndentation(),
+            )
+        val analyzers =
+            listOf(
+                VariableDeclarationForAnalyzer(
+                    ruleValidators,
+                ),
+                LiteralNumberForAnalyzer(),
+                LiteralIdentifierForAnalyzer(),
+                LiteralStringForAnalyzer(),
+                GroupingForAnalyzer(),
+                UnaryForAnalyzer(),
+                CallableForAnalyzer(
+                    listOf(SpacesPrintln()),
+                ),
+                BinaryForAnalyzer(),
+                VariableReassignmentForAnalyzer(
+                    listOf(SpacesAroundAssignation()),
+                ),
+                BooleanExprForAnalyzer(),
+                ConditionalExprForAnalyzer(
+                    listOf(
+                        IfIndentation(),
+                    ),
+                ),
+                ConstDeclarationForAnalyzer(
+                    ruleValidators,
+                ),
+                LiteralBooleanForAnalyzer(),
+            )
+        return DefaultFormatter(analyzers)
+    }
+}
