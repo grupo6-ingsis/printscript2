@@ -171,4 +171,106 @@ class LinterV2Test {
         assert(result.results.any { it is LintViolation })
         assert(result.results.count { it is LintViolation } == 3)
     }
+
+    @Test
+    fun `test linter with multiple analyzers and statement types`() {
+        val v2Linter = DefaultLinterFactory.createLinter(Version.V2)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            )
+
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    ComboValuePosition("goodVar", StatementPosition(1, 6, 1, 13)),
+                    "Boolean",
+                    LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 14, 1, 18))),
+                ),
+                ConstDeclaration(
+                    ComboValuePosition("const", StatementPosition(2, 1, 2, 5)),
+                    ComboValuePosition("bad_var", StatementPosition(2, 6, 2, 13)),
+                    "Number",
+                    LiteralNumber(ComboValuePosition(42, StatementPosition(2, 14, 2, 16))),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(3, 1, 3, 4)),
+                    ComboValuePosition("another_var", StatementPosition(3, 5, 3, 16)),
+                    "Number",
+                    LiteralNumber(ComboValuePosition(7, StatementPosition(3, 17, 3, 19))),
+                ),
+                VariableReassignment(
+                    ComboValuePosition("another_var", StatementPosition(4, 1, 4, 12)),
+                    LiteralNumber(ComboValuePosition(99, StatementPosition(4, 13, 4, 15))),
+                ),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(5, 1, 5, 7)),
+                    LiteralString(ComboValuePosition("Test", StatementPosition(5, 8, 5, 13))),
+                ),
+                BooleanExpression(
+                    LiteralIdentifier(ComboValuePosition("flagA", StatementPosition(6, 1, 6, 6))),
+                    Equals(),
+                    LiteralIdentifier(ComboValuePosition("flagB", StatementPosition(6, 7, 6, 12))),
+                ),
+                Grouping(
+                    "(",
+                    LiteralNumber(ComboValuePosition(10, StatementPosition(10, 2, 10, 4))),
+                    ")",
+                ),
+                Unary(
+                    LiteralNumber(ComboValuePosition(11, StatementPosition(11, 2, 11, 4))),
+                    MinusOperator(),
+                ),
+                Binary(
+                    LiteralNumber(ComboValuePosition(12, StatementPosition(12, 2, 12, 3))),
+                    AdditionOperator(),
+                    LiteralNumber(ComboValuePosition(13, StatementPosition(12, 4, 12, 5))),
+                ),
+            )
+
+        val v2Result = v2Linter.lint(StatementStream(statements), rules)
+
+        assert(v2Result.results.any { it is LintViolation })
+        kotlin.test.assertEquals(
+            2,
+            v2Result.results.count { it is LintViolation },
+            "V2: Expected two lint violations for snake_case identifiers",
+        )
+    }
+
+    @Test
+    fun `test linter with snake_case rule and camelCase violations`() {
+        val linter = DefaultLinterFactory.createLinter(Version.V2)
+        val rules =
+            mapOf(
+                "identifierFormat" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+            )
+
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    ComboValuePosition("myConst", StatementPosition(1, 6, 1, 13)),
+                    "Boolean",
+                    LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 14, 1, 18))),
+                ),
+                VariableDeclaration(
+                    ComboValuePosition("let", StatementPosition(2, 1, 2, 4)),
+                    ComboValuePosition("anotherVar", StatementPosition(2, 5, 2, 15)),
+                    "Number",
+                    LiteralNumber(ComboValuePosition(7, StatementPosition(2, 16, 2, 18))),
+                ),
+                Callable(
+                    ComboValuePosition("println", StatementPosition(3, 1, 3, 7)),
+                    LiteralString(ComboValuePosition("Test", StatementPosition(3, 8, 3, 13))),
+                ),
+            )
+
+        val result = linter.lint(StatementStream(statements), rules)
+        assert(result.results.any { it is LintViolation })
+        assertEquals(2, result.results.count { it is LintViolation }, "Expected three lint violations for camelCase identifiers")
+    }
 }
