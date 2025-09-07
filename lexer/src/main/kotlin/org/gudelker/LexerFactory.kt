@@ -23,6 +23,8 @@ import org.gudelker.rules.OperationTokenizer
 import org.gudelker.rules.ParenthesisTokenizer
 import org.gudelker.rules.PrintTokenizer
 import org.gudelker.rules.ProhibitedSymbolDoubleTokenizer
+import org.gudelker.rules.ReadEnvTokenizer
+import org.gudelker.rules.ReadInputTokenizer
 import org.gudelker.rules.SemicolonTokenizer
 import org.gudelker.rules.StringTokenizer
 import org.gudelker.rules.StringTypeTokenizer
@@ -88,6 +90,8 @@ object LexerFactory {
                         ComparatorTokenizer(),
                         ElseTokenizer(),
                         BooleanTokenizer(),
+                        ReadInputTokenizer(),
+                        ReadEnvTokenizer()
                     )
                 val listV2: List<RuleTokenizer> = newTokenizers + listOfRules + notAllowed
                 return DefaultLexer(listV2)
