@@ -2,8 +2,9 @@ package org.gudelker.evaluator
 
 import org.gudelker.Callable
 import org.gudelker.Statement
+import org.gudelker.callable.CallableValidator
 
-class CallableEvaluator : Evaluator<Any> {
+class CallableEvaluator(private val functions: List<CallableValidator>) : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: ConstVariableContext,
