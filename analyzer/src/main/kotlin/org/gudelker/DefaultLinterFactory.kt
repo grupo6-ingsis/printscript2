@@ -14,9 +14,11 @@ import org.gudelker.analyzers.UnaryExpressionLintAnalyzer
 import org.gudelker.analyzers.VariableDeclarationLintAnalyzer
 import org.gudelker.analyzers.VariableReassginationLintAnalyzer
 import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
-import org.gudelker.rulelinter.CamelCaseRule
+import org.gudelker.rulelinter.ConstDeclarationCamelCaseRule
+import org.gudelker.rulelinter.ConstDeclarationSnakeCaseRule
 import org.gudelker.rulelinter.RestrictPrintLnExpressions
-import org.gudelker.rulelinter.SnakeCaseRule
+import org.gudelker.rulelinter.VariableDeclarationCamelCaseRule
+import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.utilities.Version
 
 object DefaultLinterFactory {
@@ -30,7 +32,7 @@ object DefaultLinterFactory {
     private fun createLinterV1(): Linter {
         val analyzers =
             listOf(
-                VariableDeclarationLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
@@ -61,7 +63,7 @@ object DefaultLinterFactory {
     private fun createLinterV2(): Linter {
         val analyzers =
             listOf(
-                VariableDeclarationLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
@@ -74,23 +76,10 @@ object DefaultLinterFactory {
                         ),
                     ),
                 ),
-                ConstDeclarationLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
-                BinaryExpressionLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
-                ConditionalExpressionLintAnalyzer(
-                    listOf(
-                        CamelCaseRule(),
-                        SnakeCaseRule(),
-                        RestrictPrintLnExpressions(
-                            listOf(
-                                LiteralString::class,
-                                LiteralNumber::class,
-                                LiteralIdentifier::class,
-                                LiteralBoolean::class,
-                            ),
-                        ),
-                    ),
-                ),
-                BooleanExpressionLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                ConstDeclarationLintAnalyzer(listOf(ConstDeclarationCamelCaseRule(), ConstDeclarationSnakeCaseRule())),
+                BinaryExpressionLintAnalyzer(emptyList()),
+                ConditionalExpressionLintAnalyzer(emptyList()),
+                BooleanExpressionLintAnalyzer(emptyList()),
                 UnaryExpressionLintAnalyzer(emptyList()),
                 GroupingExpressionLintAnalyzer(emptyList()),
                 VariableReassginationLintAnalyzer(emptyList()),

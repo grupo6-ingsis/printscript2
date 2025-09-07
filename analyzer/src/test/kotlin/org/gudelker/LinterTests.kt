@@ -13,9 +13,9 @@ import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
 import org.gudelker.result.LintViolation
-import org.gudelker.rulelinter.CamelCaseRule
 import org.gudelker.rulelinter.RestrictPrintLnExpressions
-import org.gudelker.rulelinter.SnakeCaseRule
+import org.gudelker.rulelinter.VariableDeclarationCamelCaseRule
+import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -31,7 +31,7 @@ class LinterTests {
     fun setup() {
         val analyzers =
             listOf(
-                VariableDeclarationLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
@@ -316,7 +316,6 @@ class LinterTests {
                 "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
             )
         val result = linter.lint(StatementStream(stmts), rules)
-        // Should have violations for snake_case variable and println with expression argument
         assertTrue(result.results.size >= 2)
         assertTrue(result.results.any { it is LintViolation })
     }

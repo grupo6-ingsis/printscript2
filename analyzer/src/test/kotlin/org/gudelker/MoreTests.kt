@@ -9,9 +9,9 @@ import org.gudelker.analyzers.VariableReassginationLintAnalyzer
 import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.MinusOperator
-import org.gudelker.rulelinter.CamelCaseRule
 import org.gudelker.rulelinter.RestrictPrintLnExpressions
-import org.gudelker.rulelinter.SnakeCaseRule
+import org.gudelker.rulelinter.VariableDeclarationCamelCaseRule
+import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -25,7 +25,7 @@ class MoreTests {
     private fun createLinter(): DefaultLinter {
         val analyzers =
             listOf(
-                VariableDeclarationLintAnalyzer(listOf(CamelCaseRule(), SnakeCaseRule())),
+                VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
