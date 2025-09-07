@@ -7,7 +7,7 @@ import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 import org.gudelker.result.ValidLint
 
-class CamelCaseRule : RuleLinter {
+class VariableDeclarationCamelCaseRule : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {
         return ruleMap.values.any { it.identifierFormat == "camelCase" }
     }
