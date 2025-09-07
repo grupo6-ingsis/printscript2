@@ -4,6 +4,7 @@ import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.Valid
 import org.gudelker.result.ValidTokens
+import org.gudelker.rules.FormatterRule
 import org.gudelker.sourcereader.StringSourceReader
 import org.gudelker.tokenstream.TokenStream
 import org.gudelker.utilities.Version
@@ -209,25 +210,25 @@ class IntegrationTest {
         when (tokenResult) {
             is LexerSyntaxError ->
                 throw RuntimeException("Lexer error: $tokenResult")
-            is ValidTokens ->
-                {
-                    val tokens = tokenResult.getList()
 
-                    // 2. Syntax Analysis
-                    val tokenStream = TokenStream(tokens)
-                    val parser = DefaultParserFactory.createParser(Version.V1)
-                    val parseResult = parser.parse(tokenStream)
+            is ValidTokens -> {
+                val tokens = tokenResult.getList()
 
-                    if (parseResult !is Valid) {
-                        throw RuntimeException("Parser error: $parseResult")
-                    }
+                // 2. Syntax Analysis
+                val tokenStream = TokenStream(tokens)
+                val parser = DefaultParserFactory.createParser(Version.V1)
+                val parseResult = parser.parse(tokenStream)
 
-                    val statements = parseResult.getStatements()
-
-                    // 3. Interpretation
-                    val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-                    return interpreter.interpret(statements)
+                if (parseResult !is Valid) {
+                    throw RuntimeException("Parser error: $parseResult")
                 }
+
+                val statements = parseResult.getStatements()
+
+                // 3. Interpretation
+                val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+                return interpreter.interpret(statements)
+            }
         }
     }
 
@@ -312,6 +313,7 @@ class IntegrationTest {
         when (tokenResult) {
             is LexerSyntaxError ->
                 throw RuntimeException("Lexer error: $tokenResult")
+
             is ValidTokens -> {
                 val tokens = tokenResult.getList()
 
@@ -329,6 +331,71 @@ class IntegrationTest {
                 // 3. Interpretation
                 val interpreter = InterpreterFactory.createInterpreter(Version.V2)
                 return interpreter.interpret(statements)
+            }
+        }
+    }
+
+    @Test
+    fun `should return formatted code applying rules`() {
+        val code =
+            """
+            let y:boolean=true;
+            if (y){
+            println("Y is true");
+            }
+            """.trimIndent()
+
+        val result = formatCodeV2(code)
+
+        val expectedCode =
+            """
+            let y :  boolean   =   true;
+            if (y) {
+
+                println("Y is true");
+            }
+            """.trimIndent()
+
+        println(expectedCode.replace("\n", "\\n\n"))
+        println(result.replace("\n", "\\n\n"))
+        assertEquals(expectedCode, result)
+    }
+
+    private fun formatCodeV2(code: String): String {
+        // 1. Lexical Analysis
+        val lexer = LexerFactory.createLexer(Version.V2)
+        val sourceReader = StringSourceReader(code)
+        val tokenResult = lexer.lex(sourceReader)
+
+        when (tokenResult) {
+            is LexerSyntaxError ->
+                throw RuntimeException("Lexer error: $tokenResult")
+
+            is ValidTokens -> {
+                val tokens = tokenResult.getList()
+
+                // 2. Syntax Analysis
+                val tokenStream = TokenStream(tokens)
+                val parser = DefaultParserFactory.createParser(Version.V2)
+                val parseResult = parser.parse(tokenStream)
+
+                if (parseResult !is Valid) {
+                    throw RuntimeException("Parser error: $parseResult")
+                }
+
+                val statements = parseResult.getStatements()
+                val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+
+                val rules =
+                    mapOf(
+                        "beforeDeclaration" to FormatterRule(on = true, quantity = 1),
+                        "afterDeclaration" to FormatterRule(on = true, quantity = 2),
+                        "assignDeclaration" to FormatterRule(on = true, quantity = 3),
+                        "ifIndentation" to FormatterRule(on = true, quantity = 4),
+                        "println" to FormatterRule(on = true, quantity = 1),
+                    )
+
+                return statements.joinToString("\n") { formatter.format(it, rules) }
             }
         }
     }
