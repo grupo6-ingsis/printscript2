@@ -18,7 +18,7 @@ class IntegrationTest {
     fun `should process simple variable declaration and usage`() {
         val code =
             """
-            let x = - 42;
+            let x: Number = - 42;
             println(x);
             """.trimIndent()
 
@@ -293,7 +293,7 @@ class IntegrationTest {
     fun `should process with boolean statement without else`() {
         val code =
             """
-            let y = true;
+            let y: boolean = true;
             if (y) {
                 println("Y is true");
             }
@@ -414,7 +414,6 @@ class IntegrationTest {
     }
 
     private fun formatCodeV2(code: String): String {
-        // 1. Lexical Analysis
         val lexer = LexerFactory.createLexer(Version.V2)
         val sourceReader = StringSourceReader(code)
         val tokenResult = lexer.lex(sourceReader)

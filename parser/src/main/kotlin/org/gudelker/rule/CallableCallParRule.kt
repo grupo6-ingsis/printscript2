@@ -1,6 +1,6 @@
 package org.gudelker.rule
 
-import org.gudelker.Callable
+import org.gudelker.CallableCall
 import org.gudelker.ExpressionStatement
 import org.gudelker.LiteralNumber
 import org.gudelker.components.org.gudelker.TokenType
@@ -11,7 +11,7 @@ import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.tokenstream.TokenStream
 
-class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule {
+class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {
         return tokenStream.current()?.getType() == TokenType.FUNCTION
     }
@@ -55,16 +55,7 @@ class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule
             return ParseResult(ParserSyntaxError("Expected ';' after function call"), afterCloseParen)
         }
 
-//        val values = CallableAnalyzer(expressionRule).parse(tokenStream)
-//        if (values !is Map<*, *>) {
-//            return values as ParseResult
-//        }
-//        val afterSemicolon = values["afterSemicolon"] as TokenStream
-//        val expression = values["expression"] as ExpressionStatement
-//        val functionToken = values["functionToken"] as org.gudelker.Token
-//        val callablePosition = values["callablePosition"] as StatementPosition
-
-        val callable = Callable(ComboValuePosition(functionToken.getValue(), callablePosition), expression)
+        val callable = CallableCall(ComboValuePosition(functionToken.getValue(), callablePosition), expression)
         return ParseResult(ValidStatementParserResult(callable), afterSemicolon)
     }
 }
