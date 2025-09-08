@@ -413,6 +413,17 @@ class IntegrationTest {
         assertEquals(1, result.results.count { it is LintViolation })
     }
 
+    @Test
+    fun `read input`() {
+        val code =
+            """
+            let x: String = readInput("Ingrese un string:");
+            println(x);
+            """.trimIndent()
+        val result = processCodeV2(code)
+        assertEquals(2, result.size)
+    }
+
     private fun formatCodeV2(code: String): String {
         val lexer = LexerFactory.createLexer(Version.V2)
         val sourceReader = StringSourceReader(code)

@@ -1,7 +1,5 @@
 package org.gudelker
 
-import org.gudelker.callable.PrintLn
-import org.gudelker.callable.ReadEnv
 import org.gudelker.callable.ReadInput
 import org.gudelker.comparator.Equals
 import org.gudelker.comparator.Greater
@@ -11,6 +9,7 @@ import org.gudelker.comparator.LesserEquals
 import org.gudelker.comparator.NotEquals
 import org.gudelker.evaluator.BinaryEvaluator
 import org.gudelker.evaluator.BooleanExpressionEvaluator
+import org.gudelker.evaluator.CallableCallEvaluator
 import org.gudelker.evaluator.CallableEvaluator
 import org.gudelker.evaluator.ConditionalEvaluator
 import org.gudelker.evaluator.ConstDeclarationEvaluator
@@ -23,6 +22,7 @@ import org.gudelker.evaluator.LiteralStringEvaluator
 import org.gudelker.evaluator.UnaryEvaluator
 import org.gudelker.evaluator.VariableDeclarationEvaluator
 import org.gudelker.evaluator.VariableReassignmentEvaluator
+import org.gudelker.inputprovider.TestInputProvider
 import org.gudelker.operator.AdditionOperator
 import org.gudelker.operator.DivisionOperator
 import org.gudelker.operator.MinusOperator
@@ -50,7 +50,7 @@ class ListCase {
                         GroupingEvaluator(),
                         VariableDeclarationEvaluator(),
                         VariableReassignmentEvaluator(),
-                        CallableEvaluator(listOf(PrintLn())),
+                        CallableEvaluator(),
                     )
                 Version.V2 ->
                     listOf(
@@ -81,7 +81,18 @@ class ListCase {
                         ConstDeclarationEvaluator(),
                         VariableDeclarationEvaluator(),
                         VariableReassignmentEvaluator(),
-                        CallableEvaluator(listOf(PrintLn(), ReadInput(), ReadEnv())),
+                        CallableEvaluator(),
+                        CallableCallEvaluator(
+                            listOf(
+                                ReadInput(
+                                    TestInputProvider(
+                                        mutableListOf(
+                                            "hola",
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
                         ConditionalEvaluator(),
                     )
             }
