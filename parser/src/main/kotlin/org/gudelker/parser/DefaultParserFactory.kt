@@ -262,10 +262,20 @@ object DefaultParserFactory {
             )
 
         val conditionalParRule = ConditionalParRule(finalBooleanRule, statementRules)
+        val finalStatements =
+            listOf(
+                conditionalParRule,
+                variableDeclarationParRule,
+                variableReassignmentParRule,
+                constantDeclarationRule,
+                callableParRule,
+                callableCall,
+            )
+        val finalConditionalParRule = ConditionalParRule(finalBooleanRule, finalStatements)
 
         return DefaultParser(
             listOf(
-                conditionalParRule,
+                finalConditionalParRule,
                 variableDeclarationParRule,
                 variableReassignmentParRule,
                 constantDeclarationRule,
