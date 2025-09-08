@@ -52,6 +52,5 @@ class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxPar
 
         val callable = CallableCall(ComboValuePosition(functionToken.getValue(), callablePosition), expression)
         return ParseResult(ValidStatementParserResult(callable), afterCloseParen)
-
     }
 }

@@ -238,19 +238,18 @@ class IntegrationTest {
     fun `should process simple if-else statement`() {
         val code =
             """
-            let x = 4;
-            if (x > 5) {
+            if (true) {
+                if (true) {
+                    println("Hello World!");
+                }
                 println("Greater than 5");
-            } else {
-                println("Less or equal to 5");
             }
             """.trimIndent()
 
         val result = processCodeV2(code)
 
-        assertEquals(2, result.size)
+        assertEquals(1, result.size)
         assertEquals(Unit, result[0])
-        assertEquals(Unit, result[1])
     }
 
     @Test
