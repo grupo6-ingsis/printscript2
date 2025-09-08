@@ -1,5 +1,8 @@
 package org.gudelker
 
+import org.gudelker.callable.PrintLn
+import org.gudelker.callable.ReadEnv
+import org.gudelker.callable.ReadInput
 import org.gudelker.comparator.Equals
 import org.gudelker.comparator.Greater
 import org.gudelker.comparator.GreaterEquals
@@ -47,7 +50,7 @@ class ListCase {
                         GroupingEvaluator(),
                         VariableDeclarationEvaluator(),
                         VariableReassignmentEvaluator(),
-                        CallableEvaluator(),
+                        CallableEvaluator(listOf(PrintLn())),
                     )
                 Version.V2 ->
                     listOf(
@@ -78,7 +81,7 @@ class ListCase {
                         ConstDeclarationEvaluator(),
                         VariableDeclarationEvaluator(),
                         VariableReassignmentEvaluator(),
-                        CallableEvaluator(),
+                        CallableEvaluator(listOf(PrintLn(), ReadInput(), ReadEnv())),
                         ConditionalEvaluator(),
                     )
             }
