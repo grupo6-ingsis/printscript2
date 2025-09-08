@@ -1,6 +1,6 @@
 package org.gudelker.rule
 
-import org.gudelker.ExpressionStatement
+import org.gudelker.CanBeCallStatement
 import org.gudelker.VariableDeclaration
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.ParseResult
@@ -64,7 +64,7 @@ class VariableDeclarationParRule(
             return ParseResult(ParserSyntaxError("Error al parsear la expresión"), expressionResult.tokenStream)
         }
 
-        val expressionStatement = expressionResult.parserResult.getStatement() as ExpressionStatement
+        val expressionStatement = expressionResult.parserResult.getStatement() as CanBeCallStatement
 
         // Semicolon
         val (semicolonToken, finalStream) = expressionResult.tokenStream.consume(TokenType.SEMICOLON)

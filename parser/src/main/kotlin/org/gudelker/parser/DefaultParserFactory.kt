@@ -12,6 +12,7 @@ import org.gudelker.operator.MinusOperator
 import org.gudelker.operator.MultiplyOperator
 import org.gudelker.rule.BinaryParRule
 import org.gudelker.rule.BooleanExpressionParRule
+import org.gudelker.rule.CallableCallParRule
 import org.gudelker.rule.CallableParRule
 import org.gudelker.rule.ConditionalParRule
 import org.gudelker.rule.ConstDeclarationParRule
@@ -245,18 +246,19 @@ object DefaultParserFactory {
                     literalIdentifierParRule,
                 ),
             )
-
+        val callableCall = CallableCallParRule(completeExpressionParRule)
+        val expression = ExpressionParRule(listOf(completeExpressionParRule, callableCall))
         val callableParRule = CallableParRule(completeExpressionParRule)
-        val variableDeclarationParRule = VariableDeclarationParRule(setOf("let"), completeExpressionParRule)
-        val variableReassignmentParRule = VariableReassignmentParRule(completeExpressionParRule)
-        val constantDeclarationRule = ConstDeclarationParRule(setOf("const"), completeExpressionParRule)
-
+        val variableDeclarationParRule = VariableDeclarationParRule(setOf("let"), expression)
+        val variableReassignmentParRule = VariableReassignmentParRule(expression)
+        val constantDeclarationRule = ConstDeclarationParRule(setOf("const"), expression)
         val statementRules =
             listOf(
                 variableDeclarationParRule,
                 variableReassignmentParRule,
                 constantDeclarationRule,
                 callableParRule,
+                callableCall,
             )
 
         val conditionalParRule = ConditionalParRule(finalBooleanRule, statementRules)

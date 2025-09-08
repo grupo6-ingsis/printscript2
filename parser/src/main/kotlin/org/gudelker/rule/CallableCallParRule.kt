@@ -50,12 +50,8 @@ class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxPar
             return ParseResult(ParserSyntaxError("Expected ')' after function arguments"), afterExpression)
         }
 
-        val (semicolonToken, afterSemicolon) = afterCloseParen.consume(TokenType.SEMICOLON)
-        if (semicolonToken == null) {
-            return ParseResult(ParserSyntaxError("Expected ';' after function call"), afterCloseParen)
-        }
-
         val callable = CallableCall(ComboValuePosition(functionToken.getValue(), callablePosition), expression)
-        return ParseResult(ValidStatementParserResult(callable), afterSemicolon)
+        return ParseResult(ValidStatementParserResult(callable), afterCloseParen)
+
     }
 }
