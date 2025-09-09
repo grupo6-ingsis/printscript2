@@ -10,8 +10,6 @@ import org.gudelker.statements.interfaces.Statement
 import org.gudelker.tokenstream.TokenStream
 
 class DefaultParser(
-//    private val tokenStream: TokenStream,
-//    private val root: List<Statement>,
     private val rules: List<SyntaxParRule>,
 ) : Parser {
     override fun parse(tokenStream: TokenStream): ParserResult {
