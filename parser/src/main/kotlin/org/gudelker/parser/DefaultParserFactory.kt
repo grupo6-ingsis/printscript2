@@ -248,7 +248,21 @@ object DefaultParserFactory {
             )
         val callableCall = CallableCallParRule(completeExpressionParRule)
         val expression = ExpressionParRule(listOf(completeExpressionParRule, callableCall))
-        val callableParRule = CallableParRule(completeExpressionParRule)
+
+        val completeExpressionForCallable =
+            ExpressionParRule(
+                listOf(
+                    finalBooleanRule,
+                    finalBinaryParRule,
+                    unaryParRule,
+                    finalGroupingParRule,
+                    callableCall,
+                    literalNumberParRule,
+                    literalStringParRule,
+                    literalIdentifierParRule,
+                ),
+            )
+        val callableParRule = CallableParRule(completeExpressionForCallable)
         val variableDeclarationParRule = VariableDeclarationParRule(setOf("let"), expression)
         val variableReassignmentParRule = VariableReassignmentParRule(expression)
         val constantDeclarationRule = ConstDeclarationParRule(setOf("const"), expression)

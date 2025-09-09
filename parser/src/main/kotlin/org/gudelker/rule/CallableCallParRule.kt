@@ -2,7 +2,7 @@ package org.gudelker.rule
 
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.CallableCall
-import org.gudelker.expressions.ExpressionStatement
+import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
@@ -30,7 +30,7 @@ class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxPar
             return ParseResult(ParserSyntaxError("Expected '(' after function name"), afterFunction)
         }
 
-        val expression: ExpressionStatement?
+        val expression: CanBeCallStatement?
         val afterExpression: TokenStream
 
         if (afterOpenParen.check(TokenType.CLOSE_PARENTHESIS)) {
@@ -41,7 +41,7 @@ class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxPar
             if (exprResult.parserResult !is ValidStatementParserResult) {
                 return ParseResult(ParserSyntaxError("Invalid expression inside function call"), exprResult.tokenStream)
             }
-            expression = exprResult.parserResult.getStatement() as ExpressionStatement
+            expression = exprResult.parserResult.getStatement() as CanBeCallStatement
             afterExpression = exprResult.tokenStream
         }
 
