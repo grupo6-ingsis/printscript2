@@ -5,4 +5,5 @@ import kotlinx.serialization.Serializable
 data class LinterConfig(
     val identifierFormat: String,
     val restrictPrintlnExpressions: Boolean,
+    val restrictReadInputExpressions: Boolean,
 )

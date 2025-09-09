@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class LinterConfigTest {
     @Test
     fun `should create and serialize LinterConfig correctly`() {
-        val config = LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = false)
+        val config = LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = false, restrictReadInputExpressions = true)
         assertEquals("snake_case", config.identifierFormat)
         assertEquals(false, config.restrictPrintlnExpressions)
 
