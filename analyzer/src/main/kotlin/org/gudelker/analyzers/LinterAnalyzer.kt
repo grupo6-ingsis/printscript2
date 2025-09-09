@@ -1,8 +1,8 @@
 package org.gudelker.analyzers
 import org.gudelker.Linter
 import org.gudelker.LinterConfig
-import org.gudelker.Statement
 import org.gudelker.result.LinterResult
+import org.gudelker.statements.interfaces.Statement
 
 interface LinterAnalyzer {
     fun canHandle(statement: Statement): Boolean

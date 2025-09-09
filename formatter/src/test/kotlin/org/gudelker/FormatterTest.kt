@@ -1,11 +1,21 @@
 package org.gudelker
 
-import org.gudelker.comparator.Greater
-import org.gudelker.operator.AdditionOperator
-import org.gudelker.operator.DivisionOperator
-import org.gudelker.operator.MinusOperator
-import org.gudelker.operator.MultiplyOperator
+import org.gudelker.compare.operators.Greater
+import org.gudelker.expressions.Binary
+import org.gudelker.expressions.BooleanExpression
+import org.gudelker.expressions.Callable
+import org.gudelker.expressions.ConditionalExpression
+import org.gudelker.expressions.LiteralIdentifier
+import org.gudelker.expressions.LiteralNumber
+import org.gudelker.expressions.LiteralString
+import org.gudelker.expressions.Unary
+import org.gudelker.operators.AdditionOperator
+import org.gudelker.operators.DivisionOperator
+import org.gudelker.operators.MinusOperator
+import org.gudelker.operators.MultiplyOperator
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.VariableReassignment
+import org.gudelker.statements.declarations.VariableDeclaration
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.utilities.Version

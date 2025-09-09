@@ -1,14 +1,14 @@
 package org.gudelker.evaluator
 
-import org.gudelker.BooleanExpression
-import org.gudelker.Statement
-import org.gudelker.comparator.Comparator
-import org.gudelker.comparator.Equals
-import org.gudelker.comparator.Greater
-import org.gudelker.comparator.GreaterEquals
-import org.gudelker.comparator.Lesser
-import org.gudelker.comparator.LesserEquals
-import org.gudelker.comparator.NotEquals
+import org.gudelker.compare.operators.Comparator
+import org.gudelker.compare.operators.Equals
+import org.gudelker.compare.operators.Greater
+import org.gudelker.compare.operators.GreaterEquals
+import org.gudelker.compare.operators.Lesser
+import org.gudelker.compare.operators.LesserEquals
+import org.gudelker.compare.operators.NotEquals
+import org.gudelker.expressions.BooleanExpression
+import org.gudelker.statements.interfaces.Statement
 
 class BooleanExpressionEvaluator(
     private val supportedComparators: Set<Class<out Comparator>> = emptySet(),

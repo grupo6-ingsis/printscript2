@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.LiteralNumber
-import org.gudelker.Statement
+import org.gudelker.expressions.LiteralNumber
+import org.gudelker.statements.interfaces.Statement
 
 class LiteralNumberEvaluator : Evaluator<Number> {
     override fun evaluate(

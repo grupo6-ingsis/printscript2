@@ -1,12 +1,12 @@
 package org.gudelker.parser
 
 import Parser
-import org.gudelker.Statement
 import org.gudelker.result.ParserResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.Valid
 import org.gudelker.result.ValidStatementParserResult
 import org.gudelker.rule.SyntaxParRule
+import org.gudelker.statements.interfaces.Statement
 import org.gudelker.tokenstream.TokenStream
 
 class DefaultParser(

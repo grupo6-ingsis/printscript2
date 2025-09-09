@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.LiteralBoolean
-import org.gudelker.Statement
+import org.gudelker.expressions.LiteralBoolean
+import org.gudelker.statements.interfaces.Statement
 
 class LiteralBooleanEvaluator : Evaluator<Any> {
     override fun evaluate(

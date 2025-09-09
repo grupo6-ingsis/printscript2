@@ -1,9 +1,9 @@
 package org.gudelker.analyzer
 
 import org.gudelker.DefaultFormatter
-import org.gudelker.Grouping
-import org.gudelker.Statement
+import org.gudelker.expressions.Grouping
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 
 class GroupingForAnalyzer : Analyzer {
     override fun canHandle(statement: Statement): Boolean {

@@ -1,10 +1,10 @@
 package org.gudelker.rulelinter
-import org.gudelker.Callable
 import org.gudelker.LinterConfig
-import org.gudelker.Statement
+import org.gudelker.expressions.Callable
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 import org.gudelker.result.ValidLint
+import org.gudelker.statements.interfaces.Statement
 import kotlin.reflect.KClass
 
 class RestrictPrintLnExpressions(

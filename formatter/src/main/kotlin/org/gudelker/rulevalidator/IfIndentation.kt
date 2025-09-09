@@ -1,7 +1,7 @@
 package org.gudelker.rulevalidator
 
-import org.gudelker.Statement
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 
 class IfIndentation : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {

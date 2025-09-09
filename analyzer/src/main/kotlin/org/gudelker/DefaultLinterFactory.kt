@@ -13,6 +13,10 @@ import org.gudelker.analyzers.LiteralStringLintAnalyzer
 import org.gudelker.analyzers.UnaryExpressionLintAnalyzer
 import org.gudelker.analyzers.VariableDeclarationLintAnalyzer
 import org.gudelker.analyzers.VariableReassginationLintAnalyzer
+import org.gudelker.expressions.LiteralBoolean
+import org.gudelker.expressions.LiteralIdentifier
+import org.gudelker.expressions.LiteralNumber
+import org.gudelker.expressions.LiteralString
 import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.rulelinter.ConstDeclarationCamelCaseRule
 import org.gudelker.rulelinter.ConstDeclarationSnakeCaseRule

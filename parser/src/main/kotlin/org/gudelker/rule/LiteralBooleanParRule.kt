@@ -1,7 +1,7 @@
 package org.gudelker.rule
 
-import org.gudelker.LiteralBoolean
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult

@@ -1,10 +1,10 @@
 package org.gudelker.analyzer
 
-import org.gudelker.ConditionalExpression
 import org.gudelker.DefaultFormatter
-import org.gudelker.Statement
+import org.gudelker.expressions.ConditionalExpression
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
+import org.gudelker.statements.interfaces.Statement
 
 class ConditionalExprForAnalyzer(
     private val ruleValidators: List<RuleValidatorFormatter>,

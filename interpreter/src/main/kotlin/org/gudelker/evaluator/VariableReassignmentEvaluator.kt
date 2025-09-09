@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Statement
-import org.gudelker.VariableReassignment
+import org.gudelker.statements.VariableReassignment
+import org.gudelker.statements.interfaces.Statement
 import kotlin.reflect.KClass
 
 class VariableReassignmentEvaluator : Evaluator<Unit> {

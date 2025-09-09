@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Grouping
-import org.gudelker.Statement
+import org.gudelker.expressions.Grouping
+import org.gudelker.statements.interfaces.Statement
 
 class GroupingEvaluator : Evaluator<Any> {
     override fun evaluate(

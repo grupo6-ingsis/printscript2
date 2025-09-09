@@ -1,5 +1,7 @@
 package org.gudelker
 
+import org.gudelker.statements.interfaces.Statement
+
 class StatementStream private constructor(
     private val statements: List<Statement>,
     private val currentIndex: Int = 0,

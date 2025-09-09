@@ -1,6 +1,6 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Statement
+import org.gudelker.statements.interfaces.Statement
 
 interface Evaluator<T> {
     fun evaluate(

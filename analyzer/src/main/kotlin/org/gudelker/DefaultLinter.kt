@@ -5,6 +5,7 @@ import org.gudelker.linterloader.LinterConfigLoader
 import org.gudelker.result.CompoundResult
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
+import org.gudelker.statements.interfaces.Statement
 
 class DefaultLinter(private val astLinters: List<LinterAnalyzer>, private val configLoader: LinterConfigLoader) : Linter {
     override fun lint(

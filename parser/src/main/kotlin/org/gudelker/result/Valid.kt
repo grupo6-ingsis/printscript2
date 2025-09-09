@@ -1,6 +1,6 @@
 package org.gudelker.result
 
-import org.gudelker.Statement
+import org.gudelker.statements.interfaces.Statement
 
 data class Valid(
     private val statements: List<Statement>,

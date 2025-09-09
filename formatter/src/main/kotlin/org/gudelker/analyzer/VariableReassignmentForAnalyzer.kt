@@ -1,10 +1,10 @@
 package org.gudelker.analyzer
 
 import org.gudelker.DefaultFormatter
-import org.gudelker.Statement
-import org.gudelker.VariableReassignment
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
+import org.gudelker.statements.VariableReassignment
+import org.gudelker.statements.interfaces.Statement
 
 class VariableReassignmentForAnalyzer(
     private val ruleValidators: List<RuleValidatorFormatter>,
