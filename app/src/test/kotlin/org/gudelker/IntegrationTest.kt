@@ -25,8 +25,8 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(2, result.size)
-        assertEquals(Unit, result[0]) // declaración
-        assertEquals(Unit, result[1]) // println
+        assertEquals(Unit, result[0])
+        assertEquals(Unit, result[1])
     }
 
     @Test
@@ -393,6 +393,21 @@ class IntegrationTest {
         assertEquals(2, result.results.count { it is LintViolation })
     }
 
+    @Test
+    fun `should lint code with restrictReadInputExpressions`() {
+        val code =
+            """
+            const myConst = true;
+            let another_var = 42;
+            println(myConst);
+            """.trimIndent()
+
+        val result = lintCodeV2(code)
+        // myConst (camelCase) and another_var (snake_case) with camelCase rule: one violation
+        assert(result.results.any { it is LintViolation })
+        assertEquals(1, result.results.count { it is LintViolation })
+    }
+
     // File: app/src/test/kotlin/org/gudelker/IntegrationTest.kt
 
     @Test
@@ -482,8 +497,21 @@ class IntegrationTest {
                 val linter = DefaultLinterFactory.createLinter(Version.V2)
                 val rules =
                     mapOf(
-                        "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                        "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                        "identifierFormat" to
+                            LinterConfig(
+                                identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                                restrictReadInputExpressions = true,
+                            ),
+                        "restrictPrintlnExpressions" to
+                            LinterConfig(
+                                identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                                restrictReadInputExpressions = true,
+                            ),
+                        "restrictReadInputExpressions" to
+                            LinterConfig(
+                                identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                                restrictReadInputExpressions = true,
+                            ),
                     )
                 return linter.lint(StatementStream(statements), rules)
             }
