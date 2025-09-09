@@ -1,6 +1,7 @@
 package org.gudelker
 import org.gudelker.analyzer.Analyzer
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 
 class DefaultFormatter(
     private val analyzers: List<Analyzer>,

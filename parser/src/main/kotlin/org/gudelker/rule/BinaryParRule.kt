@@ -1,9 +1,9 @@
 package org.gudelker.rule
 
-import org.gudelker.Binary
-import org.gudelker.ExpressionStatement
 import org.gudelker.components.org.gudelker.TokenType
-import org.gudelker.operator.Operator
+import org.gudelker.expressions.Binary
+import org.gudelker.expressions.ExpressionStatement
+import org.gudelker.operators.Operator
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult

@@ -1,9 +1,9 @@
 package org.gudelker.rule
 
-import org.gudelker.BooleanExpression
-import org.gudelker.ExpressionStatement
-import org.gudelker.comparator.Comparator
+import org.gudelker.compare.operators.Comparator
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.expressions.BooleanExpression
+import org.gudelker.expressions.ExpressionStatement
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult

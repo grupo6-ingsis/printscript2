@@ -1,9 +1,9 @@
 package org.gudelker.analyzer
 
 import org.gudelker.DefaultFormatter
-import org.gudelker.Statement
-import org.gudelker.Unary
+import org.gudelker.expressions.Unary
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 
 class UnaryForAnalyzer : Analyzer {
     override fun canHandle(statement: Statement): Boolean {

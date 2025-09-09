@@ -1,9 +1,9 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Statement
-import org.gudelker.Unary
-import org.gudelker.operator.AdditionOperator
-import org.gudelker.operator.MinusOperator
+import org.gudelker.expressions.Unary
+import org.gudelker.operators.AdditionOperator
+import org.gudelker.operators.MinusOperator
+import org.gudelker.statements.interfaces.Statement
 
 class UnaryEvaluator : Evaluator<Any> {
     override fun evaluate(

@@ -1,8 +1,8 @@
 package org.gudelker.evaluator
 
-import org.gudelker.CallableCall
-import org.gudelker.Statement
 import org.gudelker.callable.CallableValidator
+import org.gudelker.expressions.CallableCall
+import org.gudelker.statements.interfaces.Statement
 
 class CallableCallEvaluator(private val callables: List<CallableValidator>) : Evaluator<Any> {
     override fun evaluate(

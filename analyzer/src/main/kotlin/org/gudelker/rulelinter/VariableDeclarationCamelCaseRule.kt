@@ -1,11 +1,11 @@
 package org.gudelker.rulelinter
 
 import org.gudelker.LinterConfig
-import org.gudelker.Statement
-import org.gudelker.VariableDeclaration
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 import org.gudelker.result.ValidLint
+import org.gudelker.statements.declarations.VariableDeclaration
+import org.gudelker.statements.interfaces.Statement
 
 class VariableDeclarationCamelCaseRule : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {

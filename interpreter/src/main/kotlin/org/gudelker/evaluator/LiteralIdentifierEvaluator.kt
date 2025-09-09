@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.LiteralIdentifier
-import org.gudelker.Statement
+import org.gudelker.expressions.LiteralIdentifier
+import org.gudelker.statements.interfaces.Statement
 
 class LiteralIdentifierEvaluator : Evaluator<Any> {
     override fun evaluate(

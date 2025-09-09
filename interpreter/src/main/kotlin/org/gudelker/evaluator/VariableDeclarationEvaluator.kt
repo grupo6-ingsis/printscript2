@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Statement
-import org.gudelker.VariableDeclaration
+import org.gudelker.statements.declarations.VariableDeclaration
+import org.gudelker.statements.interfaces.Statement
 
 class VariableDeclarationEvaluator : Evaluator<Unit> {
     override fun evaluate(

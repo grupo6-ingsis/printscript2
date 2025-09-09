@@ -2,10 +2,10 @@ package org.gudelker.analyzers
 
 import org.gudelker.Linter
 import org.gudelker.LinterConfig
-import org.gudelker.LiteralString
-import org.gudelker.Statement
+import org.gudelker.expressions.LiteralString
 import org.gudelker.result.LinterResult
 import org.gudelker.rulelinter.RuleLinter
+import org.gudelker.statements.interfaces.Statement
 
 class LiteralStringLintAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
     override fun canHandle(statement: Statement): Boolean {

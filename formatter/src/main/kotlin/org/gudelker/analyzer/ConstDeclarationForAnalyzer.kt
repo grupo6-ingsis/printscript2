@@ -1,10 +1,10 @@
 package org.gudelker.analyzer
 
-import org.gudelker.ConstDeclaration
 import org.gudelker.DefaultFormatter
-import org.gudelker.Statement
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
+import org.gudelker.statements.declarations.ConstDeclaration
+import org.gudelker.statements.interfaces.Statement
 
 class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {

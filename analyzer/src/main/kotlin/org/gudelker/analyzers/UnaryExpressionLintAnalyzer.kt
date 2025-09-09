@@ -1,10 +1,10 @@
 package org.gudelker.analyzers
 import org.gudelker.Linter
 import org.gudelker.LinterConfig
-import org.gudelker.Statement
-import org.gudelker.Unary
+import org.gudelker.expressions.Unary
 import org.gudelker.result.LinterResult
 import org.gudelker.rulelinter.RuleLinter
+import org.gudelker.statements.interfaces.Statement
 
 class UnaryExpressionLintAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
     override fun canHandle(statement: Statement): Boolean {

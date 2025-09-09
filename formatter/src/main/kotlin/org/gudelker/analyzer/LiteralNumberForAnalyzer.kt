@@ -1,9 +1,9 @@
 package org.gudelker.analyzer
 
 import org.gudelker.DefaultFormatter
-import org.gudelker.LiteralNumber
-import org.gudelker.Statement
+import org.gudelker.expressions.LiteralNumber
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 
 class LiteralNumberForAnalyzer : Analyzer {
     override fun canHandle(statement: Statement): Boolean {

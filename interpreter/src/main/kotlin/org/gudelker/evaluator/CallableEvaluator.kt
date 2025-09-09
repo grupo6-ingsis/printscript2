@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Callable
-import org.gudelker.Statement
+import org.gudelker.expressions.Callable
+import org.gudelker.statements.interfaces.Statement
 
 class CallableEvaluator() : Evaluator<Any> {
     override fun evaluate(

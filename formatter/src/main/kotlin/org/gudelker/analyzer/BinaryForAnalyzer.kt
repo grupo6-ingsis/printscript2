@@ -1,9 +1,9 @@
 package org.gudelker.analyzer
 
-import org.gudelker.Binary
 import org.gudelker.DefaultFormatter
-import org.gudelker.Statement
+import org.gudelker.expressions.Binary
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 
 class BinaryForAnalyzer : Analyzer {
     override fun canHandle(statement: Statement): Boolean {

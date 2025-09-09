@@ -1,12 +1,12 @@
 package org.gudelker.evaluator
 
-import org.gudelker.Binary
-import org.gudelker.Statement
-import org.gudelker.operator.AdditionOperator
-import org.gudelker.operator.DivisionOperator
-import org.gudelker.operator.MinusOperator
-import org.gudelker.operator.MultiplyOperator
-import org.gudelker.operator.Operator
+import org.gudelker.expressions.Binary
+import org.gudelker.operators.AdditionOperator
+import org.gudelker.operators.DivisionOperator
+import org.gudelker.operators.MinusOperator
+import org.gudelker.operators.MultiplyOperator
+import org.gudelker.operators.Operator
+import org.gudelker.statements.interfaces.Statement
 
 class BinaryEvaluator(
     private val supportedOperators: Set<Class<out Operator>> = emptySet(),

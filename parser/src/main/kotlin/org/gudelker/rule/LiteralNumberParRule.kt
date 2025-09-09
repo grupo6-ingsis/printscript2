@@ -1,7 +1,7 @@
 package org.gudelker.rule
 
-import org.gudelker.LiteralNumber
 import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.expressions.LiteralNumber
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
 import org.gudelker.result.ValidStatementParserResult

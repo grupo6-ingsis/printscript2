@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.LiteralString
-import org.gudelker.Statement
+import org.gudelker.expressions.LiteralString
+import org.gudelker.statements.interfaces.Statement
 
 class LiteralStringEvaluator : Evaluator<String> {
     override fun evaluate(

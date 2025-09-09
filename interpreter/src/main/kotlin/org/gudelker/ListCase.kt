@@ -1,12 +1,12 @@
 package org.gudelker
 
 import org.gudelker.callable.ReadInput
-import org.gudelker.comparator.Equals
-import org.gudelker.comparator.Greater
-import org.gudelker.comparator.GreaterEquals
-import org.gudelker.comparator.Lesser
-import org.gudelker.comparator.LesserEquals
-import org.gudelker.comparator.NotEquals
+import org.gudelker.compare.operators.Equals
+import org.gudelker.compare.operators.Greater
+import org.gudelker.compare.operators.GreaterEquals
+import org.gudelker.compare.operators.Lesser
+import org.gudelker.compare.operators.LesserEquals
+import org.gudelker.compare.operators.NotEquals
 import org.gudelker.evaluator.BinaryEvaluator
 import org.gudelker.evaluator.BooleanExpressionEvaluator
 import org.gudelker.evaluator.CallableCallEvaluator
@@ -23,10 +23,10 @@ import org.gudelker.evaluator.UnaryEvaluator
 import org.gudelker.evaluator.VariableDeclarationEvaluator
 import org.gudelker.evaluator.VariableReassignmentEvaluator
 import org.gudelker.inputprovider.TestInputProvider
-import org.gudelker.operator.AdditionOperator
-import org.gudelker.operator.DivisionOperator
-import org.gudelker.operator.MinusOperator
-import org.gudelker.operator.MultiplyOperator
+import org.gudelker.operators.AdditionOperator
+import org.gudelker.operators.DivisionOperator
+import org.gudelker.operators.MinusOperator
+import org.gudelker.operators.MultiplyOperator
 import org.gudelker.utilities.Version
 
 class ListCase {

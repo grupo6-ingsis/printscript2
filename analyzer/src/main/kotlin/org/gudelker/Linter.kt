@@ -2,6 +2,7 @@ package org.gudelker
 
 import org.gudelker.result.CompoundResult
 import org.gudelker.result.LinterResult
+import org.gudelker.statements.interfaces.Statement
 
 interface Linter {
     fun lint(

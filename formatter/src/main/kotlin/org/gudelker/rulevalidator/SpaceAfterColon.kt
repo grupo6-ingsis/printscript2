@@ -1,7 +1,7 @@
 package org.gudelker.rulevalidator
 
-import org.gudelker.Statement
 import org.gudelker.rules.FormatterRule
+import org.gudelker.statements.interfaces.Statement
 import org.gudelker.utils.FormatterUtils
 
 class SpaceAfterColon : RuleValidatorFormatter {

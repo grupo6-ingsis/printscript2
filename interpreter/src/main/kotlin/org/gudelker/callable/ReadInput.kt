@@ -1,9 +1,9 @@
 package org.gudelker.callable
 
-import org.gudelker.CallableCall
-import org.gudelker.Statement
 import org.gudelker.evaluator.EvaluationResult
+import org.gudelker.expressions.CallableCall
 import org.gudelker.inputprovider.InputProvider
+import org.gudelker.statements.interfaces.Statement
 
 class ReadInput(private val inputProvider: InputProvider) : CallableValidator {
     override fun matches(statement: Statement): Boolean {

@@ -1,7 +1,7 @@
 package org.gudelker.evaluator
 
-import org.gudelker.ConstDeclaration
-import org.gudelker.Statement
+import org.gudelker.statements.declarations.ConstDeclaration
+import org.gudelker.statements.interfaces.Statement
 import kotlin.reflect.KClass
 
 class ConstDeclarationEvaluator : Evaluator<Unit> {
