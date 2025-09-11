@@ -20,7 +20,7 @@ class DefaultFormatter(
         val analyzer =
             analyzers.firstOrNull { it.canHandle(node) }
                 ?: throw IllegalArgumentException("No analyzer found for ${node::class.simpleName}")
-
+        println("hola")
         return analyzer.format(node, rules, this)
     }
 }
