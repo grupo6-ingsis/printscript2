@@ -494,7 +494,11 @@ class IntegrationTest {
                 }
 
                 val statements = parseResult.getStatements()
-                val linter = DefaultLinterFactory.createLinter(Version.V2)
+                val linter =
+                    DefaultLinterFactory.createLinter(
+                        Version.V2,
+                        "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+                    )
                 val rules =
                     mapOf(
                         "identifierFormat" to

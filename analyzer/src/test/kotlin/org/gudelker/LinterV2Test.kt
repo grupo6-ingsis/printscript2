@@ -48,7 +48,12 @@ class LinterV2Test {
 
     @BeforeEach
     fun setUp() {
-        linter = DefaultLinterFactory.createLinter(Version.V2)
+        linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/" +
+                    "printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
     }
 
     @Test
@@ -201,7 +206,11 @@ class LinterV2Test {
 
     @Test
     fun `test linter with multiple analyzers and statement types`() {
-        val v2Linter = DefaultLinterFactory.createLinter(Version.V2)
+        val v2Linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
         val rules =
             mapOf(
                 "identifierFormat" to
@@ -282,7 +291,11 @@ class LinterV2Test {
 
     @Test
     fun `test linter with snake_case rule and camelCase violations`() {
-        val linter = DefaultLinterFactory.createLinter(Version.V2)
+        val linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
         val rules =
             mapOf(
                 "identifierFormat" to

@@ -7,7 +7,7 @@ import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 import org.gudelker.statements.interfaces.Statement
 
-class DefaultLinter(private val astLinters: List<LinterAnalyzer>, private val configLoader: LinterConfigLoader) : Linter {
+class DefaultLinter(private val astLinters: List<LinterAnalyzer>, val configLoader: LinterConfigLoader) : Linter {
     override fun lint(
         statementStream: StatementStream,
         ruleMap: Map<String, LinterConfig>,
