@@ -1,9 +1,18 @@
-subprojects {
+ext {
+    versionCode = '1.0.1-SNAPSHOT' // version de todos los subproyectos
+}
+
+allprojects {
+    version = rootProject.ext.versionCode
+}
+
+subprojects { subproj ->
     afterEvaluate {
         if (plugins.hasPlugin('maven-publish')) {
             tasks.matching { it.name == 'publish' }.all {
                 // No-op, just ensures the task exists
             }
+
         }
     }
 }
