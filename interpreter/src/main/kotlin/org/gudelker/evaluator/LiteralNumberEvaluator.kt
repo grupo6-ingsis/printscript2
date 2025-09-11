@@ -8,10 +8,10 @@ class LiteralNumberEvaluator : Evaluator<Number> {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         return when (statement) {
-            is LiteralNumber -> EvaluationResult(statement.value.value.toDouble(), context)
-            else -> throw IllegalArgumentException("Expected LiteralNumber, got ${statement::class.simpleName}")
+            is LiteralNumber -> Result.success(EvaluationResult(statement.value.value.toDouble(), context))
+            else -> Result.failure(IllegalArgumentException("Expected LiteralNumber, got ${statement::class.simpleName}"))
         }
     }
 }

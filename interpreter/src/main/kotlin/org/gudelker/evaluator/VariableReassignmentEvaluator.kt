@@ -2,37 +2,55 @@ package org.gudelker.evaluator
 
 import org.gudelker.statements.VariableReassignment
 import org.gudelker.statements.interfaces.Statement
-import kotlin.reflect.KClass
+import org.gudelker.types.TypeValidator
 
-class VariableReassignmentEvaluator : Evaluator<Unit> {
+class VariableReassignmentEvaluator(
+    private val acceptedTypes: Map<String, TypeValidator>,
+) : Evaluator<Unit> {
     override fun evaluate(
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
-        return when (statement) {
-            is VariableReassignment -> {
-                val valueResult = Analyzer.analyze(statement.value, context, evaluators)
-                if (valueResult.context.hasVariable(statement.identifier.value)) {
-                    val identifier = statement.identifier.value
-                    if (valueType(valueResult.value) != valueType(valueResult.context.getVariable(identifier))) {
-                        throw IllegalArgumentException(
-                            "Type mismatch: cannot assign ${valueType(
-                                valueResult.value,
-                            ).simpleName} to variable '$identifier' of type ${valueType(
-                                valueResult.context.getVariable(identifier),
-                            ).simpleName}",
+    ): Result<EvaluationResult> {
+        return try {
+            when (statement) {
+                is VariableReassignment -> {
+                    val name = statement.identifier.value
+                    if (!context.hasVariable(name)) {
+                        return Result.failure(
+                            IllegalArgumentException("Variable '$name' no declarada"),
                         )
                     }
-                }
-                val newContext = valueResult.context.updateVariable(statement.identifier.value, valueResult.value)
-                EvaluationResult(Unit, newContext)
-            }
-            else -> throw IllegalArgumentException("Expected VariableReassignment, got ${statement::class.simpleName}")
-        }
-    }
+                    val expectedType = context.getVariableType(name)
+                    val valueResult = Analyzer.analyze(statement.value, context, evaluators)
+                    val value = valueResult.getOrThrow().value
 
-    private fun <T> valueType(variable: T): KClass<*> {
-        return variable!!::class
+                    if (expectedType != null) {
+                        val validator = acceptedTypes[expectedType]
+                        if (validator == null) {
+                            return Result.failure(
+                                IllegalArgumentException("Tipo '$expectedType' no soportado"),
+                            )
+                        }
+                        if (value != null && !validator.isInstance(value)) {
+                            return Result.failure(
+                                IllegalArgumentException(
+                                    "Tipo de dato inválido para variable '$name': " +
+                                        "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
+                                ),
+                            )
+                        }
+                    }
+                    val newContext = valueResult.getOrThrow().context.updateVariable(name, value!!)
+                    Result.success(EvaluationResult(Unit, newContext))
+                }
+                else ->
+                    Result.failure(
+                        IllegalArgumentException("Expected VariableReassignment, got ${statement::class.simpleName}"),
+                    )
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }

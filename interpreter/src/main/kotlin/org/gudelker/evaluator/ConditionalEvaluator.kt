@@ -8,41 +8,45 @@ class ConditionalEvaluator : Evaluator<Any> {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         return when (statement) {
             is ConditionalExpression -> {
                 // Evaluar la condición
-                val conditionResult = Analyzer.analyze(statement.condition, context, evaluators)
-
-                // Verificar que el resultado sea un booleano
-                val conditionValue =
-                    when (conditionResult.value) {
-                        is Boolean -> conditionResult.value
-                        else -> throw IllegalArgumentException(
-                            "La condición debe evaluar a un booleano, pero fue: ${conditionResult.value::class.simpleName}",
-                        )
-                    }
-
-                // Ejecutar el bloque correspondiente
-                val bodyToExecute =
-                    if (conditionValue) {
-                        statement.ifBody
-                    } else {
-                        statement.elseBody ?: emptyList()
-                    }
-
-                // Evaluar todas las sentencias del bloque seleccionado de forma inmutable
-                // El fold acumulativo permite pasar el contexto actualizado entre sentencias
-                val finalResult =
-                    bodyToExecute.fold(
-                        EvaluationResult(Unit, conditionResult.context),
-                    ) { acc, stmt ->
-                        Analyzer.analyze(stmt, acc.context, evaluators)
-                    }
-
-                finalResult
+                Analyzer.analyze(statement.condition, context, evaluators).fold(
+                    onSuccess = { conditionEval ->
+                        val conditionValue = conditionEval.value
+                        if (conditionValue !is Boolean) {
+                            return Result.failure(
+                                IllegalArgumentException(
+                                    "La condición debe evaluar a un booleano, pero fue: ${conditionValue?.let { it::class.simpleName }}",
+                                ),
+                            )
+                        }
+                        val bodyToExecute =
+                            if (conditionValue) {
+                                statement.ifBody
+                            } else {
+                                statement.elseBody ?: emptyList()
+                            }
+                        // Ejecutar el bloque seleccionado
+                        bodyToExecute.fold(
+                            Result.success(EvaluationResult(Unit, conditionEval.context)),
+                        ) { accResult, stmt ->
+                            accResult.fold(
+                                onSuccess = { acc ->
+                                    Analyzer.analyze(stmt, acc.context, evaluators)
+                                },
+                                onFailure = { Result.failure(it) },
+                            )
+                        }
+                    },
+                    onFailure = { Result.failure(it) },
+                )
             }
-            else -> throw IllegalArgumentException("Expected ConditionalExpression, got ${statement::class.simpleName}")
+            else ->
+                Result.failure(
+                    IllegalArgumentException("Expected ConditionalExpression, got ${statement::class.simpleName}"),
+                )
         }
     }
 }

@@ -18,14 +18,15 @@ class IntegrationTest {
     fun `should process simple variable declaration and usage`() {
         val code =
             """
-            let x: Number = - 42;
+            let x:number;
+            x = - 42;
             println(x);
             """.trimIndent()
 
         val result = processCode(code)
 
-        assertEquals(2, result.size)
-        assertEquals(Unit, result[0])
+        assertEquals(3, result.size)
+        assertEquals(Unit, result[0]) // declaración
         assertEquals(Unit, result[1])
     }
 
@@ -242,6 +243,9 @@ class IntegrationTest {
                 if (true) {
                     println("Hello World!");
                 }
+                else {
+                    println("Is not working");
+                    }
                 println("Greater than 5");
             }
             """.trimIndent()

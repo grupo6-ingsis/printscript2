@@ -12,7 +12,8 @@ class StringTypeTokenizer : RuleTokenizer {
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return (actualWord == "String") && (nextChar == null || nextChar.isWhitespace() || nextChar == '=' || nextChar == ';')
+        return (actualWord == "String" || actualWord == "string") &&
+            (nextChar == null || nextChar.isWhitespace() || nextChar == '=' || nextChar == ';')
     }
 
     override fun generateToken(

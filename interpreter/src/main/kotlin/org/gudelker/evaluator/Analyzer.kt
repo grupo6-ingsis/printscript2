@@ -7,14 +7,18 @@ object Analyzer {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         for (evaluator in evaluators) {
-            try {
-                return evaluator.evaluate(statement, context, evaluators)
-            } catch (e: IllegalArgumentException) {
-                continue
+            val result =
+                try {
+                    evaluator.evaluate(statement, context, evaluators)
+                } catch (e: IllegalArgumentException) {
+                    Result.failure<EvaluationResult>(e)
+                }
+            if (result.isSuccess) {
+                return result
             }
         }
-        throw IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}")
+        return Result.failure(IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}"))
     }
 }
