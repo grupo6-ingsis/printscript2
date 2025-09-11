@@ -8,16 +8,16 @@ class GroupingEvaluator : Evaluator<Any> {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         return when (statement) {
             is Grouping -> {
                 if (statement.expression != null) {
                     Analyzer.analyze(statement.expression!!, context, evaluators)
                 } else {
-                    EvaluationResult(Unit, context)
+                    Result.success(EvaluationResult(Unit, context))
                 }
             }
-            else -> throw IllegalArgumentException("Expected Grouping, got ${statement::class.simpleName}")
+            else -> Result.failure(IllegalArgumentException("Expected Grouping, got ${statement::class.simpleName}"))
         }
     }
 }

@@ -1,26 +1,30 @@
 package org.gudelker.evaluator
 
+import org.gudelker.callable.CallableValidator
 import org.gudelker.expressions.Callable
 import org.gudelker.statements.interfaces.Statement
 
-class CallableEvaluator() : Evaluator<Any> {
+class CallableEvaluator(private val callables: List<CallableValidator>) : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
-        return when (statement) {
-            is Callable -> {
-                val argumentResult = Analyzer.analyze(statement.expression, context, evaluators)
-                when (statement.functionName.value) {
-                    "println" -> {
-                        println(argumentResult.value)
-                        EvaluationResult(Unit, argumentResult.context)
-                    }
-                    else -> throw UnsupportedOperationException("Función no soportada: ${statement.functionName}")
+    ): Result<EvaluationResult> {
+        if (statement is Callable) {
+            for (callable in callables) {
+                if (callable.matches(statement)) {
+                    val argumentResult = Analyzer.analyze(statement.expression, context, evaluators)
+                    return argumentResult.fold(
+                        onSuccess = { leftEvalResult ->
+                            Result.success(callable.execute(leftEvalResult))
+                        },
+                        onFailure = { error ->
+                            Result.failure(error)
+                        },
+                    )
                 }
             }
-            else -> throw IllegalArgumentException("Expected Callable, got ${statement::class.simpleName}")
         }
+        return Result.failure(IllegalArgumentException("Invalid callable statement"))
     }
 }

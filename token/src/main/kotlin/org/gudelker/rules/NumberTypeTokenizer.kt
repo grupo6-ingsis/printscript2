@@ -12,7 +12,8 @@ class NumberTypeTokenizer : RuleTokenizer {
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        return actualWord == "Number" && (nextChar == null || nextChar.isWhitespace() || nextChar == '=' || nextChar == ';')
+        return (actualWord == "Number" || actualWord == "number") &&
+            (nextChar == null || nextChar.isWhitespace() || nextChar == '=' || nextChar == ';')
     }
 
     override fun generateToken(

@@ -2,7 +2,8 @@ package org.gudelker.evaluator
 
 data class ConstVariableContext(
     private val constants: Map<String, Any> = emptyMap(),
-    private val variables: Map<String, Any> = emptyMap(),
+    private val variables: Map<String, Any?> = emptyMap(),
+    private val variableTypes: Map<String, String> = emptyMap(),
 ) {
     fun setConstant(
         name: String,
@@ -14,12 +15,20 @@ data class ConstVariableContext(
         return copy(constants = constants + (name to value))
     }
 
-    fun setVariable(
+    fun setVariableWithType(
         name: String,
-        value: Any,
+        value: Any?,
+        type: String,
     ): ConstVariableContext {
-        return copy(variables = variables + (name to value))
+        return copy(
+            variables = variables + (name to value),
+            variableTypes = variableTypes + (name to type),
+        )
     }
+
+    fun getVariableType(name: String): String? = variableTypes[name]
+
+    fun getAllVariableTypes(): Map<String, String> = variableTypes.toMap()
 
     fun getVariable(name: String): Any {
         if (!hasVariable(name)) {

@@ -22,7 +22,6 @@ class VariableDeclarationParRule(
     override fun parse(tokenStream: TokenStream): ParseResult {
         // Consume keyword
         val (keywordToken, streamAfterKeyword) = tokenStream.consume(TokenType.KEYWORD)
-
         if (keywordToken == null) {
             return ParseResult(ParserSyntaxError("Se esperaba una palabra clave al inicio de la declaración"), tokenStream)
         }
@@ -52,37 +51,63 @@ class VariableDeclarationParRule(
             return ParseResult(type.second!!, streamAfterType)
         }
 
-        // Assignation
+        // Intentar consumir '='
         val (assignToken, streamAfterAssign) = streamAfterType.consume(TokenType.ASSIGNATION)
-        if (assignToken == null) {
-            return ParseResult(ParserSyntaxError("Se esperaba '=' después de la declaración"), streamAfterType)
+
+        // Si hay asignación, proceder normalmente
+        if (assignToken != null) {
+            // Expression
+            val expressionResult = expressionRule.parse(streamAfterAssign)
+            if (expressionResult.parserResult !is ValidStatementParserResult) {
+                return ParseResult(ParserSyntaxError("Error al parsear la expresión"), expressionResult.tokenStream)
+            }
+            val expressionStatement = expressionResult.parserResult.getStatement() as CanBeCallStatement
+
+            // Semicolon
+            val (semicolonToken, finalStream) = expressionResult.tokenStream.consume(TokenType.SEMICOLON)
+            if (semicolonToken == null) {
+                return ParseResult(
+                    ParserSyntaxError("Se esperaba un punto y coma al final de la declaración"),
+                    expressionResult.tokenStream,
+                )
+            }
+
+            val statement =
+                VariableDeclaration(
+                    ComboValuePosition(keywordToken.getValue(), position),
+                    ComboValuePosition(identifierToken.getValue(), identifierPos),
+                    type.first,
+                    expressionStatement,
+                )
+            return ParseResult(ValidStatementParserResult(statement), finalStream)
+        } else {
+            // Si no hay asignación, verificar que haya tipo
+            if (type.first == null) {
+                return ParseResult(
+                    ParserSyntaxError("Se esperaba un tipo o asignación después del identificador"),
+                    streamAfterType,
+                )
+            }
+
+            // Semicolon
+            val (semicolonToken, finalStream) = streamAfterType.consume(TokenType.SEMICOLON)
+            if (semicolonToken == null) {
+                return ParseResult(
+                    ParserSyntaxError("Se esperaba un punto y coma al final de la declaración"),
+                    streamAfterType,
+                )
+            }
+
+            val statement =
+                VariableDeclaration(
+                    ComboValuePosition(keywordToken.getValue(), position),
+                    ComboValuePosition(identifierToken.getValue(), identifierPos),
+                    type.first,
+                    null,
+                    // No hay valor de inicialización
+                )
+            return ParseResult(ValidStatementParserResult(statement), finalStream)
         }
-
-        // Expression
-        val expressionResult = expressionRule.parse(streamAfterAssign)
-        if (expressionResult.parserResult !is ValidStatementParserResult) {
-            return ParseResult(ParserSyntaxError("Error al parsear la expresión"), expressionResult.tokenStream)
-        }
-
-        val expressionStatement = expressionResult.parserResult.getStatement() as CanBeCallStatement
-
-        // Semicolon
-        val (semicolonToken, finalStream) = expressionResult.tokenStream.consume(TokenType.SEMICOLON)
-        if (semicolonToken == null) {
-            return ParseResult(
-                ParserSyntaxError("Se esperaba un punto y coma al final de la declaración"),
-                expressionResult.tokenStream,
-            )
-        }
-
-        val statement =
-            VariableDeclaration(
-                ComboValuePosition(keywordToken.getValue(), position),
-                ComboValuePosition(identifierToken.getValue(), identifierPos),
-                type.first,
-                expressionStatement,
-            )
-        return ParseResult(ValidStatementParserResult(statement), finalStream)
     }
 
     private fun parseOptionalType(stream: TokenStream): Pair<Pair<String?, ParserSyntaxError?>, TokenStream> {

@@ -2,47 +2,59 @@ package org.gudelker.evaluator
 
 import org.gudelker.statements.declarations.ConstDeclaration
 import org.gudelker.statements.interfaces.Statement
-import kotlin.reflect.KClass
+import org.gudelker.types.TypeValidator
 
-class ConstDeclarationEvaluator : Evaluator<Unit> {
+class ConstDeclarationEvaluator(
+    private val acceptedTypes: Map<String, TypeValidator>,
+) : Evaluator<Unit> {
     override fun evaluate(
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
-        return when (statement) {
-            is ConstDeclaration -> {
-                val name = statement.identifierCombo.value
-                if (context.hasVariable(name)) {
-                    throw IllegalArgumentException("No se puede declarar constante '$name': ya existe como variable")
-                }
-                val valueResult = Analyzer.analyze(statement.value, context, evaluators)
-                if (valueResult.value != null) {
-                    val expectedType = statement.type
-                    val actualType = mapRuntimeTypeToLangType(valueResult.value)
-                    if (expectedType != null && expectedType != actualType) {
-                        throw IllegalArgumentException(
-                            "Tipo de dato inválido para variable '$name': se esperaba '$expectedType', pero se obtuvo '$actualType'",
+    ): Result<EvaluationResult> {
+        return try {
+            when (statement) {
+                is ConstDeclaration -> {
+                    val name = statement.identifierCombo.value
+                    if (context.hasVariable(name)) {
+                        return Result.failure(
+                            IllegalArgumentException("No se puede declarar constante '$name': ya existe como variable"),
                         )
                     }
+                    if (context.hasConstant(name)) {
+                        return Result.failure(
+                            IllegalArgumentException("Constante '$name' ya declarada"),
+                        )
+                    }
+                    val valueResult = Analyzer.analyze(statement.value, context, evaluators)
+                    val value = valueResult.getOrThrow().value
+                    val expectedType = statement.type?.lowercase()
+                    if (expectedType != null) {
+                        val validator = acceptedTypes[expectedType]
+                        if (validator == null) {
+                            return Result.failure(
+                                IllegalArgumentException("Tipo '$expectedType' no soportado"),
+                            )
+                        }
+                        if (value != null && !validator.isInstance(value)) {
+                            return Result.failure(
+                                IllegalArgumentException(
+                                    "Tipo de dato inválido para variable '$name': " +
+                                        "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
+                                ),
+                            )
+                        }
+                    }
+                    val newContext = valueResult.getOrThrow().context.setConstant(name, value!!)
+                    Result.success(EvaluationResult(Unit, newContext))
                 }
-                val newContext = valueResult.context.setConstant(name, valueResult.value)
-                EvaluationResult(Unit, newContext)
+                else ->
+                    Result.failure(
+                        IllegalArgumentException("Expected ConstDeclaration, got ${statement::class.simpleName}"),
+                    )
             }
-            else -> throw IllegalArgumentException("Expected ConstDeclaration, got ${statement::class.simpleName}")
+        } catch (e: Exception) {
+            Result.failure(e)
         }
-    }
-
-    private fun mapRuntimeTypeToLangType(value: Any?): String? =
-        when (value) {
-            is String -> "String"
-            is Number -> "Number"
-            is Boolean -> "boolean"
-            null -> null
-            else -> "Unknown"
-        }
-
-    private fun <T> valueType(variable: T): KClass<*> {
-        return variable!!::class
     }
 }

@@ -23,7 +23,8 @@ class VariableDeclarationLintAnalyzer(private val linterRules: List<RuleLinter>)
                 linterRules.fold(results) { acc, rule ->
                     if (rule.matches(ruleMap)) acc + rule.validate(statement) else acc
                 }
-            return linter.lintNode(statement.value, ruleMap, newList)
+
+            return linter.lintNode(statement.value!!, ruleMap, newList)
         }
         return results + ValidLint("All variable declaration rules passed")
     }

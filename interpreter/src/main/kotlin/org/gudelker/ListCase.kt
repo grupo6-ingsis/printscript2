@@ -1,5 +1,6 @@
 package org.gudelker
 
+import org.gudelker.callable.PrintLn
 import org.gudelker.callable.ReadInput
 import org.gudelker.compare.operators.Equals
 import org.gudelker.compare.operators.Greater
@@ -27,10 +28,26 @@ import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.DivisionOperator
 import org.gudelker.operators.MinusOperator
 import org.gudelker.operators.MultiplyOperator
+import org.gudelker.types.BooleanValidator
+import org.gudelker.types.NumberValidator
+import org.gudelker.types.StringValidator
 import org.gudelker.utilities.Version
 
 class ListCase {
     fun listForVersion(version: Version): List<Evaluator<out Any>> {
+        val typeValidatorsV2 =
+            mapOf(
+                "string" to StringValidator(),
+                "number" to NumberValidator(),
+                "boolean" to BooleanValidator(),
+            )
+
+        val typeValidatorsV1 =
+            mapOf(
+                "string" to StringValidator(),
+                "number" to NumberValidator(),
+            )
+
         val evaluators =
             when (version) {
                 Version.V1 ->
@@ -48,9 +65,9 @@ class ListCase {
                             ),
                         ),
                         GroupingEvaluator(),
-                        VariableDeclarationEvaluator(),
-                        VariableReassignmentEvaluator(),
-                        CallableEvaluator(),
+                        VariableDeclarationEvaluator(typeValidatorsV1),
+                        VariableReassignmentEvaluator(typeValidatorsV1),
+                        CallableEvaluator(listOf(PrintLn())),
                     )
                 Version.V2 ->
                     listOf(
@@ -78,10 +95,10 @@ class ListCase {
                             ),
                         ),
                         GroupingEvaluator(),
-                        ConstDeclarationEvaluator(),
-                        VariableDeclarationEvaluator(),
-                        VariableReassignmentEvaluator(),
-                        CallableEvaluator(),
+                        ConstDeclarationEvaluator(typeValidatorsV2),
+                        VariableDeclarationEvaluator(typeValidatorsV2),
+                        VariableReassignmentEvaluator(typeValidatorsV2),
+                        CallableEvaluator(listOf(PrintLn())),
                         CallableCallEvaluator(
                             listOf(
                                 ReadInput(

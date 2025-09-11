@@ -20,7 +20,7 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
         val keyword = statement.keywordCombo
         val identifier = declaration.identifierCombo.value
         val typeStr = statement.type
-        val valueFormatted = formatter.formatNode(declaration.value, formatterRuleMap)
+        val valueFormatted = formatter.formatNode(declaration.value!!, formatterRuleMap)
 
         var string =
             if (typeStr == null) {
