@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 class LinterConfigTest {
     @Test
     fun `should create and serialize LinterConfig correctly`() {
-        val config = LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = false)
+        val config = LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = false, restrictReadInputExpressions = true)
         assertEquals("snake_case", config.identifierFormat)
         assertEquals(false, config.restrictPrintlnExpressions)
 
@@ -20,8 +20,16 @@ class LinterConfigTest {
 
     @Test
     fun `should create linter V1 and V2`() {
-        val linterV1: Linter = DefaultLinterFactory.createLinter(Version.V1)
-        val linterV2: Linter = DefaultLinterFactory.createLinter(Version.V2)
+        val linterV1: Linter =
+            DefaultLinterFactory.createLinter(
+                Version.V1,
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
+        val linterV2: Linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
         assertNotNull(linterV1)
         assertNotNull(linterV2)
     }

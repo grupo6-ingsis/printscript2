@@ -4,6 +4,7 @@ import org.gudelker.compare.operators.NotEquals
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.Callable
+import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.ConditionalExpression
 import org.gudelker.expressions.Grouping
 import org.gudelker.expressions.LiteralBoolean
@@ -28,13 +29,31 @@ class LinterV2Test {
     private lateinit var linter: Linter
     private val rules =
         mapOf(
-            "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-            "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+            "identifierFormat" to
+                LinterConfig(
+                    identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                    restrictReadInputExpressions = true,
+                ),
+            "restrictPrintlnExpressions" to
+                LinterConfig(
+                    identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                    restrictReadInputExpressions = true,
+                ),
+            "restrictReadInputExpressions" to
+                LinterConfig(
+                    identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                    restrictReadInputExpressions = true,
+                ),
         )
 
     @BeforeEach
     fun setUp() {
-        linter = DefaultLinterFactory.createLinter(Version.V2)
+        linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/" +
+                    "printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
     }
 
     @Test
@@ -187,11 +206,28 @@ class LinterV2Test {
 
     @Test
     fun `test linter with multiple analyzers and statement types`() {
-        val v2Linter = DefaultLinterFactory.createLinter(Version.V2)
+        val v2Linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
             )
 
         val statements =
@@ -255,11 +291,28 @@ class LinterV2Test {
 
     @Test
     fun `test linter with snake_case rule and camelCase violations`() {
-        val linter = DefaultLinterFactory.createLinter(Version.V2)
+        val linter =
+            DefaultLinterFactory.createLinter(
+                Version.V2,
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+            )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "snake_case", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "snake_case", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "snake_case", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
             )
 
         val statements =
@@ -284,6 +337,57 @@ class LinterV2Test {
 
         val result = linter.lint(StatementStream(statements), rules)
         assert(result.results.any { it is LintViolation })
-        assertEquals(2, result.results.count { it is LintViolation }, "Expected three lint violations for camelCase identifiers")
+        assertEquals(2, result.results.count { it is LintViolation }, "Expected two lint violations for camelCase identifiers")
+    }
+
+    @Test
+    fun `test linter readInput restrictExpressions only literals`() {
+        val statements =
+            listOf(
+                CallableCall(
+                    ComboValuePosition("readInput", StatementPosition(1, 1, 1, 9)),
+                    LiteralString(ComboValuePosition("Enter name:", StatementPosition(1, 10, 1, 22))),
+                ),
+                CallableCall(
+                    ComboValuePosition("readInput", StatementPosition(3, 1, 3, 7)),
+                    LiteralNumber(ComboValuePosition(5, StatementPosition(3, 8, 3, 13))),
+                ),
+                CallableCall(
+                    ComboValuePosition("readInput", StatementPosition(5, 1, 5, 7)),
+                    Binary(
+                        LiteralNumber(ComboValuePosition(1, StatementPosition(5, 8, 5, 9))),
+                        AdditionOperator(),
+                        LiteralNumber(ComboValuePosition(2, StatementPosition(5, 10, 5, 11))),
+                    ),
+                ),
+                CallableCall(
+                    ComboValuePosition("readInput", StatementPosition(5, 1, 5, 7)),
+                    Unary(
+                        LiteralNumber(ComboValuePosition(3, StatementPosition(6, 8, 6, 9))),
+                        MinusOperator(),
+                    ),
+                ),
+            )
+        val rules =
+            mapOf(
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "snake_case", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "snake_case", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "snake_case", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+            )
+        val result = linter.lint(StatementStream(statements), rules)
+        assert(result.results.any { it is LintViolation })
+        assertEquals(2, result.results.count { it is LintViolation }, "Expected two lint violations for restrictExpression in readInput")
     }
 }

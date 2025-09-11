@@ -76,8 +76,21 @@ class LinterTests {
             )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = false),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = false),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(listOf(stmt)), rules)
         assertEquals(result.results, emptyList<LintViolation>())
@@ -108,8 +121,21 @@ class LinterTests {
             )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(2, result.results.size)
@@ -129,8 +155,21 @@ class LinterTests {
             )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(listOf(stmt)), rules)
         assertTrue(result.results.isNotEmpty())
@@ -145,8 +184,21 @@ class LinterTests {
             )
         val rules =
             mapOf(
-                "camelCase" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "camelCase" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(listOf(stmt)), rules)
         assertEquals(emptyList<LintViolation>(), result.results)
@@ -183,8 +235,21 @@ class LinterTests {
             )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(1, result.results.size)
@@ -196,8 +261,21 @@ class LinterTests {
         val stmts = emptyList<Statement>()
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
         assertEquals(emptyList<LintViolation>(), result.results)
@@ -222,8 +300,21 @@ class LinterTests {
             )
         val config =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), config)
         assertTrue(result.results.size <= 1)
@@ -245,8 +336,21 @@ class LinterTests {
             )
         val config =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), config)
         assertTrue(result.results.isEmpty())
@@ -263,8 +367,21 @@ class LinterTests {
             )
         val config =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), config)
         assertTrue(result.results.isEmpty())
@@ -322,8 +439,21 @@ class LinterTests {
             )
         val rules =
             mapOf(
-                "identifierFormat" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
-                "restrictPrintlnExpressions" to LinterConfig(identifierFormat = "camelCase", restrictPrintlnExpressions = true),
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
         assertTrue(result.results.size >= 2)

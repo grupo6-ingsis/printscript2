@@ -2,6 +2,7 @@ package org.gudelker
 
 import org.gudelker.analyzer.BinaryForAnalyzer
 import org.gudelker.analyzer.BooleanExprForAnalyzer
+import org.gudelker.analyzer.CallableCallForAnalyzer
 import org.gudelker.analyzer.CallableForAnalyzer
 import org.gudelker.analyzer.ConditionalExprForAnalyzer
 import org.gudelker.analyzer.ConstDeclarationForAnalyzer
@@ -23,12 +24,12 @@ import org.gudelker.utilities.Version
 object DefaultFormatterFactory {
     fun createFormatter(version: Version): DefaultFormatter {
         return when (version) {
-            Version.V1 -> createParserV1()
-            Version.V2 -> createParserV2()
+            Version.V1 -> createFormatterV1()
+            Version.V2 -> createFormatterV2()
         }
     }
 
-    private fun createParserV1(): DefaultFormatter {
+    private fun createFormatterV1(): DefaultFormatter {
         val ruleValidors =
             listOf(
                 SpaceBeforeColon(),
@@ -56,7 +57,7 @@ object DefaultFormatterFactory {
         return DefaultFormatter(analyzers)
     }
 
-    private fun createParserV2(): DefaultFormatter {
+    private fun createFormatterV2(): DefaultFormatter {
         val ruleValidators =
             listOf(
                 SpaceBeforeColon(),
@@ -77,6 +78,7 @@ object DefaultFormatterFactory {
                 CallableForAnalyzer(
                     listOf(SpacesPrintln()),
                 ),
+                CallableCallForAnalyzer(emptyList()),
                 BinaryForAnalyzer(),
                 VariableReassignmentForAnalyzer(
                     listOf(SpacesAroundAssignation()),

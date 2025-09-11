@@ -4,6 +4,7 @@ import org.gudelker.compare.operators.Greater
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.Callable
+import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.ConditionalExpression
 import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
@@ -570,12 +571,12 @@ class FormatterTest {
     @Test
     fun `test readInput and readEnv formatted correctly`() {
         val statement =
-            Callable(
+            CallableCall(
                 ComboValuePosition("readInput", StatementPosition(1, 1, 1, 9)),
                 LiteralString(ComboValuePosition("Enter your name:", StatementPosition(1, 1, 1, 20))),
             )
         val statement2 =
-            Callable(
+            CallableCall(
                 ComboValuePosition("readEnv", StatementPosition(1, 1, 1, 7)),
                 LiteralString(ComboValuePosition("PATH", StatementPosition(1, 1, 1, 6))),
             )

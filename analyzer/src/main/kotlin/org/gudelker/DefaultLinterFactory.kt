@@ -2,6 +2,7 @@ package org.gudelker
 
 import org.gudelker.analyzers.BinaryExpressionLintAnalyzer
 import org.gudelker.analyzers.BooleanExpressionLintAnalyzer
+import org.gudelker.analyzers.CallableCallLintAnalyzer
 import org.gudelker.analyzers.CallableLintAnalyzer
 import org.gudelker.analyzers.ConditionalExpressionLintAnalyzer
 import org.gudelker.analyzers.ConstDeclarationLintAnalyzer
@@ -21,19 +22,23 @@ import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.rulelinter.ConstDeclarationCamelCaseRule
 import org.gudelker.rulelinter.ConstDeclarationSnakeCaseRule
 import org.gudelker.rulelinter.RestrictPrintLnExpressions
+import org.gudelker.rulelinter.RestrictReadInputExpressions
 import org.gudelker.rulelinter.VariableDeclarationCamelCaseRule
 import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.utilities.Version
 
 object DefaultLinterFactory {
-    fun createLinter(version: Version): Linter {
+    fun createLinter(
+        version: Version,
+        config: String,
+    ): DefaultLinter {
         when (version) {
-            Version.V1 -> return createLinterV1()
-            Version.V2 -> return createLinterV2()
+            Version.V1 -> return createLinterV1(config)
+            Version.V2 -> return createLinterV2(config)
         }
     }
 
-    private fun createLinterV1(): Linter {
+    private fun createLinterV1(config: String): DefaultLinter {
         val analyzers =
             listOf(
                 VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
@@ -58,19 +63,31 @@ object DefaultLinterFactory {
             )
         val configLoader =
             JsonLinterConfigLoaderToMap(
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+                config,
             )
         val linterV1 = DefaultLinter(analyzers, configLoader)
         return linterV1
     }
 
-    private fun createLinterV2(): Linter {
+    private fun createLinterV2(config: String): DefaultLinter {
         val analyzers =
             listOf(
                 VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
+                            listOf(
+                                LiteralString::class,
+                                LiteralNumber::class,
+                                LiteralIdentifier::class,
+                                LiteralBoolean::class,
+                            ),
+                        ),
+                    ),
+                ),
+                CallableCallLintAnalyzer(
+                    listOf(
+                        RestrictReadInputExpressions(
                             listOf(
                                 LiteralString::class,
                                 LiteralNumber::class,
@@ -94,7 +111,7 @@ object DefaultLinterFactory {
             )
         val configLoader =
             JsonLinterConfigLoaderToMap(
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
+                config,
             )
         val linterV2 = DefaultLinter(analyzers, configLoader)
         return linterV2

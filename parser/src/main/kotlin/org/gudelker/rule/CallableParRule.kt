@@ -2,7 +2,7 @@ package org.gudelker.rule
 
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.Callable
-import org.gudelker.expressions.ExpressionStatement
+import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.result.ParseResult
 import org.gudelker.result.ParserSyntaxError
@@ -30,7 +30,7 @@ class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule
             return ParseResult(ParserSyntaxError("Expected '(' after function name"), afterFunction)
         }
 
-        val expression: ExpressionStatement?
+        val expression: CanBeCallStatement?
         val afterExpression: TokenStream
 
         if (afterOpenParen.check(TokenType.CLOSE_PARENTHESIS)) {
@@ -41,7 +41,7 @@ class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule
             if (exprResult.parserResult !is ValidStatementParserResult) {
                 return ParseResult(ParserSyntaxError("Invalid expression inside function call"), exprResult.tokenStream)
             }
-            expression = exprResult.parserResult.getStatement() as ExpressionStatement
+            expression = exprResult.parserResult.getStatement() as CanBeCallStatement
             afterExpression = exprResult.tokenStream
         }
 
@@ -54,15 +54,6 @@ class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule
         if (semicolonToken == null) {
             return ParseResult(ParserSyntaxError("Expected ';' after function call"), afterCloseParen)
         }
-
-//        val values = CallableAnalyzer(expressionRule).parse(tokenStream)
-//        if (values !is Map<*, *>) {
-//            return values as ParseResult
-//        }
-//        val afterSemicolon = values["afterSemicolon"] as TokenStream
-//        val expression = values["expression"] as ExpressionStatement
-//        val functionToken = values["functionToken"] as org.gudelker.Token
-//        val callablePosition = values["callablePosition"] as StatementPosition
 
         val callable = Callable(ComboValuePosition(functionToken.getValue(), callablePosition), expression)
         return ParseResult(ValidStatementParserResult(callable), afterSemicolon)
