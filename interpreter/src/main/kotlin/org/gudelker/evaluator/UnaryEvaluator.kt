@@ -10,33 +10,39 @@ class UnaryEvaluator : Evaluator<Any> {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         return when (statement) {
             is Unary -> {
-                val valueResult = Analyzer.analyze(statement.value, context, evaluators)
-                val result =
-                    when (statement.operator) {
-                        is AdditionOperator -> performUnaryAddition(valueResult.value)
-                        is MinusOperator -> performUnaryMinus(valueResult.value)
-                        else -> throw UnsupportedOperationException("Operador unario no soportado: ${statement.operator}")
-                    }
-                EvaluationResult(result, valueResult.context)
+                Analyzer.analyze(statement.value, context, evaluators).fold(
+                    onSuccess = { valueEvalResult ->
+                        when (statement.operator) {
+                            is AdditionOperator ->
+                                performUnaryAddition(valueEvalResult.value!!)
+                                    .map { EvaluationResult(it, valueEvalResult.context) }
+                            is MinusOperator ->
+                                performUnaryMinus(valueEvalResult.value!!)
+                                    .map { EvaluationResult(it, valueEvalResult.context) }
+                            else -> Result.failure(UnsupportedOperationException("Operador unario no soportado: ${statement.operator}"))
+                        }
+                    },
+                    onFailure = { Result.failure(it) },
+                )
             }
-            else -> throw IllegalArgumentException("Expected Unary, got ${statement::class.simpleName}")
+            else -> Result.failure(IllegalArgumentException("Expected Unary, got ${statement::class.simpleName}"))
         }
     }
 
-    private fun performUnaryAddition(value: Any): Any {
+    private fun performUnaryAddition(value: Any): Result<Any> {
         return when (value) {
-            is Number -> +value.toDouble()
-            else -> throw IllegalArgumentException("Tipo incompatible para operador unario +")
+            is Number -> Result.success(+value.toDouble())
+            else -> Result.failure(IllegalArgumentException("Tipo incompatible para operador unario +"))
         }
     }
 
-    private fun performUnaryMinus(value: Any): Any {
+    private fun performUnaryMinus(value: Any): Result<Any> {
         return when (value) {
-            is Number -> -value.toDouble()
-            else -> throw IllegalArgumentException("Tipo incompatible para operador unario -")
+            is Number -> Result.success(-value.toDouble())
+            else -> Result.failure(IllegalArgumentException("Tipo incompatible para operador unario -"))
         }
     }
 }

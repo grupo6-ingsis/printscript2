@@ -8,7 +8,7 @@ class LiteralIdentifierEvaluator : Evaluator<Any> {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         return when (statement) {
             is LiteralIdentifier -> {
                 val name = statement.value.value
@@ -16,11 +16,11 @@ class LiteralIdentifierEvaluator : Evaluator<Any> {
                     when {
                         context.hasVariable(name) -> context.getVariable(name)
                         context.hasConstant(name) -> context.getConstant(name)
-                        else -> throw IllegalArgumentException("Variable o constante no declarada: $name")
+                        else -> Result.failure<Any>(IllegalArgumentException("Variable o constante no declarada: $name"))
                     }
-                EvaluationResult(value, context)
+                Result.success(EvaluationResult(value, context))
             }
-            else -> throw IllegalArgumentException("Expected LiteralIdentifier, got ${statement::class.simpleName}")
+            else -> Result.failure(IllegalArgumentException("Expected LiteralIdentifier, got ${statement::class.simpleName}"))
         }
     }
 }

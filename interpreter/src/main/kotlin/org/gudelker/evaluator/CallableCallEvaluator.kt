@@ -9,16 +9,22 @@ class CallableCallEvaluator(private val callables: List<CallableValidator>) : Ev
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         if (statement is CallableCall) {
             for (callable in callables) {
                 if (callable.matches(statement)) {
                     val argumentResult = Analyzer.analyze(statement.expression, context, evaluators)
-                    val result = callable.execute(argumentResult)
-                    return result
+                    return argumentResult.fold(
+                        onSuccess = { leftEvalResult ->
+                            Result.success(callable.execute(leftEvalResult))
+                        },
+                        onFailure = { error ->
+                            Result.failure(error)
+                        },
+                    )
                 }
             }
         }
-        throw IllegalArgumentException("Invalid callable statement")
+        return Result.failure(IllegalArgumentException("Invalid callable statement"))
     }
 }

@@ -7,5 +7,5 @@ interface Evaluator<T> {
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult
+    ): Result<EvaluationResult>
 }

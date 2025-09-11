@@ -8,5 +8,5 @@ data class VariableDeclaration(
     val keywordCombo: ComboValuePosition<String>,
     val identifierCombo: ComboValuePosition<String>,
     val type: String?,
-    val value: CanBeCallStatement,
+    val value: CanBeCallStatement?,
 ) : VariableStatement

@@ -17,51 +17,61 @@ class BooleanExpressionEvaluator(
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
-    ): EvaluationResult {
+    ): Result<EvaluationResult> {
         return when (statement) {
             is BooleanExpression -> {
                 if (supportedComparators.isNotEmpty() &&
                     !supportedComparators.contains(statement.comparator::class.java)
                 ) {
-                    throw UnsupportedOperationException("Comparador no soportado: ${statement.comparator::class.simpleName}")
+                    return Result.failure(
+                        UnsupportedOperationException("Comparador no soportado: ${statement.comparator::class.simpleName}"),
+                    )
                 }
 
                 val leftResult = Analyzer.analyze(statement.left, context, evaluators)
-                val rightResult = Analyzer.analyze(statement.right, leftResult.context, evaluators)
-
-                val result =
-                    when (statement.comparator) {
-                        is Equals -> performEquals(leftResult.value, rightResult.value)
-                        is NotEquals -> performNotEquals(leftResult.value, rightResult.value)
-                        is Greater -> performGreater(leftResult.value, rightResult.value)
-                        is Lesser -> performLesser(leftResult.value, rightResult.value)
-                        is GreaterEquals -> performGreaterEquals(leftResult.value, rightResult.value)
-                        is LesserEquals -> performLesserEquals(leftResult.value, rightResult.value)
-                    }
-
-                EvaluationResult(result, rightResult.context)
+                leftResult.fold(
+                    onSuccess = { leftEvalResult ->
+                        val rightResult = Analyzer.analyze(statement.right, leftEvalResult.context, evaluators)
+                        rightResult.fold(
+                            onSuccess = { rightEvalResult ->
+                                val result =
+                                    when (statement.comparator) {
+                                        is Equals -> performEquals(leftEvalResult.value, rightEvalResult.value)
+                                        is NotEquals -> performNotEquals(leftEvalResult.value, rightEvalResult.value)
+                                        is Greater -> performGreater(leftEvalResult.value, rightEvalResult.value)
+                                        is Lesser -> performLesser(leftEvalResult.value, rightEvalResult.value)
+                                        is GreaterEquals -> performGreaterEquals(leftEvalResult.value, rightEvalResult.value)
+                                        is LesserEquals -> performLesserEquals(leftEvalResult.value, rightEvalResult.value)
+                                    }
+                                Result.success(EvaluationResult(result, rightEvalResult.context))
+                            },
+                            onFailure = { Result.failure(it) },
+                        )
+                    },
+                    onFailure = { Result.failure(it) },
+                )
             }
-            else -> throw IllegalArgumentException("Expected BooleanExpression, got ${statement::class.simpleName}")
+            else -> Result.failure(IllegalArgumentException("Expected BooleanExpression, got ${statement::class.simpleName}"))
         }
     }
 
     private fun performEquals(
-        left: Any,
-        right: Any,
+        left: Any?,
+        right: Any?,
     ): Boolean {
         return left == right
     }
 
     private fun performNotEquals(
-        left: Any,
-        right: Any,
+        left: Any?,
+        right: Any?,
     ): Boolean {
         return left != right
     }
 
     private fun performGreater(
-        left: Any,
-        right: Any,
+        left: Any?,
+        right: Any?,
     ): Boolean {
         return when {
             left is Number && right is Number -> left.toDouble() > right.toDouble()
@@ -70,8 +80,8 @@ class BooleanExpressionEvaluator(
     }
 
     private fun performLesser(
-        left: Any,
-        right: Any,
+        left: Any?,
+        right: Any?,
     ): Boolean {
         return when {
             left is Number && right is Number -> left.toDouble() < right.toDouble()
@@ -80,8 +90,8 @@ class BooleanExpressionEvaluator(
     }
 
     private fun performGreaterEquals(
-        left: Any,
-        right: Any,
+        left: Any?,
+        right: Any?,
     ): Boolean {
         return when {
             left is Number && right is Number -> left.toDouble() >= right.toDouble()
@@ -90,8 +100,8 @@ class BooleanExpressionEvaluator(
     }
 
     private fun performLesserEquals(
-        left: Any,
-        right: Any,
+        left: Any?,
+        right: Any?,
     ): Boolean {
         return when {
             left is Number && right is Number -> left.toDouble() <= right.toDouble()
