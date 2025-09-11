@@ -6,7 +6,6 @@ plugins {
 }
 
 group = 'org.gudelker'
-version = '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -27,11 +26,6 @@ dependencies {
     implementation project(':interpreter')
     implementation project(':formatter')
     implementation project(':analyzer')
-
-
-
-
-
 }
 
 test {
