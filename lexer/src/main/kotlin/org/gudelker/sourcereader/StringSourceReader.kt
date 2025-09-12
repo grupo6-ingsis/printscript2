@@ -22,6 +22,5 @@ class StringSourceReader(private val content: String) : SourceReader {
     override fun isEOF(): Boolean = position >= content.length
 
     override fun close() {
-        // No hay nada que cerrar para strings
     }
 }
