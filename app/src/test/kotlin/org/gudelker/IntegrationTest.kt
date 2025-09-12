@@ -468,11 +468,11 @@ class IntegrationTest {
 
                 val rules =
                     mapOf(
-                        "beforeDeclaration" to FormatterRule(on = true, quantity = 1),
-                        "afterDeclaration" to FormatterRule(on = true, quantity = 2),
-                        "assignDeclaration" to FormatterRule(on = true, quantity = 3),
-                        "ifIndentation" to FormatterRule(on = true, quantity = 4),
-                        "println" to FormatterRule(on = true, quantity = 1),
+                        "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                        "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 2),
+                        "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 3),
+                        "indent-inside-if" to FormatterRule(on = true, quantity = 4),
+                        "line-breaks-after-println" to FormatterRule(on = true, quantity = 1),
                     )
 
                 return statements.joinToString("\n") { formatter.format(it, rules) }

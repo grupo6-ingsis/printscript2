@@ -35,9 +35,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 1),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 1),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -63,9 +63,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 0),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 1),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -91,9 +91,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 0),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 0),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 0),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -119,9 +119,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 0),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 0),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -145,9 +145,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 0),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 0),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -173,9 +173,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 0),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 0),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 0),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -197,7 +197,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "println" to FormatterRule(on = true, quantity = 0),
+                "line-breaks-after-println" to FormatterRule(on = true, quantity = 0),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -219,7 +219,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "println" to FormatterRule(on = true, quantity = 1),
+                "line-breaks-after-println" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -241,7 +241,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "println" to FormatterRule(on = true, quantity = 2),
+                "line-breaks-after-println" to FormatterRule(on = true, quantity = 2),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -347,9 +347,9 @@ class FormatterTest {
 
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 1),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 1),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -391,7 +391,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -417,9 +417,9 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "beforeDeclaration" to FormatterRule(on = true, quantity = 3),
-                "afterDeclaration" to FormatterRule(on = true, quantity = 2),
-                "assignDeclaration" to FormatterRule(on = true, quantity = 4),
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 3),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 2),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 4),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -443,7 +443,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "assignDeclaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -465,7 +465,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "assignDeclaration" to FormatterRule(on = true, quantity = 0),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 0),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -493,7 +493,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "assignDeclaration" to FormatterRule(on = true, quantity = 3),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 3),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V1)
@@ -556,7 +556,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "ifIndentation" to FormatterRule(on = true, quantity = 2),
+                "indent-inside-if" to FormatterRule(on = true, quantity = 2),
             )
 
         val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
@@ -582,7 +582,7 @@ class FormatterTest {
             )
         val rules =
             mapOf(
-                "ifIndentation" to FormatterRule(on = true, quantity = 2),
+                "indent-inside-if" to FormatterRule(on = true, quantity = 2),
             )
 
         val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
