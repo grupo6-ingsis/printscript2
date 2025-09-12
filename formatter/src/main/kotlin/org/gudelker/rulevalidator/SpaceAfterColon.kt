@@ -6,7 +6,7 @@ import org.gudelker.utils.FormatterUtils
 
 class SpaceAfterColon : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
-        val ruleName = "afterDeclaration"
+        val ruleName = "enforce-spacing-after-colon-in-declaration"
         val rule = formatterRuleMap[ruleName] ?: return false
         return formatterRuleMap.containsKey(ruleName) && rule.on
     }
@@ -16,7 +16,7 @@ class SpaceAfterColon : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val spacesAfter = FormatterUtils.getDeclarationSpaces("afterDeclaration", formatterRuleMap)
+        val spacesAfter = FormatterUtils.getDeclarationSpaces("enforce-spacing-after-colon-in-declaration", formatterRuleMap)
         return string.replace(":", ":$spacesAfter")
     }
 }

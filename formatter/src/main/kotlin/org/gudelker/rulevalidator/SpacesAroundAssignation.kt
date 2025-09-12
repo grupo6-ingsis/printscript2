@@ -6,7 +6,7 @@ import org.gudelker.utils.FormatterUtils
 
 class SpacesAroundAssignation : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
-        val ruleName = "assignDeclaration"
+        val ruleName = "enforce-spacing-around-equals"
         val rule = formatterRuleMap[ruleName] ?: return false
         return formatterRuleMap.containsKey(ruleName) && rule.on
     }
@@ -16,7 +16,7 @@ class SpacesAroundAssignation : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val assignSpaces = FormatterUtils.getAssignationSpaces("assignDeclaration", formatterRuleMap)
+        val assignSpaces = FormatterUtils.getAssignationSpaces("enforce-spacing-around-equals", formatterRuleMap)
         return string.replace("=", "$assignSpaces=$assignSpaces")
     }
 }

@@ -5,7 +5,7 @@ import org.gudelker.statements.interfaces.Statement
 
 class IfIndentation : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
-        val ruleName = "ifIndentation"
+        val ruleName = "indent-inside-if"
         val rule = formatterRuleMap[ruleName] ?: return false
         return formatterRuleMap.containsKey(ruleName) && rule.on
     }
@@ -15,7 +15,7 @@ class IfIndentation : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val rule = formatterRuleMap["ifIndentation"] ?: return string
+        val rule = formatterRuleMap["indent-inside-if"] ?: return string
         val indentSpaces = " ".repeat(rule.quantity)
 
         val lines = string.split("\n")

@@ -1,21 +1,21 @@
 {
-  "afterDeclaration": {
+  "enforce-spacing-after-colon-in-declaration": {
     "on": true,
     "quantity": 1
   },
-  "beforeDeclaration": {
+  "enforce-spacing-before-colon-in-declaration": {
     "on": true,
     "quantity": 1
   },
-  "assignation": {
+  "enforce-spacing-around-equals": {
     "on": true,
     "quantity": 1
   },
-  "println": {
+  "line-breaks-after-println": {
     "on": true,
     "quantity": 1
   },
-  "ifIndentation": {
+  "indent-inside-if": {
     "on": true,
     "quantity": 1
   }

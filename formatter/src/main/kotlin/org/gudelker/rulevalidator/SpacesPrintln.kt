@@ -6,7 +6,7 @@ import org.gudelker.utils.FormatterUtils
 
 class SpacesPrintln : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
-        val ruleName = "println"
+        val ruleName = "line-breaks-after-println"
         val rule = formatterRuleMap[ruleName] ?: return false
         return formatterRuleMap.containsKey(ruleName) && rule.on
     }
@@ -16,7 +16,7 @@ class SpacesPrintln : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val newLines = FormatterUtils.generateNewLines("println", formatterRuleMap)
+        val newLines = FormatterUtils.generateNewLines("line-breaks-after-println", formatterRuleMap)
         return string.replace("println", "${newLines}println")
     }
 }
