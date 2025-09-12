@@ -8,7 +8,14 @@ class InputStreamFormatterConfigLoaderToMap(private val inputStream: InputStream
     override fun loadConfig(): Map<String, FormatterRule> {
         val gson = Gson()
         val json = inputStream.bufferedReader().readText()
-        val type = object : TypeToken<Map<String, FormatterRule>>() {}.type
-        return gson.fromJson(json, type)
+
+        // Primero lo leo como Map<String, Int>
+        val type = object : TypeToken<Map<String, Int>>() {}.type
+        val raw: Map<String, Int> = gson.fromJson(json, type)
+
+        // Después lo transformo a Map<String, FormatterRule>
+        return raw.mapValues { (_, quantity) ->
+            FormatterRule(on = true, quantity = quantity)
+        }
     }
 }
