@@ -122,7 +122,7 @@ class Formatting : CliktCommand("formatting") {
             val jsonToMap = JsonReaderFormatterToMap(configPath)
             val strBuilder = StringBuilder()
             for (statement in ast.getStatements()) {
-                formatter.format(statement, jsonToMap.jsonToMap())
+                formatter.format(statement, jsonToMap.loadConfig())
                 strBuilder.append(statement)
             }
             echo(strBuilder.toString())
