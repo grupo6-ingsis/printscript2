@@ -52,7 +52,7 @@ class MoreTests {
                 VariableReassginationLintAnalyzer(emptyList()),
             )
         val config = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
-        return DefaultLinter(analyzers, config)
+        return DefaultLinter(analyzers)
     }
 
     @BeforeEach

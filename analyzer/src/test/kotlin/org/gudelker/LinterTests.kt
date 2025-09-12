@@ -62,7 +62,7 @@ class LinterTests {
                 LiteralIdentifierLintAnalyzer(emptyList()),
             )
         val configLoader = JsonLinterConfigLoaderToMap("src/main/kotlin/org/gudelker/linterconfig.json")
-        linter = DefaultLinter(analyzers, configLoader)
+        linter = DefaultLinter(analyzers)
     }
 
     @Test

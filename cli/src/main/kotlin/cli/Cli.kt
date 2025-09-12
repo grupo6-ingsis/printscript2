@@ -11,6 +11,7 @@ import org.gudelker.DefaultLinterFactory
 import org.gudelker.InterpreterFactory
 import org.gudelker.LexerFactory
 import org.gudelker.StatementStream
+import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.ParserSyntaxError
@@ -144,7 +145,7 @@ class Analyzing : CliktCommand("analyzing") {
             showProgress("Analyzing", 100)
             val linter = DefaultLinterFactory.createLinter(parseVersion(version), configPath)
             val statementStream = StatementStream(ast.getStatements())
-            val configLoader = linter.configLoader
+            val configLoader = JsonLinterConfigLoaderToMap(configPath)
             val rules = configLoader.loadConfig()
             val result = linter.lint(statementStream, rules)
             val lintResults = result.results

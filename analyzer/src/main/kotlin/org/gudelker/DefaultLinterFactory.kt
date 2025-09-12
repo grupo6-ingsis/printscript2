@@ -65,7 +65,7 @@ object DefaultLinterFactory {
             JsonLinterConfigLoaderToMap(
                 config,
             )
-        val linterV1 = DefaultLinter(analyzers, configLoader)
+        val linterV1 = DefaultLinter(analyzers)
         return linterV1
     }
 
@@ -113,7 +113,7 @@ object DefaultLinterFactory {
             JsonLinterConfigLoaderToMap(
                 config,
             )
-        val linterV2 = DefaultLinter(analyzers, configLoader)
+        val linterV2 = DefaultLinter(analyzers)
         return linterV2
     }
 }
