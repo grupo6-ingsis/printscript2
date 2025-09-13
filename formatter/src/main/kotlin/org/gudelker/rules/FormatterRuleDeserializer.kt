@@ -16,7 +16,7 @@ class FormatterRuleDeserializer : JsonDeserializer<FormatterRule> {
             json.isJsonObject -> {
                 val obj = json.asJsonObject
                 val on = obj.get("on").asBoolean
-                val quantity = obj.get("quantity").asInt
+                val quantity = if (obj.has("quantity")) obj.get("quantity").asInt else 1
                 FormatterRule(on, quantity)
             }
             json.isJsonPrimitive && json.asJsonPrimitive.isBoolean -> {

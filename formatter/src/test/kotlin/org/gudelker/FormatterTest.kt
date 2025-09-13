@@ -46,8 +46,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x : Number = 5;", result)
-        assertEquals("let x : Number = 5;", result2)
+        assertEquals("let x : Number = 5;\n", result)
+        assertEquals("let x : Number = 5;\n", result2)
     }
 
     @Test
@@ -74,8 +74,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x: Number = 5;", result)
-        assertEquals("let x: Number = 5;", result2)
+        assertEquals("let x: Number = 5;\n", result)
+        assertEquals("let x: Number = 5;\n", result2)
     }
 
     @Test
@@ -102,8 +102,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let y:String=\"hello\";", result)
-        assertEquals("let y:String=\"hello\";", result2)
+        assertEquals("let y:String=\"hello\";\n", result)
+        assertEquals("let y:String=\"hello\";\n", result2)
     }
 
     @Test
@@ -130,8 +130,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let y:String = \"hello\";", result)
-        assertEquals("let y:String = \"hello\";", result2)
+        assertEquals("let y:String = \"hello\";\n", result)
+        assertEquals("let y:String = \"hello\";\n", result2)
     }
 
     @Test
@@ -156,8 +156,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x:Number = 10;", result)
-        assertEquals("let x:Number = 10;", result2)
+        assertEquals("let x:Number = 10;\n", result)
+        assertEquals("let x:Number = 10;\n", result2)
     }
 
     @Test
@@ -184,8 +184,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x:Number=10;", result)
-        assertEquals("let x:Number=10;", result2)
+        assertEquals("let x:Number=10;\n", result)
+        assertEquals("let x:Number=10;\n", result2)
     }
 
     @Test
@@ -206,8 +206,8 @@ class FormatterTest {
         val result = formatter.format(printlnStatement, rules)
         val result2 = formatter2.format(printlnStatement, rules)
 
-        assertEquals("println(\"test\");", result)
-        assertEquals("println(\"test\");", result2)
+        assertEquals("println(\"test\");\n", result)
+        assertEquals("println(\"test\");\n", result2)
     }
 
     @Test
@@ -228,8 +228,8 @@ class FormatterTest {
         val result = formatter.format(printlnStatement, rules)
         val result2 = formatter2.format(printlnStatement, rules)
 
-        assertEquals("\nprintln(\"test\");", result)
-        assertEquals("\nprintln(\"test\");", result2)
+        assertEquals("\nprintln(\"test\");\n", result)
+        assertEquals("\nprintln(\"test\");\n", result2)
     }
 
     @Test
@@ -250,8 +250,8 @@ class FormatterTest {
         val result = formatter.format(printlnStatement, rules)
         val result2 = formatter2.format(printlnStatement, rules)
 
-        assertEquals("\n\nprintln(\"test\");", result)
-        assertEquals("\n\nprintln(\"test\");", result2)
+        assertEquals("\n\nprintln(\"test\");\n", result)
+        assertEquals("\n\nprintln(\"test\");\n", result2)
     }
 
     @Test
@@ -359,8 +359,8 @@ class FormatterTest {
 
         val expected =
             listOf(
-                "let x : Number = 5;",
-                "let name : String = \"John\";",
+                "let x : Number = 5;\n",
+                "let name : String = \"John\";\n",
                 "x + 10",
             )
 
@@ -370,8 +370,8 @@ class FormatterTest {
 
         val expected2 =
             listOf(
-                "let x : Number = 5;",
-                "let name : String = \"John\";",
+                "let x : Number = 5;\n",
+                "let name : String = \"John\";\n",
                 "x + 10",
             )
 
@@ -400,8 +400,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x = 42;", result)
-        assertEquals("let x = 42;", result2)
+        assertEquals("let x = 42;\n", result)
+        assertEquals("let x = 42;\n", result2)
     }
 
     @Test
@@ -428,8 +428,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let variable   :  Boolean    =    \"true\";", result)
-        assertEquals("let variable   :  Boolean    =    \"true\";", result2)
+        assertEquals("let variable   :  Boolean    =    \"true\";\n", result)
+        assertEquals("let variable   :  Boolean    =    \"true\";\n", result2)
     }
 
     @Test
@@ -452,8 +452,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("x = 42;", result)
-        assertEquals("x = 42;", result2)
+        assertEquals("x = 42;\n", result)
+        assertEquals("x = 42;\n", result2)
     }
 
     @Test
@@ -474,8 +474,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("variable=\"newValue\";", result)
-        assertEquals("variable=\"newValue\";", result2)
+        assertEquals("variable=\"newValue\";\n", result)
+        assertEquals("variable=\"newValue\";\n", result2)
     }
 
     @Test
@@ -502,8 +502,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("count   =   count + 1;", result)
-        assertEquals("count   =   count + 1;", result2)
+        assertEquals("count   =   count + 1;\n", result)
+        assertEquals("count   =   count + 1;\n", result2)
     }
 
     @Test
@@ -590,8 +590,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter.format(statement2, rules)
 
-        val expected = "readInput(\"Enter your name:\");"
-        val expected2 = "readEnv(\"PATH\");"
+        val expected = "readInput(\"Enter your name:\");\n"
+        val expected2 = "readEnv(\"PATH\");\n"
 
         assertEquals(expected, result)
         assertEquals(expected2, result2)

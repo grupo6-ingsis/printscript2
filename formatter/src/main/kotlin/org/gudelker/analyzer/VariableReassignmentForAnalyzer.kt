@@ -21,7 +21,7 @@ class VariableReassignmentForAnalyzer(
         val reassignment = statement as VariableReassignment
         val identifier = reassignment.identifier
         val value = formatter.format(reassignment.value, formatterRuleMap)
-        var string = "$identifier=$value;"
+        var string = "$identifier=$value;\n"
         ruleValidators.forEach { validator ->
             if (validator.matches(formatterRuleMap)) {
                 string = validator.applyRule(string, statement, formatterRuleMap)

@@ -360,8 +360,6 @@ class IntegrationTest {
                 println("Y is true");
             }
             """.trimIndent()
-
-        println(expectedCode.replace("\n", "\\n\n"))
         println(result.replace("\n", "\\n\n"))
         assertEquals(expectedCode, result)
     }
@@ -475,7 +473,7 @@ class IntegrationTest {
                         "line-breaks-after-println" to FormatterRule(on = true, quantity = 1),
                     )
 
-                return statements.joinToString("\n") { formatter.format(it, rules) }
+                return statements.joinToString("") { formatter.format(it, rules) }
             }
         }
     }
