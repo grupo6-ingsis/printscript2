@@ -18,7 +18,6 @@ import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
-import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.rulelinter.ConstDeclarationCamelCaseRule
 import org.gudelker.rulelinter.ConstDeclarationSnakeCaseRule
 import org.gudelker.rulelinter.RestrictPrintLnExpressions
@@ -28,17 +27,14 @@ import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.utilities.Version
 
 object DefaultLinterFactory {
-    fun createLinter(
-        version: Version,
-        config: String,
-    ): DefaultLinter {
+    fun createLinter(version: Version): DefaultLinter {
         when (version) {
-            Version.V1 -> return createLinterV1(config)
-            Version.V2 -> return createLinterV2(config)
+            Version.V1 -> return createLinterV1()
+            Version.V2 -> return createLinterV2()
         }
     }
 
-    private fun createLinterV1(config: String): DefaultLinter {
+    private fun createLinterV1(): DefaultLinter {
         val analyzers =
             listOf(
                 VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
@@ -61,15 +57,11 @@ object DefaultLinterFactory {
                 LiteralStringLintAnalyzer(emptyList()),
                 LiteralIdentifierLintAnalyzer(emptyList()),
             )
-        val configLoader =
-            JsonLinterConfigLoaderToMap(
-                config,
-            )
         val linterV1 = DefaultLinter(analyzers)
         return linterV1
     }
 
-    private fun createLinterV2(config: String): DefaultLinter {
+    private fun createLinterV2(): DefaultLinter {
         val analyzers =
             listOf(
                 VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
@@ -108,10 +100,6 @@ object DefaultLinterFactory {
                 LiteralIdentifierLintAnalyzer(emptyList()),
                 LiteralBooleanLintAnalyzer(emptyList()),
                 LiteralNumberLintAnalyzer(emptyList()),
-            )
-        val configLoader =
-            JsonLinterConfigLoaderToMap(
-                config,
             )
         val linterV2 = DefaultLinter(analyzers)
         return linterV2

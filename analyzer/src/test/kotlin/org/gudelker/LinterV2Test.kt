@@ -51,8 +51,6 @@ class LinterV2Test {
         linter =
             DefaultLinterFactory.createLinter(
                 Version.V2,
-                "/Users/pedrodelaguila/faculty/ingsis/" +
-                    "printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
             )
     }
 
@@ -209,7 +207,6 @@ class LinterV2Test {
         val v2Linter =
             DefaultLinterFactory.createLinter(
                 Version.V2,
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
             )
         val rules =
             mapOf(
@@ -294,7 +291,6 @@ class LinterV2Test {
         val linter =
             DefaultLinterFactory.createLinter(
                 Version.V2,
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
             )
         val rules =
             mapOf(

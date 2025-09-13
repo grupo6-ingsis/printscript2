@@ -11,8 +11,7 @@ class RestrictPrintLnExpressions(
     private val allowedTypes: List<KClass<out Statement>>,
 ) : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {
-        val restrictPrintLnExpressions = "restrictPrintlnExpressions"
-        return ruleMap[restrictPrintLnExpressions]?.restrictPrintlnExpressions == true
+        return ruleMap.values.any { it.restrictPrintlnExpressions }
     }
 
     override fun validate(statement: Statement): LinterResult {

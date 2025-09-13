@@ -143,7 +143,7 @@ class Analyzing : CliktCommand("analyzing") {
             val tokens = lexSource(filePath, version)
             val ast = parseTokens(tokens, version)
             showProgress("Analyzing", 100)
-            val linter = DefaultLinterFactory.createLinter(parseVersion(version), configPath)
+            val linter = DefaultLinterFactory.createLinter(parseVersion(version))
             val statementStream = StatementStream(ast.getStatements())
             val configLoader = JsonLinterConfigLoaderToMap(configPath)
             val rules = configLoader.loadConfig()

@@ -23,13 +23,9 @@ class LinterConfigTest {
         val linterV1: Linter =
             DefaultLinterFactory.createLinter(
                 Version.V1,
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
             )
         val linterV2: Linter =
-            DefaultLinterFactory.createLinter(
-                Version.V2,
-                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.json",
-            )
+            DefaultLinterFactory.createLinter(Version.V2)
         assertNotNull(linterV1)
         assertNotNull(linterV2)
     }

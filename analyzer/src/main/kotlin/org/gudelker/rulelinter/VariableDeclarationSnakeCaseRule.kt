@@ -9,7 +9,10 @@ import org.gudelker.statements.interfaces.Statement
 
 class VariableDeclarationSnakeCaseRule : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {
-        return ruleMap.values.any { it.identifierFormat == "snake_case" }
+        return ruleMap.values.any {
+            val normalizedFormat = it.identifierFormat.lowercase().replace(Regex("[^a-z]"), "")
+            normalizedFormat == "snakecase"
+        }
     }
 
     override fun validate(statement: Statement): LinterResult {

@@ -10,8 +10,7 @@ import kotlin.reflect.KClass
 
 class RestrictReadInputExpressions(private val allowedTypes: List<KClass<out Statement>>) : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {
-        val restrictReadInputExpressions = "restrictReadInputExpressions"
-        return ruleMap[restrictReadInputExpressions]?.restrictReadInputExpressions == true
+        return ruleMap.values.any { it.restrictReadInputExpressions }
     }
 
     override fun validate(statement: Statement): LinterResult {

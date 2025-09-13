@@ -9,7 +9,10 @@ import org.gudelker.statements.interfaces.Statement
 
 class ConstDeclarationCamelCaseRule : RuleLinter {
     override fun matches(ruleMap: Map<String, LinterConfig>): Boolean {
-        return ruleMap.values.any { it.identifierFormat == "camelCase" }
+        return ruleMap.values.any {
+            val normalizedFormat = it.identifierFormat.lowercase().replace(Regex("[^a-z]"), "")
+            normalizedFormat == "camelcase"
+        }
     }
 
     override fun validate(statement: Statement): LinterResult {
