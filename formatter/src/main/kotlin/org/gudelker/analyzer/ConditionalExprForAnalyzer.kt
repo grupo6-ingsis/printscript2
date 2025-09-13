@@ -29,14 +29,14 @@ class ConditionalExprForAnalyzer(
         val formattedIfBody =
             ifBody.joinToString("") {
                 formatter.format(it, formatterRuleMap)
-            }
+            }.trimEnd('\n')
 
         var result =
             if (elseBody != null) {
                 val formattedElseBody =
                     elseBody.joinToString("") {
                         formatter.format(it, formatterRuleMap)
-                    }
+                    }.trimEnd('\n')
                 "$ifKeyword ($formattedCondition) {\n$formattedIfBody\n} else {\n$formattedElseBody\n}"
             } else {
                 "$ifKeyword ($formattedCondition) {\n$formattedIfBody\n}"

@@ -19,7 +19,7 @@ class CallableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatte
         val callable = statement as Callable
         val name = callable.functionName.value
         val formattedExpression = formatter.format(callable.expression, formatterRuleMap)
-        var string = "$name($formattedExpression);"
+        var string = "$name($formattedExpression);\n"
 
         ruleValidators.forEach { rule ->
             if (rule.matches(formatterRuleMap)) {

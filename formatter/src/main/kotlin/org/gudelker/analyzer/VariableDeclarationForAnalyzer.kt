@@ -24,9 +24,9 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
 
         var string =
             if (typeStr == null) {
-                "$keyword $identifier=$valueFormatted;"
+                "$keyword $identifier=$valueFormatted;\n"
             } else {
-                "$keyword $identifier:$typeStr=$valueFormatted;"
+                "$keyword $identifier:$typeStr=$valueFormatted;\n"
             }
 
         rulesValidators.forEach { validator ->
