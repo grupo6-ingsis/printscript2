@@ -1,5 +1,5 @@
 ext {
-    versionCode = '1.0.12'
+    versionCode = '1.0.13'
 }
 
 allprojects {

@@ -13,7 +13,7 @@ class InputStreamLinterConfigLoaderToMap(private val inputStream: InputStream) :
         val jsonObject = gson.fromJson(InputStreamReader(inputStream), JsonObject::class.java)
 
         // Default config
-        var identifierFormat = "camelCase"
+        var identifierFormat = ""
         var restrictPrintln = false
         var restrictReadInput = false
 
