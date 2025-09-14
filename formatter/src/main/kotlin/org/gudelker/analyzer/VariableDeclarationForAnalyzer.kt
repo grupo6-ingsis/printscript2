@@ -16,18 +16,29 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val declaration = statement as VariableDeclaration
+        if(statement !is VariableDeclaration) return ""
         val keyword = statement.keywordCombo
-        val identifier = declaration.identifierCombo.value
-        val typeStr = statement.type
-        val valueFormatted = formatter.formatNode(declaration.value!!, formatterRuleMap)
+        val identifier = statement.identifierCombo.value
+        val colon = statement.colon?.value
+        val spacesBeforeColon = statement.colon!!.position.startColumn - statement.identifierCombo.position.endColumn
+        val spacesAfterColon = statement.type!!.position.startColumn - statement.colon!!.position.endColumn
+        val typeStr = statement.type?.value
+        val equals = statement.equals?.value
+        val valueFormatted = formatter.formatNode(statement.value!!, formatterRuleMap)
+        val spacesBeforeEquals = statement.type?.position?.startColumn - statement.equals?.position?.startColumn
+        // let x:x = value;
 
         var string =
             if (typeStr == null) {
-                "$keyword $identifier=$valueFormatted;\n"
-            } else {
-                "$keyword $identifier:$typeStr=$valueFormatted;\n"
+                "$keyword $identifier$spacesBeforeEquals=$spacesAfterEquals$valueFormatted;\n"
             }
+            else if (equals == null) {
+                "$keyword $identifier$spacesBeforeColon:$spacesAfterColon$typeStr;\n"
+            }
+            else {
+                "$keyword $identifier$spacesBeforeColon:$spacesAfterColon$typeStr$spacesBeforeEquals=$spacesAfterEquals$valueFormatted;\n"
+            }
+
 
         rulesValidators.forEach { validator ->
             if (validator.matches(formatterRuleMap)) {

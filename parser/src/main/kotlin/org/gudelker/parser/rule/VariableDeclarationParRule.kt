@@ -1,8 +1,10 @@
 package org.gudelker.parser.rule
 
+import org.gudelker.Position
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.CanBeCallStatement
+import org.gudelker.parser.parsingtoken.TypeParseResult
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
@@ -35,14 +37,16 @@ class VariableDeclarationParRule(
             return errorResult(typeResult.error.toString(), typeResult.nextStream)
         }
         val (assignToken, streamAfterAssign) = typeResult.nextStream.consume(TokenType.ASSIGNATION)
+        val assignPosition = assignToken?.getPosition()
         return if (assignToken != null) {
             parseWithAssignment(
                 keywordToken,
                 keywordTokenPosition,
                 identifierResult.identifier,
                 identifierPos,
-                typeResult.typeName,
+                typeResult,
                 streamAfterAssign,
+                assignPosition
             )
         } else {
             parseWithoutAssignment(
@@ -50,7 +54,7 @@ class VariableDeclarationParRule(
                 keywordTokenPosition,
                 identifierResult.identifier,
                 identifierPos,
-                typeResult.typeName,
+                typeResult,
                 typeResult.nextStream,
             )
         }
@@ -73,8 +77,9 @@ class VariableDeclarationParRule(
         position: StatementPosition,
         identifierToken: Token,
         identifierPos: StatementPosition,
-        type: String?,
+        type: TypeParseResult?,
         streamAfterAssign: TokenStream,
+        assignPosition: Position?
     ): ParseResult {
         val expressionResult = expressionRule.parse(streamAfterAssign)
         if (expressionResult.parserResult !is ValidStatementParserResult) {
@@ -92,7 +97,9 @@ class VariableDeclarationParRule(
             VariableDeclaration(
                 keywordCombo = ComboValuePosition(keywordToken.getValue(), position),
                 identifierCombo = ComboValuePosition(identifierToken.getValue(), identifierPos),
-                type,
+                colon = type?.colonPosition?.let { ComboValuePosition(":", it) },
+                type = type?.typePosition?.let{ComboValuePosition(type.typeName!!, it)},
+                equals = ComboValuePosition("=", StatementPosition(assignPosition!!.startLine, assignPosition.startColumn, assignPosition.endLine, assignPosition.endColumn)),
                 value = expressionStatement,
             )
         return ParseResult(ValidStatementParserResult(statement), finalStream)
@@ -103,7 +110,7 @@ class VariableDeclarationParRule(
         position: StatementPosition,
         identifierToken: Token,
         identifierPos: StatementPosition,
-        type: String?,
+        type: TypeParseResult?,
         streamAfterType: TokenStream,
     ): ParseResult {
         if (type == null) {
@@ -117,8 +124,10 @@ class VariableDeclarationParRule(
             VariableDeclaration(
                 keywordCombo = ComboValuePosition(keywordToken.getValue(), position),
                 identifierCombo = ComboValuePosition(identifierToken.getValue(), identifierPos),
-                type,
-                value = null,
+                type = ComboValuePosition(type.typeName!!, type.typePosition!!),
+                colon = ComboValuePosition(":", type.colonPosition!!),
+                equals = null,
+                value = null
             )
         return ParseResult(ValidStatementParserResult(statement), finalStream)
     }
