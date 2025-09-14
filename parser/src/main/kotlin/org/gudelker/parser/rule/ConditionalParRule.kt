@@ -1,15 +1,16 @@
-package org.gudelker.rule
+package org.gudelker.parser.rule
 
+import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.BooleanExpressionStatement
 import org.gudelker.expressions.ConditionalExpression
-import org.gudelker.result.ParseResult
-import org.gudelker.result.ParserSyntaxError
-import org.gudelker.result.ValidStatementParserResult
+import org.gudelker.parser.result.ParseResult
+import org.gudelker.parser.result.ParserSyntaxError
+import org.gudelker.parser.result.ValidStatementParserResult
+import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.statements.interfaces.Statement
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
-import org.gudelker.tokenstream.TokenStream
 
 class ConditionalParRule(
     private val booleanExpressionRule: SyntaxParRule,
@@ -86,7 +87,7 @@ class ConditionalParRule(
 
     private fun parseElseBlock(
         tokenStream: TokenStream,
-        ifToken: org.gudelker.Token,
+        ifToken: Token,
         position: StatementPosition,
         booleanExpression: BooleanExpressionStatement,
         ifBody: List<Statement>,

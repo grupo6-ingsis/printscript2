@@ -1,4 +1,4 @@
-package org.gudelker.result
+package org.gudelker.parser.result
 
 import org.gudelker.statements.interfaces.Statement
 

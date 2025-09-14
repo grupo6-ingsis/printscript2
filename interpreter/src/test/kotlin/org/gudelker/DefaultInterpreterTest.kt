@@ -37,7 +37,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         println(result[0])
@@ -52,7 +52,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Hello World", result[0])
@@ -70,7 +70,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(8.0, result[0])
@@ -87,7 +87,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(-10.0, result[0])
@@ -106,7 +106,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(Unit, result[0])
@@ -126,7 +126,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(2, result.size)
         assertEquals(Unit, result[0])
@@ -151,7 +151,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(3, result.size)
         assertEquals(Unit, result[0])
@@ -175,7 +175,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(0.0, result[0])
@@ -192,7 +192,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(Unit, result[0])
@@ -222,7 +222,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(3, result.size)
         assertEquals(Unit, result[0])
@@ -244,7 +244,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(3, result.size)
         assertEquals(1.0, result[0])
@@ -264,7 +264,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(5.0, result[0])
@@ -294,7 +294,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(3, result.size)
         assertEquals(Unit, result[0])
@@ -314,7 +314,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("Hello World", result[0])
@@ -332,10 +332,10 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
-        assertEquals("Result: 42.0", result[0])
+        assertEquals("Result: 42", result[0])
     }
 
     @Test
@@ -349,7 +349,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(15.0, result[0])
@@ -372,7 +372,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(2, result.size)
         assertEquals(Unit, result[0])
@@ -403,7 +403,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(0.0, result[0])
@@ -433,7 +433,7 @@ class DefaultInterpreterTest {
             )
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals("false path", result[0])
@@ -450,7 +450,7 @@ class DefaultInterpreterTest {
         val statements = listOf(statement)
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(true, result[0])
@@ -468,7 +468,7 @@ class DefaultInterpreterTest {
         val statements = listOf(statement)
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(false, result[0])
@@ -486,7 +486,7 @@ class DefaultInterpreterTest {
         val statements = listOf(statement)
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(true, result[0])
@@ -504,7 +504,7 @@ class DefaultInterpreterTest {
         val statements = listOf(statement)
 
         val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-        val result = interpreter.interpret(statements)
+        val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
         assertEquals(true, result[0])

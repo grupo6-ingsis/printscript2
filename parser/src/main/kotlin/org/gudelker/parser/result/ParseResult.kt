@@ -1,6 +1,6 @@
-package org.gudelker.result
+package org.gudelker.parser.result
 
-import org.gudelker.tokenstream.TokenStream
+import org.gudelker.parser.tokenstream.TokenStream
 
 data class ParseResult(
     val parserResult: ParserResult,

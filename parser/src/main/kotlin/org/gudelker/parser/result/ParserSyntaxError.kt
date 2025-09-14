@@ -1,4 +1,4 @@
-package org.gudelker.result
+package org.gudelker.parser.result
 
 data class ParserSyntaxError(
     private val errorMessage: String,

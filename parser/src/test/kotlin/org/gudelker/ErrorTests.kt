@@ -2,8 +2,8 @@ package org.gudelker
 
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.parser.DefaultParserFactory
-import org.gudelker.result.ParserSyntaxError
-import org.gudelker.tokenstream.TokenStream
+import org.gudelker.parser.result.ParserSyntaxError
+import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.utilities.Version
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,5 +1,5 @@
-import org.gudelker.result.ParserResult
-import org.gudelker.tokenstream.TokenStream
+import org.gudelker.parser.result.ParserResult
+import org.gudelker.parser.tokenstream.TokenStream
 
 interface Parser {
     fun parse(tokenStream: TokenStream): ParserResult
