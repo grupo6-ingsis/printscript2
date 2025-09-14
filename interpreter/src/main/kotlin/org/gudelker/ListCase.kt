@@ -55,7 +55,12 @@ class ListCase {
                         LiteralNumberEvaluator(),
                         LiteralStringEvaluator(),
                         LiteralIdentifierEvaluator(),
-                        UnaryEvaluator(),
+                        UnaryEvaluator(
+                            setOf(
+                                AdditionOperator::class.java,
+                                MinusOperator::class.java,
+                            ),
+                        ),
                         BinaryEvaluator(
                             setOf(
                                 AdditionOperator::class.java,
@@ -75,7 +80,12 @@ class ListCase {
                         LiteralStringEvaluator(),
                         LiteralIdentifierEvaluator(),
                         LiteralBooleanEvaluator(),
-                        UnaryEvaluator(),
+                        UnaryEvaluator(
+                            setOf(
+                                AdditionOperator::class.java,
+                                MinusOperator::class.java,
+                            ),
+                        ),
                         BinaryEvaluator(
                             setOf(
                                 AdditionOperator::class.java,

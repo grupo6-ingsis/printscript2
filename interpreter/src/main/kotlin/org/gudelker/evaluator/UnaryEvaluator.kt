@@ -1,11 +1,13 @@
 package org.gudelker.evaluator
 
 import org.gudelker.expressions.Unary
-import org.gudelker.operators.AdditionOperator
-import org.gudelker.operators.MinusOperator
+import org.gudelker.operators.Operator
+import org.gudelker.operators.UnaryOperator
 import org.gudelker.statements.interfaces.Statement
 
-class UnaryEvaluator : Evaluator<Any> {
+class UnaryEvaluator(
+    private val supportedOperators: Set<Class<out Operator>> = emptySet(),
+) : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: ConstVariableContext,
@@ -13,17 +15,12 @@ class UnaryEvaluator : Evaluator<Any> {
     ): Result<EvaluationResult> {
         return when (statement) {
             is Unary -> {
+                if (operatorNotSupported(statement)) {
+                    return Result.failure(UnsupportedOperationException("Operador no soportado: ${statement.operator::class.simpleName}"))
+                }
                 Analyzer.analyze(statement.value, context, evaluators).fold(
                     onSuccess = { valueEvalResult ->
-                        when (statement.operator) {
-                            is AdditionOperator ->
-                                performUnaryAddition(valueEvalResult.value!!)
-                                    .map { EvaluationResult(it, valueEvalResult.context) }
-                            is MinusOperator ->
-                                performUnaryMinus(valueEvalResult.value!!)
-                                    .map { EvaluationResult(it, valueEvalResult.context) }
-                            else -> Result.failure(UnsupportedOperationException("Operador unario no soportado: ${statement.operator}"))
-                        }
+                        finalResult(statement, valueEvalResult)
                     },
                     onFailure = { Result.failure(it) },
                 )
@@ -32,17 +29,21 @@ class UnaryEvaluator : Evaluator<Any> {
         }
     }
 
-    private fun performUnaryAddition(value: Any): Result<Any> {
-        return when (value) {
-            is Number -> Result.success(+value.toDouble())
-            else -> Result.failure(IllegalArgumentException("Tipo incompatible para operador unario +"))
+    private fun finalResult(
+        statement: Unary,
+        valueEvalResult: EvaluationResult,
+    ): Result<EvaluationResult> {
+        val operator = statement.operator
+        return if (operator is UnaryOperator) {
+            operator.performUnaryOperation(valueEvalResult.value)
+                .map { EvaluationResult(it, valueEvalResult.context) }
+        } else {
+            Result.failure(UnsupportedOperationException("Operador binario no soportado: ${operator::class.simpleName}"))
         }
     }
 
-    private fun performUnaryMinus(value: Any): Result<Any> {
-        return when (value) {
-            is Number -> Result.success(-value.toDouble())
-            else -> Result.failure(IllegalArgumentException("Tipo incompatible para operador unario -"))
-        }
+    private fun operatorNotSupported(statement: Unary): Boolean {
+        return supportedOperators.isNotEmpty() &&
+            !supportedOperators.contains(statement.operator::class.java)
     }
 }

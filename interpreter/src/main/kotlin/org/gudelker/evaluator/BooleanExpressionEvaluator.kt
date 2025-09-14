@@ -1,12 +1,6 @@
 package org.gudelker.evaluator
 
 import org.gudelker.compare.operators.Comparator
-import org.gudelker.compare.operators.Equals
-import org.gudelker.compare.operators.Greater
-import org.gudelker.compare.operators.GreaterEquals
-import org.gudelker.compare.operators.Lesser
-import org.gudelker.compare.operators.LesserEquals
-import org.gudelker.compare.operators.NotEquals
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.statements.interfaces.Statement
 
@@ -20,9 +14,7 @@ class BooleanExpressionEvaluator(
     ): Result<EvaluationResult> {
         return when (statement) {
             is BooleanExpression -> {
-                if (supportedComparators.isNotEmpty() &&
-                    !supportedComparators.contains(statement.comparator::class.java)
-                ) {
+                if (notSupportedComparator(statement)) {
                     return Result.failure(
                         UnsupportedOperationException("Comparador no soportado: ${statement.comparator::class.simpleName}"),
                     )
@@ -34,16 +26,7 @@ class BooleanExpressionEvaluator(
                         val rightResult = Analyzer.analyze(statement.right, leftEvalResult.context, evaluators)
                         rightResult.fold(
                             onSuccess = { rightEvalResult ->
-                                val result =
-                                    when (statement.comparator) {
-                                        is Equals -> performEquals(leftEvalResult.value, rightEvalResult.value)
-                                        is NotEquals -> performNotEquals(leftEvalResult.value, rightEvalResult.value)
-                                        is Greater -> performGreater(leftEvalResult.value, rightEvalResult.value)
-                                        is Lesser -> performLesser(leftEvalResult.value, rightEvalResult.value)
-                                        is GreaterEquals -> performGreaterEquals(leftEvalResult.value, rightEvalResult.value)
-                                        is LesserEquals -> performLesserEquals(leftEvalResult.value, rightEvalResult.value)
-                                    }
-                                Result.success(EvaluationResult(result, rightEvalResult.context))
+                                finalResult(statement, leftEvalResult, rightEvalResult)
                             },
                             onFailure = { Result.failure(it) },
                         )
@@ -55,57 +38,20 @@ class BooleanExpressionEvaluator(
         }
     }
 
-    private fun performEquals(
-        left: Any?,
-        right: Any?,
-    ): Boolean {
-        return left == right
-    }
-
-    private fun performNotEquals(
-        left: Any?,
-        right: Any?,
-    ): Boolean {
-        return left != right
-    }
-
-    private fun performGreater(
-        left: Any?,
-        right: Any?,
-    ): Boolean {
-        return when {
-            left is Number && right is Number -> left.toDouble() > right.toDouble()
-            else -> throw IllegalArgumentException("Tipos incompatibles para comparación >")
+    private fun finalResult(
+        statement: BooleanExpression,
+        leftEvalResult: EvaluationResult,
+        rightEvalResult: EvaluationResult,
+    ): Result<EvaluationResult> =
+        statement.comparator.performBinaryComparator(
+            leftEvalResult.value,
+            rightEvalResult.value,
+        ).map { result ->
+            EvaluationResult(result, rightEvalResult.context)
         }
-    }
 
-    private fun performLesser(
-        left: Any?,
-        right: Any?,
-    ): Boolean {
-        return when {
-            left is Number && right is Number -> left.toDouble() < right.toDouble()
-            else -> throw IllegalArgumentException("Tipos incompatibles para comparación <")
-        }
-    }
-
-    private fun performGreaterEquals(
-        left: Any?,
-        right: Any?,
-    ): Boolean {
-        return when {
-            left is Number && right is Number -> left.toDouble() >= right.toDouble()
-            else -> throw IllegalArgumentException("Tipos incompatibles para comparación >=")
-        }
-    }
-
-    private fun performLesserEquals(
-        left: Any?,
-        right: Any?,
-    ): Boolean {
-        return when {
-            left is Number && right is Number -> left.toDouble() <= right.toDouble()
-            else -> throw IllegalArgumentException("Tipos incompatibles para comparación <=")
-        }
+    private fun notSupportedComparator(statement: BooleanExpression): Boolean {
+        return supportedComparators.isNotEmpty() &&
+            !supportedComparators.contains(statement.comparator::class.java)
     }
 }
