@@ -10,21 +10,21 @@ import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.DivisionOperator
 import org.gudelker.operators.MinusOperator
 import org.gudelker.operators.MultiplyOperator
-import org.gudelker.rule.BinaryParRule
-import org.gudelker.rule.BooleanExpressionParRule
-import org.gudelker.rule.CallableCallParRule
-import org.gudelker.rule.CallableParRule
-import org.gudelker.rule.ConditionalParRule
-import org.gudelker.rule.ConstDeclarationParRule
-import org.gudelker.rule.ExpressionParRule
-import org.gudelker.rule.GroupingParRule
-import org.gudelker.rule.LiteralBooleanParRule
-import org.gudelker.rule.LiteralIdentifierParRule
-import org.gudelker.rule.LiteralNumberParRule
-import org.gudelker.rule.LiteralStringParRule
-import org.gudelker.rule.UnaryParRule
-import org.gudelker.rule.VariableDeclarationParRule
-import org.gudelker.rule.VariableReassignmentParRule
+import org.gudelker.parser.rule.BinaryParRule
+import org.gudelker.parser.rule.BooleanExpressionParRule
+import org.gudelker.parser.rule.CallableCallParRule
+import org.gudelker.parser.rule.CallableParRule
+import org.gudelker.parser.rule.ConditionalParRule
+import org.gudelker.parser.rule.ConstDeclarationParRule
+import org.gudelker.parser.rule.ExpressionParRule
+import org.gudelker.parser.rule.GroupingParRule
+import org.gudelker.parser.rule.LiteralBooleanParRule
+import org.gudelker.parser.rule.LiteralIdentifierParRule
+import org.gudelker.parser.rule.LiteralNumberParRule
+import org.gudelker.parser.rule.LiteralStringParRule
+import org.gudelker.parser.rule.UnaryParRule
+import org.gudelker.parser.rule.VariableDeclarationParRule
+import org.gudelker.parser.rule.VariableReassignmentParRule
 import org.gudelker.utilities.Version
 
 object DefaultParserFactory {
@@ -41,7 +41,15 @@ object DefaultParserFactory {
         val literalIdentifierParRule = LiteralIdentifierParRule()
 
         val baseExpressionParRule = ExpressionParRule(listOf(literalNumberParRule, literalStringParRule, literalIdentifierParRule))
-        val unaryParRule = UnaryParRule(baseExpressionParRule)
+        val unaryParRule: UnaryParRule =
+            UnaryParRule(
+                baseExpressionParRule,
+                unaryOperators =
+                    mapOf(
+                        "+" to { AdditionOperator() },
+                        "-" to { MinusOperator() },
+                    ),
+            )
         val groupingParRule = GroupingParRule(baseExpressionParRule)
 
         val binaryExpressionParRule =
@@ -124,7 +132,15 @@ object DefaultParserFactory {
         val baseExpressionParRule =
             ExpressionParRule(listOf(literalNumberParRule, literalStringParRule, literalIdentifierParRule, literalBooleanParRule))
 
-        val unaryParRule = UnaryParRule(baseExpressionParRule)
+        val unaryParRule: UnaryParRule =
+            UnaryParRule(
+                expressionRule = baseExpressionParRule,
+                unaryOperators =
+                    mapOf(
+                        "+" to { AdditionOperator() },
+                        "-" to { MinusOperator() },
+                    ),
+            )
         val groupingParRule = GroupingParRule(baseExpressionParRule)
 
         val binaryExpressionParRule =

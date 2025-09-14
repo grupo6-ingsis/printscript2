@@ -2,8 +2,8 @@ package org.gudelker
 
 import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.parser.DefaultParserFactory
-import org.gudelker.result.Valid
-import org.gudelker.tokenstream.TokenStream
+import org.gudelker.parser.result.Valid
+import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

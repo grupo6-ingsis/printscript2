@@ -11,6 +11,8 @@ class AdditionOperator(
     ): Result<Any> {
         return when {
             left is Number && right is Number -> Result.success(left.toDouble() + right.toDouble())
+            left is Number && right is String -> Result.success(left.toInt().toString() + right)
+            left is String && right is Number -> Result.success(left + right.toInt().toString())
             left is String || right is String -> Result.success(left.toString() + right.toString())
             else -> Result.failure(IllegalArgumentException("Tipos incompatibles para suma"))
         }

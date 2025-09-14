@@ -1,8 +1,8 @@
-package org.gudelker.rule
+package org.gudelker.parser.rule
 
-import org.gudelker.result.ParseResult
-import org.gudelker.result.ParserSyntaxError
-import org.gudelker.tokenstream.TokenStream
+import org.gudelker.parser.result.ParseResult
+import org.gudelker.parser.result.ParserSyntaxError
+import org.gudelker.parser.tokenstream.TokenStream
 
 class ExpressionParRule(
     private val rules: List<SyntaxParRule>,

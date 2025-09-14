@@ -1,7 +1,0 @@
-let name: String = "hola";
-KEYWORD IDENTIFIER DECLARATION TYPE ASSIGNSATION STRING SEMICOLON
-
-VariableDeclaration(val identifier: String, val type : String?,val value : VariableStatement)
-
-let peter = 5
-peter = peter + 1

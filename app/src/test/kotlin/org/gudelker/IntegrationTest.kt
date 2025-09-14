@@ -1,14 +1,14 @@
 package org.gudelker
 
 import org.gudelker.parser.DefaultParserFactory
+import org.gudelker.parser.result.Valid
+import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.result.CompoundResult
 import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.LintViolation
-import org.gudelker.result.Valid
 import org.gudelker.result.ValidTokens
 import org.gudelker.rules.FormatterRule
 import org.gudelker.sourcereader.StringSourceReader
-import org.gudelker.tokenstream.TokenStream
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -230,7 +230,8 @@ class IntegrationTest {
 
                 // 3. Interpretation
                 val interpreter = InterpreterFactory.createInterpreter(Version.V1)
-                return interpreter.interpret(statements)
+                val intResult = interpreter.interpret(statements)
+                return intResult.getOrElse { throw RuntimeException("Interpreter error: $it") }
             }
         }
     }
@@ -335,7 +336,8 @@ class IntegrationTest {
 
                 // 3. Interpretation
                 val interpreter = InterpreterFactory.createInterpreter(Version.V2)
-                return interpreter.interpret(statements)
+                val intResult = interpreter.interpret(statements)
+                return intResult.getOrElse { throw RuntimeException("Interpreter error: $it") }
             }
         }
     }

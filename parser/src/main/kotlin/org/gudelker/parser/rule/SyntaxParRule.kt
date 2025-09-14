@@ -1,7 +1,7 @@
-package org.gudelker.rule
+package org.gudelker.parser.rule
 
-import org.gudelker.result.ParseResult
-import org.gudelker.tokenstream.TokenStream
+import org.gudelker.parser.result.ParseResult
+import org.gudelker.parser.tokenstream.TokenStream
 
 interface SyntaxParRule {
     fun matches(tokenStream: TokenStream): Boolean

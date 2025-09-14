@@ -1,13 +1,13 @@
 package org.gudelker.parser
 
 import Parser
-import org.gudelker.result.ParserResult
-import org.gudelker.result.ParserSyntaxError
-import org.gudelker.result.Valid
-import org.gudelker.result.ValidStatementParserResult
-import org.gudelker.rule.SyntaxParRule
+import org.gudelker.parser.result.ParserResult
+import org.gudelker.parser.result.ParserSyntaxError
+import org.gudelker.parser.result.Valid
+import org.gudelker.parser.result.ValidStatementParserResult
+import org.gudelker.parser.rule.SyntaxParRule
+import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.statements.interfaces.Statement
-import org.gudelker.tokenstream.TokenStream
 
 class DefaultParser(
     private val rules: List<SyntaxParRule>,

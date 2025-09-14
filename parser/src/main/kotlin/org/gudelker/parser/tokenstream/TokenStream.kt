@@ -1,4 +1,4 @@
-package org.gudelker.tokenstream
+package org.gudelker.parser.tokenstream
 
 import org.gudelker.Token
 import org.gudelker.components.org.gudelker.TokenType
