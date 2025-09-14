@@ -1,11 +1,11 @@
 package org.gudelker
 
+import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.rules.FormatterRule
-import org.gudelker.statements.interfaces.Statement
 
 interface Formatter {
     fun format(
-        statement: Statement,
+        tokenStream: TokenStream,
         rules: Map<String, FormatterRule>,
     ): String
 }

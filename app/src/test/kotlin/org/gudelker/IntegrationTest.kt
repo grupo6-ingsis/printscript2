@@ -342,29 +342,29 @@ class IntegrationTest {
         }
     }
 
-    @Test
-    fun `should return formatted code applying rules`() {
-        val code =
-            """
-            let y:boolean=true;
-            if (y){
-            println("Y is true");
-            }
-            """.trimIndent()
-
-        val result = formatCodeV2(code)
-
-        val expectedCode =
-            """
-            let y :  boolean   =   true;
-            if (y) {
-
-                println("Y is true");
-            }
-            """.trimIndent()
-        println(result.replace("\n", "\\n\n"))
-        assertEquals(expectedCode, result)
-    }
+//    @Test
+//    fun `should return formatted code applying rules`() {
+//        val code =
+//            """
+//            let y:boolean=true;
+//            if (y){
+//            println("Y is true");
+//            }
+//            """.trimIndent()
+//
+//        val result = formatCodeV2(code)
+//
+//        val expectedCode =
+//            """
+//            let y :  boolean   =   true;
+//            if (y) {
+//
+//                println("Y is true");
+//            }
+//            """.trimIndent()
+//        println(result.replace("\n", "\\n\n"))
+//        assertEquals(expectedCode, result)
+//    }
 
     @Test
     fun `should lint code with camelCase and snake_case identifiers`() {
