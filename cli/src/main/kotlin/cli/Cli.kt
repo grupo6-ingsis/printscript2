@@ -117,15 +117,13 @@ class Formatting : CliktCommand("formatting") {
     override fun run() {
         try {
             val tokens = lexSource(filePath, version)
-            val ast = parseTokens(tokens, version)
             showProgress("Formatting", 100)
             val formatter = DefaultFormatterFactory.createFormatter(parseVersion(version))
             val jsonToMap = JsonReaderFormatterToMap(configPath)
             val strBuilder = StringBuilder()
-            for (statement in ast.getStatements()) {
-                formatter.format(statement, jsonToMap.loadConfig())
-                strBuilder.append(statement)
-            }
+            val tokenStream = TokenStream(tokens.value)
+            val formattedCode = formatter.format(tokenStream, jsonToMap.loadConfig())
+            strBuilder.append(formattedCode)
             echo(strBuilder.toString())
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}", err = true)
