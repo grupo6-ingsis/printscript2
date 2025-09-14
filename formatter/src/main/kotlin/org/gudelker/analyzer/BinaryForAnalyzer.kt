@@ -23,6 +23,6 @@ class BinaryForAnalyzer : Analyzer {
         val formattedLeft = formatter.format(left, formatterRuleMap)
         val formattedRight = formatter.format(right, formatterRuleMap)
 
-        return "$formattedLeft ${operator.getValue()} $formattedRight"
+        return "$formattedLeft ${operator.value.getValue()} $formattedRight"
     }
 }

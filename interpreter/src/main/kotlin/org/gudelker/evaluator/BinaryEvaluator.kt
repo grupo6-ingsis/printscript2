@@ -26,7 +26,7 @@ class BinaryEvaluator(
 
                         rightResult.fold(
                             onSuccess = { rightEvalResult ->
-                                val operator = statement.operator
+                                val operator = statement.operator.value
                                 evaluationResult(operator, leftEvalResult, rightEvalResult)
                             },
                             onFailure = { Result.failure(it) },
@@ -53,6 +53,6 @@ class BinaryEvaluator(
 
     private fun operatorNotSupported(statement: Binary): Boolean {
         return supportedOperators.isNotEmpty() &&
-            !supportedOperators.contains(statement.operator::class.java)
+            !supportedOperators.contains(statement.operator.value::class.java)
     }
 }

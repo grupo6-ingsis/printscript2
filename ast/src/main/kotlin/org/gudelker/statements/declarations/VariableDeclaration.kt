@@ -12,4 +12,3 @@ data class VariableDeclaration(
     val equals: ComboValuePosition<String>?,
     val value: CanBeCallStatement?,
 ) : VariableStatement
-

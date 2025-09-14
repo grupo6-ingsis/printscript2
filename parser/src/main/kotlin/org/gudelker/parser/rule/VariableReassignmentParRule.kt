@@ -28,7 +28,18 @@ class VariableReassignmentParRule(
         val (assignToken, streamAfterAssign) =
             consumeAssignation(streamAfterIdentifier)
                 ?: return errorResult("Se esperaba '=' después del identificador", streamAfterIdentifier)
-        return parseWithAssignment(identifierToken, identifierPos, streamAfterAssign)
+        val assignPos = assignToken!!.getPosition()
+        val equalsCombo =
+            ComboValuePosition(
+                assignToken.getValue(),
+                StatementPosition(
+                    assignPos.startLine,
+                    assignPos.startColumn,
+                    assignPos.endLine,
+                    assignPos.endColumn,
+                ),
+            )
+        return parseWithAssignment(identifierToken, identifierPos, equalsCombo, streamAfterAssign)
     }
 
     private fun consumeIdentifier(tokenStream: TokenStream) = tokenStream.consume(TokenType.IDENTIFIER).takeIf { it.first != null }
@@ -48,6 +59,7 @@ class VariableReassignmentParRule(
     private fun parseWithAssignment(
         identifierToken: Token,
         identifierPos: StatementPosition,
+        equalsCombo: ComboValuePosition<String>,
         streamAfterAssign: TokenStream,
     ): ParseResult {
         val expressionResult = expressionRule.parse(streamAfterAssign)
@@ -65,6 +77,7 @@ class VariableReassignmentParRule(
         val statement =
             VariableReassignment(
                 ComboValuePosition(identifierToken.getValue(), identifierPos),
+                equalsCombo,
                 expressionStatement,
             )
         return ParseResult(ValidStatementParserResult(statement), finalStream)

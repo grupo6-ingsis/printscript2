@@ -5,6 +5,7 @@ import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.stmtposition.StatementPosition
 
 data class TypeParseResult(
+    val colon: String?,
     val colonPosition: StatementPosition?,
     val typeName: String?,
     val typePosition: StatementPosition?,

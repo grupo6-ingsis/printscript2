@@ -21,7 +21,7 @@ class VariableDeclarationEvaluator(
                             IllegalArgumentException("Variable o constante '$name' ya declarada"),
                         )
                     }
-                    val expectedType = statement.type?.lowercase()
+                    val expectedType = statement.type?.value?.lowercase()
                     val hasValue = statement.value != null
                     val valueResult =
                         if (statement.value != null) {

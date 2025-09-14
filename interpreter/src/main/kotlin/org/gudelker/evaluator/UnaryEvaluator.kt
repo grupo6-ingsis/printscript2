@@ -1,12 +1,11 @@
 package org.gudelker.evaluator
 
 import org.gudelker.expressions.Unary
-import org.gudelker.operators.Operator
 import org.gudelker.operators.UnaryOperator
 import org.gudelker.statements.interfaces.Statement
 
 class UnaryEvaluator(
-    private val supportedOperators: Set<Class<out Operator>> = emptySet(),
+    private val supportedOperators: Set<Class<out UnaryOperator>> = emptySet(),
 ) : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
@@ -33,7 +32,7 @@ class UnaryEvaluator(
         statement: Unary,
         valueEvalResult: EvaluationResult,
     ): Result<EvaluationResult> {
-        val operator = statement.operator
+        val operator = statement.operator.value
         return if (operator is UnaryOperator) {
             operator.performUnaryOperation(valueEvalResult.value)
                 .map { EvaluationResult(it, valueEvalResult.context) }
@@ -44,6 +43,6 @@ class UnaryEvaluator(
 
     private fun operatorNotSupported(statement: Unary): Boolean {
         return supportedOperators.isNotEmpty() &&
-            !supportedOperators.contains(statement.operator::class.java)
+            !supportedOperators.contains(statement.operator.value::class.java)
     }
 }

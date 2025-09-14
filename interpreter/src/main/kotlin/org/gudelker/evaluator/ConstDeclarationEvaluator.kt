@@ -28,7 +28,7 @@ class ConstDeclarationEvaluator(
                     }
                     val valueResult = Analyzer.analyze(statement.value, context, evaluators)
                     val value = valueResult.getOrThrow().value
-                    val expectedType = statement.type?.lowercase()
+                    val expectedType = statement.type?.value?.lowercase()
                     if (expectedType != null) {
                         val validator = acceptedTypes[expectedType]
                         if (validator == null) {

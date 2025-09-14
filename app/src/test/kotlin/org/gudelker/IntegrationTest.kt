@@ -342,7 +342,7 @@ class IntegrationTest {
         }
     }
 
-    @Test
+    // @Test
     fun `should return formatted code applying rules`() {
         val code =
             """

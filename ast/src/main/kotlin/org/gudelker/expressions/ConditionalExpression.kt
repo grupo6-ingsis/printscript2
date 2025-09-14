@@ -9,4 +9,9 @@ data class ConditionalExpression(
     val condition: BooleanExpressionStatement,
     val ifBody: List<Statement>,
     val elseBody: List<Statement>? = null,
+    val ifOpenBracket: ComboValuePosition<String>? = null,
+    val ifCloseBracket: ComboValuePosition<String>? = null,
+    val elseKeyword: ComboValuePosition<String>? = null,
+    val elseOpenBracket: ComboValuePosition<String>? = null,
+    val elseCloseBracket: ComboValuePosition<String>? = null,
 ) : ConditionalStatement

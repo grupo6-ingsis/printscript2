@@ -23,28 +23,30 @@ object ParserUtils {
     fun parseOptionalType(stream: TokenStream): TypeParseResult {
         if (stream.check(TokenType.COLON)) {
             val (colonToken, streamAfterColon) = stream.consume(TokenType.COLON)
-            val colonPos : StatementPosition = StatementPosition(
-                colonToken!!.getPosition().startLine,
-                colonToken.getPosition().startColumn,
-                colonToken.getPosition().endLine,
-                colonToken.getPosition().endColumn,
-            )
-            val (typeToken, streamAfterType) = streamAfterColon.consume(TokenType.TYPE)
-            val typePos = typeToken?.let {
+            val colonPos =
                 StatementPosition(
-                    it.getPosition().startLine,
-                    it.getPosition().startColumn,
-                    it.getPosition().endLine,
-                    it.getPosition().endColumn,
+                    colonToken!!.getPosition().startLine,
+                    colonToken.getPosition().startColumn,
+                    colonToken.getPosition().endLine,
+                    colonToken.getPosition().endColumn,
                 )
-            }
+            val (typeToken, streamAfterType) = streamAfterColon.consume(TokenType.TYPE)
+            val typePos =
+                typeToken?.let {
+                    StatementPosition(
+                        it.getPosition().startLine,
+                        it.getPosition().startColumn,
+                        it.getPosition().endLine,
+                        it.getPosition().endColumn,
+                    )
+                }
             return if (typeToken == null) {
-                TypeParseResult(null, null, null, ParserSyntaxError("Se esperaba un tipo después de ':'"), streamAfterColon)
+                TypeParseResult(null, null, null, null, ParserSyntaxError("Se esperaba un tipo después de ':'"), streamAfterColon)
             } else {
-                TypeParseResult(colonPos,typeToken.getValue(),typePos, null, streamAfterType)
+                TypeParseResult(":", colonPos, typeToken.getValue(), typePos, null, streamAfterType)
             }
         }
-        return TypeParseResult(null, null, null, null, stream)
+        return TypeParseResult(null, null, null, null, null, stream)
     }
 
     fun parseFunctionCallArguments(

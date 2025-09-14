@@ -19,6 +19,6 @@ class UnaryForAnalyzer : Analyzer {
         val operator = unary.operator
         val expression = unary.value
         val formattedExpression = formatter.format(expression, formatterRuleMap)
-        return "${operator.getValue()}$formattedExpression"
+        return "${operator.value.getValue()}$formattedExpression"
     }
 }

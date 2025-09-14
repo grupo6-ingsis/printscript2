@@ -6,5 +6,6 @@ import org.gudelker.stmtposition.ComboValuePosition
 
 data class VariableReassignment(
     val identifier: ComboValuePosition<String>,
+    val equals: ComboValuePosition<String>,
     val value: CanBeCallStatement,
 ) : VariableStatement

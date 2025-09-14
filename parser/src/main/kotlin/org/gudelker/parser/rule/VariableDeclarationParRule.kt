@@ -46,7 +46,7 @@ class VariableDeclarationParRule(
                 identifierPos,
                 typeResult,
                 streamAfterAssign,
-                assignPosition
+                assignPosition,
             )
         } else {
             parseWithoutAssignment(
@@ -79,7 +79,7 @@ class VariableDeclarationParRule(
         identifierPos: StatementPosition,
         type: TypeParseResult?,
         streamAfterAssign: TokenStream,
-        assignPosition: Position?
+        assignPosition: Position?,
     ): ParseResult {
         val expressionResult = expressionRule.parse(streamAfterAssign)
         if (expressionResult.parserResult !is ValidStatementParserResult) {
@@ -98,8 +98,17 @@ class VariableDeclarationParRule(
                 keywordCombo = ComboValuePosition(keywordToken.getValue(), position),
                 identifierCombo = ComboValuePosition(identifierToken.getValue(), identifierPos),
                 colon = type?.colonPosition?.let { ComboValuePosition(":", it) },
-                type = type?.typePosition?.let{ComboValuePosition(type.typeName!!, it)},
-                equals = ComboValuePosition("=", StatementPosition(assignPosition!!.startLine, assignPosition.startColumn, assignPosition.endLine, assignPosition.endColumn)),
+                type = type?.typePosition?.let { ComboValuePosition(type.typeName!!, it) },
+                equals =
+                    ComboValuePosition(
+                        "=",
+                        StatementPosition(
+                            assignPosition!!.startLine,
+                            assignPosition.startColumn,
+                            assignPosition.endLine,
+                            assignPosition.endColumn,
+                        ),
+                    ),
                 value = expressionStatement,
             )
         return ParseResult(ValidStatementParserResult(statement), finalStream)
@@ -127,7 +136,7 @@ class VariableDeclarationParRule(
                 type = ComboValuePosition(type.typeName!!, type.typePosition!!),
                 colon = ComboValuePosition(":", type.colonPosition!!),
                 equals = null,
-                value = null
+                value = null,
             )
         return ParseResult(ValidStatementParserResult(statement), finalStream)
     }

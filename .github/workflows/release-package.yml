@@ -5,6 +5,8 @@ name: Java CI
 
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:

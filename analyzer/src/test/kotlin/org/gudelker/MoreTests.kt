@@ -66,7 +66,9 @@ class MoreTests {
             VariableDeclaration(
                 ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
                 ComboValuePosition("myVariable", StatementPosition(1, 5, 1, 9)),
-                "Number",
+                ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                 LiteralNumber(
                     ComboValuePosition(
                         3,
@@ -97,14 +99,16 @@ class MoreTests {
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
                     ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
                 ),
                 Callable(
                     ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 2)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
                     ),
                 ),
@@ -134,14 +138,16 @@ class MoreTests {
                     ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 2)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
                     ),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
                     ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
                 ),
             )
@@ -174,14 +180,16 @@ class MoreTests {
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
                     ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
                 ),
                 Callable(
                     ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 2)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
                     ),
                 ),
@@ -211,14 +219,16 @@ class MoreTests {
                     ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 2)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
                     ),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
                     ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
-                    "number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
                 ),
             )
@@ -251,7 +261,9 @@ class MoreTests {
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
                     ComboValuePosition("my_var", StatementPosition(1, 5, 1, 9)),
-                    "number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
                 ),
                 Callable(
@@ -262,7 +274,7 @@ class MoreTests {
                     ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 2)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
                     ),
                 ),
@@ -272,7 +284,7 @@ class MoreTests {
                         "(",
                         Binary(
                             LiteralNumber(ComboValuePosition(1, StatementPosition(1, 1, 1, 1))),
-                            AdditionOperator(),
+                            ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 2)),
                             LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
                         ),
                         ")",
@@ -280,7 +292,10 @@ class MoreTests {
                 ),
                 Callable(
                     ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
-                    Unary(LiteralNumber(ComboValuePosition(3, StatementPosition(1, 1, 1, 1))), MinusOperator()),
+                    Unary(
+                        LiteralNumber(ComboValuePosition(3, StatementPosition(1, 1, 1, 1))),
+                        ComboValuePosition(MinusOperator("-"), StatementPosition(1, 1, 1, 2)),
+                    ),
                 ),
             )
         val config =

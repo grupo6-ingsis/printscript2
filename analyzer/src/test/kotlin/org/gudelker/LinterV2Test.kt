@@ -61,13 +61,17 @@ class LinterV2Test {
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
                     ComboValuePosition("myConst", StatementPosition(1, 6, 1, 12)),
-                    "Boolean",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Boolean", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 13, 1, 17))),
                 ),
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(2, 1, 2, 5)),
                     ComboValuePosition("my_const", StatementPosition(2, 6, 2, 13)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(42, StatementPosition(2, 14, 2, 16))),
                 ),
                 ConditionalExpression(
@@ -81,7 +85,9 @@ class LinterV2Test {
                         VariableDeclaration(
                             ComboValuePosition("let", StatementPosition(3, 7, 3, 10)),
                             ComboValuePosition("result", StatementPosition(3, 11, 3, 17)),
-                            "Number",
+                            ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                            ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                            ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                             LiteralNumber(ComboValuePosition(100, StatementPosition(3, 18, 3, 21))),
                         ),
                     ),
@@ -90,7 +96,9 @@ class LinterV2Test {
                             VariableDeclaration(
                                 ComboValuePosition("let", StatementPosition(4, 1, 4, 4)),
                                 ComboValuePosition("result", StatementPosition(4, 5, 4, 11)),
-                                "Number",
+                                ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                                ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                                ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                                 LiteralNumber(ComboValuePosition(0, StatementPosition(4, 12, 4, 13))),
                             ),
                         ),
@@ -116,13 +124,17 @@ class LinterV2Test {
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
                     ComboValuePosition("myConst", StatementPosition(1, 6, 1, 12)),
-                    "Boolean",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Boolean", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 13, 1, 17))),
                 ),
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(2, 1, 2, 5)),
                     ComboValuePosition("my_const", StatementPosition(2, 6, 2, 13)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(42, StatementPosition(2, 14, 2, 16))),
                 ),
                 ConditionalExpression(
@@ -136,7 +148,9 @@ class LinterV2Test {
                         VariableDeclaration(
                             ComboValuePosition("let", StatementPosition(3, 7, 3, 10)),
                             ComboValuePosition("result", StatementPosition(3, 11, 3, 17)),
-                            "Number",
+                            ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                            ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                            ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                             LiteralNumber(ComboValuePosition(100, StatementPosition(3, 18, 3, 21))),
                         ),
                     ),
@@ -145,7 +159,9 @@ class LinterV2Test {
                             VariableDeclaration(
                                 ComboValuePosition("let", StatementPosition(4, 1, 4, 4)),
                                 ComboValuePosition("result", StatementPosition(4, 5, 4, 11)),
-                                "Number",
+                                ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                                ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                                ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                                 LiteralNumber(ComboValuePosition(0, StatementPosition(4, 12, 4, 13))),
                             ),
                         ),
@@ -160,17 +176,22 @@ class LinterV2Test {
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(7, 1, 7, 4)),
                     ComboValuePosition("anotherVar", StatementPosition(7, 5, 7, 15)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(7, StatementPosition(7, 16, 7, 18))),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(8, 1, 8, 4)),
                     ComboValuePosition("bad_var", StatementPosition(8, 5, 8, 12)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(8, StatementPosition(8, 13, 8, 15))),
                 ),
                 VariableReassignment(
                     ComboValuePosition("anotherVar", StatementPosition(9, 1, 9, 10)),
+                    ComboValuePosition("=", StatementPosition(10, 1, 10, 10)),
                     LiteralNumber(ComboValuePosition(99, StatementPosition(9, 11, 9, 13))),
                 ),
                 Grouping(
@@ -180,7 +201,7 @@ class LinterV2Test {
                 ),
                 Unary(
                     LiteralNumber(ComboValuePosition(11, StatementPosition(11, 2, 11, 4))),
-                    MinusOperator(),
+                    ComboValuePosition(MinusOperator("-"), StatementPosition(1, 1, 1, 4)),
                 ),
                 Callable(
                     ComboValuePosition("println", StatementPosition(12, 1, 12, 7)),
@@ -190,7 +211,7 @@ class LinterV2Test {
                     ComboValuePosition("println", StatementPosition(13, 1, 13, 7)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(13, 8, 13, 9))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 4)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(13, 10, 13, 11))),
                     ),
                 ),
@@ -232,23 +253,30 @@ class LinterV2Test {
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
                     ComboValuePosition("goodVar", StatementPosition(1, 6, 1, 13)),
-                    "Boolean",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Boolean", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 14, 1, 18))),
                 ),
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(2, 1, 2, 5)),
                     ComboValuePosition("bad_var", StatementPosition(2, 6, 2, 13)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(42, StatementPosition(2, 14, 2, 16))),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(3, 1, 3, 4)),
                     ComboValuePosition("another_var", StatementPosition(3, 5, 3, 16)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(7, StatementPosition(3, 17, 3, 19))),
                 ),
                 VariableReassignment(
                     ComboValuePosition("another_var", StatementPosition(4, 1, 4, 12)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 4)),
                     LiteralNumber(ComboValuePosition(99, StatementPosition(4, 13, 4, 15))),
                 ),
                 Callable(
@@ -267,11 +295,11 @@ class LinterV2Test {
                 ),
                 Unary(
                     LiteralNumber(ComboValuePosition(11, StatementPosition(11, 2, 11, 4))),
-                    MinusOperator(),
+                    ComboValuePosition(MinusOperator("-"), StatementPosition(1, 1, 1, 4)),
                 ),
                 Binary(
                     LiteralNumber(ComboValuePosition(12, StatementPosition(12, 2, 12, 3))),
-                    AdditionOperator(),
+                    ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 4)),
                     LiteralNumber(ComboValuePosition(13, StatementPosition(12, 4, 12, 5))),
                 ),
             )
@@ -316,13 +344,17 @@ class LinterV2Test {
                 ConstDeclaration(
                     ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
                     ComboValuePosition("myConst", StatementPosition(1, 6, 1, 13)),
-                    "Boolean",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Boolean", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 14, 1, 18))),
                 ),
                 VariableDeclaration(
                     ComboValuePosition("let", StatementPosition(2, 1, 2, 4)),
                     ComboValuePosition("anotherVar", StatementPosition(2, 5, 2, 15)),
-                    "Number",
+                    ComboValuePosition(":", StatementPosition(1, 1, 1, 2)),
+                    ComboValuePosition("Number", StatementPosition(1, 1, 1, 4)),
+                    ComboValuePosition("=", StatementPosition(1, 1, 1, 5)),
                     LiteralNumber(ComboValuePosition(7, StatementPosition(2, 16, 2, 18))),
                 ),
                 Callable(
@@ -352,7 +384,7 @@ class LinterV2Test {
                     ComboValuePosition("readInput", StatementPosition(5, 1, 5, 7)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(5, 8, 5, 9))),
-                        AdditionOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 1)),
                         LiteralNumber(ComboValuePosition(2, StatementPosition(5, 10, 5, 11))),
                     ),
                 ),
@@ -360,7 +392,7 @@ class LinterV2Test {
                     ComboValuePosition("readInput", StatementPosition(5, 1, 5, 7)),
                     Unary(
                         LiteralNumber(ComboValuePosition(3, StatementPosition(6, 8, 6, 9))),
-                        MinusOperator(),
+                        ComboValuePosition(AdditionOperator("+"), StatementPosition(1, 1, 1, 1)),
                     ),
                 ),
             )

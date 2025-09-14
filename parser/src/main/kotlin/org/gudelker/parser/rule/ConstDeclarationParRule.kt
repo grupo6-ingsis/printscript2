@@ -34,17 +34,40 @@ class ConstDeclarationParRule(
         if (typeResult.error != null) {
             return errorResult(typeResult.error.toString(), typeResult.nextStream)
         }
+        // Create type ComboValuePosition only if type is present
+        val typeCombo =
+            if (typeResult.typeName != null && typeResult.typePosition != null) {
+                ComboValuePosition(typeResult.typeName, typeResult.typePosition)
+            } else {
+                null
+            }
         val (assignToken, streamAfterAssign) = streamAfterType(typeResult)
         if (assignToken == null) {
             return errorResult("Se esperaba '=' después de la declaración", typeResult.nextStream)
         }
+        val equalsPos = assignToken.getPosition()
+        val equalsCombo =
+            ComboValuePosition(
+                assignToken.getValue(),
+                StatementPosition(equalsPos.startLine, equalsPos.startColumn, equalsPos.endLine, equalsPos.endColumn),
+            )
+
+        val colonCombo =
+            if (typeResult.colon != null) {
+                ComboValuePosition(typeResult.colon, typeResult.colonPosition!!)
+            } else {
+                null
+            }
+
         return parseWithAssignment(
             keywordToken,
             keywordPos,
             identifierToken,
             identifierPos,
-            typeResult.typeName,
+            typeCombo,
             streamAfterAssign,
+            colonCombo,
+            equalsCombo,
         )
     }
 
@@ -69,8 +92,10 @@ class ConstDeclarationParRule(
         keywordPos: StatementPosition,
         identifierToken: Token,
         identifierPos: StatementPosition,
-        type: String?,
+        type: ComboValuePosition<String>?,
         streamAfterAssign: TokenStream,
+        colon: ComboValuePosition<String>?,
+        equals: ComboValuePosition<String>,
     ): ParseResult {
         val expressionResult = expressionRule.parse(streamAfterAssign)
         if (expressionResult.parserResult !is ValidStatementParserResult) {
@@ -88,7 +113,9 @@ class ConstDeclarationParRule(
             ConstDeclaration(
                 ComboValuePosition(keywordToken.getValue(), keywordPos),
                 ComboValuePosition(identifierToken.getValue(), identifierPos),
+                colon,
                 type,
+                equals,
                 expressionStatement,
             )
         return ParseResult(ValidStatementParserResult(statement), finalStream)
