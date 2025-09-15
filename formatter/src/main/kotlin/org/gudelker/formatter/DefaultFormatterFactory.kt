@@ -14,6 +14,8 @@ import org.gudelker.analyzer.LiteralStringForAnalyzer
 import org.gudelker.analyzer.UnaryForAnalyzer
 import org.gudelker.analyzer.VariableDeclarationForAnalyzer
 import org.gudelker.analyzer.VariableReassignmentForAnalyzer
+import org.gudelker.rulevalidator.IfBraceBelowLine
+import org.gudelker.rulevalidator.IfBraceSameLine
 import org.gudelker.rulevalidator.IfIndentation
 import org.gudelker.rulevalidator.LineBreakAfterStatement
 import org.gudelker.rulevalidator.SpaceAfterColon
@@ -90,6 +92,8 @@ object DefaultFormatterFactory {
                 ConditionalExprForAnalyzer(
                     listOf(
                         IfIndentation(),
+                        IfBraceSameLine(),
+                        IfBraceBelowLine(),
                     ),
                 ),
                 ConstDeclarationForAnalyzer(

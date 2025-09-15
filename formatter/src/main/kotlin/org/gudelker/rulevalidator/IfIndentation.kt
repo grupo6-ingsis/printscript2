@@ -16,38 +16,24 @@ class IfIndentation : RuleValidatorFormatter {
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
         val rule = formatterRuleMap["indent-inside-if"] ?: return string
-        val indentSpaces = " ".repeat(rule.quantity)
+        val indentSpaces = rule.quantity
 
         val lines = string.split("\n")
         val processedLines = mutableListOf<String>()
-
-        var insideBlock = false
+        var indentLevel = 0
 
         for (line in lines) {
-            when {
-                line.trim().startsWith("if (") && line.trim().endsWith("{") -> {
-                    processedLines.add(line)
-                    insideBlock = true
-                }
-                line.trim() == "}" -> {
-                    processedLines.add(line)
-                    insideBlock = false
-                }
-                line.trim() == "} else {" -> {
-                    processedLines.add(line)
-                    insideBlock = true
-                }
-                insideBlock && line.trim().isNotEmpty() -> {
-                    val leadingWhitespace = line.takeWhile { it.isWhitespace() }
-                    if (leadingWhitespace.length >= rule.quantity) {
-                        processedLines.add(line)
-                    } else {
-                        processedLines.add("$indentSpaces${line.trimStart()}")
-                    }
-                }
-                else -> {
-                    processedLines.add(line)
-                }
+            val trimmed = line.trim()
+            if (trimmed.endsWith("{")) {
+                processedLines.add(" ".repeat(indentLevel * indentSpaces) + trimmed)
+                indentLevel++
+            } else if (trimmed == "}") {
+                indentLevel--
+                processedLines.add(" ".repeat(indentLevel * indentSpaces) + trimmed)
+            } else if (indentLevel > 0 && trimmed.isNotEmpty()) {
+                processedLines.add(" ".repeat(indentLevel * indentSpaces) + trimmed)
+            } else {
+                processedLines.add(line)
             }
         }
 
