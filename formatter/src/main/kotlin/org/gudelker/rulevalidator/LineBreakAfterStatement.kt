@@ -17,10 +17,12 @@ class LineBreakAfterStatement : RuleValidatorFormatter {
     ): String {
         val rule = formatterRuleMap["mandatory-line-break-after-statement"] ?: return string
         val lineBreaks = "\n".repeat(rule.quantity)
-        return if (string.endsWith("\n")) {
-            string.substring(0, string.length - 1) + lineBreaks
-        } else {
-            string + lineBreaks
-        }
+        val result =
+            if (string.endsWith("\n")) {
+                string.substring(0, string.length - 1) + lineBreaks
+            } else {
+                string + lineBreaks
+            }
+        return result.split("\n").joinToString("\n") { it.trimStart() }
     }
 }
