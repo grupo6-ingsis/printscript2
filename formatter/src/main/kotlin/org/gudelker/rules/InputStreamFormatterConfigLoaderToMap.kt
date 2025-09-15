@@ -70,7 +70,7 @@ class InputStreamFormatterConfigLoaderToMap(
             }
         }
 
-        // If indent-inside-if was not in input rules, ensure it's enabled with default value
+        // If indent-inside-if was not in input rules, ensure it's enabled with default value1
         if (!inputRules.containsKey("indent-inside-if")) {
             resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
         }
