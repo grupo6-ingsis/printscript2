@@ -18,6 +18,7 @@ import org.gudelker.rulevalidator.IfBraceBelowLine
 import org.gudelker.rulevalidator.IfBraceSameLine
 import org.gudelker.rulevalidator.IfIndentation
 import org.gudelker.rulevalidator.LineBreakAfterStatement
+import org.gudelker.rulevalidator.SingleSpaceSeparationRule
 import org.gudelker.rulevalidator.SpaceAfterColon
 import org.gudelker.rulevalidator.SpaceBeforeColon
 import org.gudelker.rulevalidator.SpacesAroundAssignation
@@ -39,6 +40,7 @@ object DefaultFormatterFactory {
                 SpaceAfterColon(),
                 SpacesAroundAssignation(),
                 LineBreakAfterStatement(),
+                SingleSpaceSeparationRule(),
             )
         val analyzers =
             listOf(
@@ -55,7 +57,7 @@ object DefaultFormatterFactory {
                 ),
                 BinaryForAnalyzer(),
                 VariableReassignmentForAnalyzer(
-                    listOf(SpacesAroundAssignation()),
+                    listOf(SpacesAroundAssignation(), SingleSpaceSeparationRule()),
                 ),
             )
         return DefaultFormatter(analyzers)
@@ -69,6 +71,7 @@ object DefaultFormatterFactory {
                 SpacesAroundAssignation(),
                 LineBreakAfterStatement(),
                 IfIndentation(),
+                SingleSpaceSeparationRule(),
             )
         val analyzers =
             listOf(
@@ -81,12 +84,12 @@ object DefaultFormatterFactory {
                 GroupingForAnalyzer(),
                 UnaryForAnalyzer(),
                 CallableForAnalyzer(
-                    listOf(SpacesPrintln()),
+                    listOf(SpacesPrintln(), SingleSpaceSeparationRule()),
                 ),
                 CallableCallForAnalyzer(emptyList()),
                 BinaryForAnalyzer(),
                 VariableReassignmentForAnalyzer(
-                    listOf(SpacesAroundAssignation()),
+                    listOf(SpacesAroundAssignation(), SingleSpaceSeparationRule()),
                 ),
                 BooleanExprForAnalyzer(),
                 ConditionalExprForAnalyzer(
@@ -94,6 +97,7 @@ object DefaultFormatterFactory {
                         IfBraceSameLine(),
                         IfBraceBelowLine(),
                         IfIndentation(),
+                        SingleSpaceSeparationRule(),
                     ),
                 ),
                 ConstDeclarationForAnalyzer(
