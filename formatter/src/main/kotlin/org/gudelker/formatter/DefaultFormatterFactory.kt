@@ -91,9 +91,9 @@ object DefaultFormatterFactory {
                 BooleanExprForAnalyzer(),
                 ConditionalExprForAnalyzer(
                     listOf(
-                        IfIndentation(),
                         IfBraceSameLine(),
                         IfBraceBelowLine(),
+                        IfIndentation(),
                     ),
                 ),
                 ConstDeclarationForAnalyzer(
