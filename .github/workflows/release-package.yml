@@ -6,7 +6,7 @@ name: Java CI
 on:
   push:
     branches:
-      - main
+      - formatter-with-position
   workflow_dispatch:
 
 jobs:
