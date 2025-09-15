@@ -11,12 +11,13 @@ class IfBraceBelowLine : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val pattern = Regex("if \\([^)]+\\)[ \\t]*\\{")
+        val pattern = Regex("if \\([^)]+\\)([ \\t]*)\\{")
         return pattern.replace(string) { match ->
             if (match.value.contains("\n{")) {
                 match.value
             } else {
-                match.value.replace("{", "\n{")
+                // Replace the space and { with just a newline and {
+                match.value.replace(Regex("\\)([ \\t]*)\\{"), ")\n{")
             }
         }
     }
