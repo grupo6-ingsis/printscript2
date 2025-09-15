@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.formatter
 
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement

@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.linter
 
 import org.gudelker.analyzers.BinaryExpressionLintAnalyzer
 import org.gudelker.analyzers.BooleanExpressionLintAnalyzer
@@ -37,7 +37,12 @@ object DefaultLinterFactory {
     private fun createLinterV1(): DefaultLinter {
         val analyzers =
             listOf(
-                VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
+                VariableDeclarationLintAnalyzer(
+                    listOf(
+                        VariableDeclarationCamelCaseRule(),
+                        VariableDeclarationSnakeCaseRule(),
+                    ),
+                ),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
@@ -64,7 +69,12 @@ object DefaultLinterFactory {
     private fun createLinterV2(): DefaultLinter {
         val analyzers =
             listOf(
-                VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
+                VariableDeclarationLintAnalyzer(
+                    listOf(
+                        VariableDeclarationCamelCaseRule(),
+                        VariableDeclarationSnakeCaseRule(),
+                    ),
+                ),
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(

@@ -1,4 +1,5 @@
-package org.gudelker
+package org.gudelker.linter
+
 import kotlinx.serialization.Serializable
 
 @Serializable

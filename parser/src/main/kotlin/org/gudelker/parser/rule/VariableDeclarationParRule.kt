@@ -1,8 +1,5 @@
 package org.gudelker.parser.rule
 
-import org.gudelker.Position
-import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.parser.parsingtoken.TypeParseResult
 import org.gudelker.parser.result.ParseResult
@@ -12,6 +9,9 @@ import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.statements.declarations.VariableDeclaration
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
+import org.gudelker.token.Position
+import org.gudelker.token.Token
+import org.gudelker.token.TokenType
 
 class VariableDeclarationParRule(
     private val keywords: Set<String>,

@@ -6,11 +6,10 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
-import org.gudelker.DefaultFormatterFactory
-import org.gudelker.DefaultLinterFactory
-import org.gudelker.InterpreterFactory
-import org.gudelker.LexerFactory
-import org.gudelker.StatementStream
+import org.gudelker.formatter.DefaultFormatterFactory
+import org.gudelker.interpreter.InterpreterFactory
+import org.gudelker.lexer.LexerFactory
+import org.gudelker.linter.DefaultLinterFactory
 import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.result.ParserSyntaxError
@@ -20,6 +19,7 @@ import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.ValidTokens
 import org.gudelker.rules.JsonReaderFormatterToMap
 import org.gudelker.sourcereader.FileSourceReader
+import org.gudelker.stmtposition.StatementStream
 import org.gudelker.utilities.Version
 
 fun parseVersion(version: String): Version =

@@ -1,7 +1,7 @@
 package org.gudelker.parser.tokenstream
 
-import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
+import org.gudelker.token.Token
+import org.gudelker.token.TokenType
 
 class TokenStream private constructor(
     private val tokens: List<Token>,

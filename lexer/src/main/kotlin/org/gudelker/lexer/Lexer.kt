@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.lexer
 
 import org.gudelker.result.LexerResult
 import org.gudelker.sourcereader.SourceReader

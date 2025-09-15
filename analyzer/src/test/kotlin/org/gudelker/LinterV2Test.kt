@@ -12,6 +12,9 @@ import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
 import org.gudelker.expressions.Unary
+import org.gudelker.linter.DefaultLinterFactory
+import org.gudelker.linter.Linter
+import org.gudelker.linter.LinterConfig
 import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.MinusOperator
 import org.gudelker.result.LintViolation
@@ -20,6 +23,7 @@ import org.gudelker.statements.declarations.ConstDeclaration
 import org.gudelker.statements.declarations.VariableDeclaration
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
+import org.gudelker.stmtposition.StatementStream
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

@@ -1,11 +1,10 @@
 package org.gudelker.rules
 
-import org.gudelker.Position
-import org.gudelker.RuleTokenizer
-import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.TokenResult
 import org.gudelker.result.ValidToken
+import org.gudelker.token.Position
+import org.gudelker.token.Token
+import org.gudelker.token.TokenType
 
 class StringTokenizer : RuleTokenizer {
     override fun matches(

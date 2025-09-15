@@ -1,10 +1,9 @@
 package org.gudelker.rules
 
-import org.gudelker.Position
-import org.gudelker.RuleTokenizer
-import org.gudelker.Token
 import org.gudelker.result.LexerError
 import org.gudelker.result.TokenResult
+import org.gudelker.token.Position
+import org.gudelker.token.Token
 
 class ProhibitedSymbolDoubleTokenizer : RuleTokenizer {
     override fun matches(

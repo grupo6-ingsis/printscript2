@@ -1,12 +1,16 @@
-package org.gudelker
+package org.gudelker.lexer
 
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.result.LexerError
 import org.gudelker.result.LexerResult
 import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.ValidToken
 import org.gudelker.result.ValidTokens
+import org.gudelker.rules.RuleTokenizer
 import org.gudelker.sourcereader.SourceReader
+import org.gudelker.token.Position
+import org.gudelker.token.Token
+import org.gudelker.token.TokenType
+import kotlin.collections.plus
 
 class DefaultLexer(
     private val rules: List<RuleTokenizer>,

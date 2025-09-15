@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.interpreter
 
 import org.gudelker.utilities.Version
 

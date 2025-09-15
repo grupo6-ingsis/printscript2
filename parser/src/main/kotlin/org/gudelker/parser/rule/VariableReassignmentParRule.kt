@@ -1,7 +1,5 @@
 package org.gudelker.parser.rule
 
-import org.gudelker.Token
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.ExpressionStatement
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
@@ -10,6 +8,8 @@ import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.statements.VariableReassignment
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
+import org.gudelker.token.Token
+import org.gudelker.token.TokenType
 
 class VariableReassignmentParRule(
     private val expressionRule: SyntaxParRule,

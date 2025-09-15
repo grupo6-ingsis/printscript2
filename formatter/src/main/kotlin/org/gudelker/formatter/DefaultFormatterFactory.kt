@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.formatter
 
 import org.gudelker.analyzer.BinaryForAnalyzer
 import org.gudelker.analyzer.BooleanExprForAnalyzer

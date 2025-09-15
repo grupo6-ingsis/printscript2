@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.token
 
 data class Position(
     val startOffset: Int = 1,

@@ -1,6 +1,9 @@
 package org.gudelker
 
 import kotlinx.serialization.json.Json
+import org.gudelker.linter.DefaultLinterFactory
+import org.gudelker.linter.Linter
+import org.gudelker.linter.LinterConfig
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -9,7 +12,12 @@ import org.junit.jupiter.api.Test
 class LinterConfigTest {
     @Test
     fun `should create and serialize LinterConfig correctly`() {
-        val config = LinterConfig(identifierFormat = "snake_case", restrictPrintlnExpressions = false, restrictReadInputExpressions = true)
+        val config =
+            LinterConfig(
+                identifierFormat = "snake_case",
+                restrictPrintlnExpressions = false,
+                restrictReadInputExpressions = true,
+            )
         assertEquals("snake_case", config.identifierFormat)
         assertEquals(false, config.restrictPrintlnExpressions)
 

@@ -1,13 +1,13 @@
 package org.gudelker.parser.rule
 
 import org.gudelker.compare.operators.Comparator
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.ExpressionStatement
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
 import org.gudelker.parser.tokenstream.TokenStream
+import org.gudelker.token.TokenType
 
 class BooleanExpressionParRule(
     private val expressionRule: SyntaxParRule,

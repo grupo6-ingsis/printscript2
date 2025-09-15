@@ -2,7 +2,7 @@ package org.gudelker.linterloader
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import org.gudelker.LinterConfig
+import org.gudelker.linter.LinterConfig
 import java.io.File
 
 class JsonLinterConfigLoaderToMap(val path: String) : LinterConfigLoader {

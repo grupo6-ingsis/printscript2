@@ -1,7 +1,7 @@
 package org.gudelker.rulelinter
 
-import org.gudelker.LinterConfig
 import org.gudelker.expressions.CallableCall
+import org.gudelker.linter.LinterConfig
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
 import org.gudelker.result.ValidLint

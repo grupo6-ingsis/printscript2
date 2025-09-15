@@ -1,6 +1,8 @@
-package org.gudelker
+package org.gudelker.rules
 
 import org.gudelker.result.TokenResult
+import org.gudelker.token.Position
+import org.gudelker.token.Token
 
 interface RuleTokenizer {
     fun matches(

@@ -1,12 +1,12 @@
 package org.gudelker.parser.rule
 
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.expressions.Callable
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.stmtposition.ComboValuePosition
+import org.gudelker.token.TokenType
 
 class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {

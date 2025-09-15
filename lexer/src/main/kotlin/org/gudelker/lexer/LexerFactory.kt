@@ -1,4 +1,4 @@
-package org.gudelker
+package org.gudelker.lexer
 
 import org.gudelker.rules.AssignationTokenizer
 import org.gudelker.rules.BooleanTokenizer
@@ -23,6 +23,7 @@ import org.gudelker.rules.PrintTokenizer
 import org.gudelker.rules.ProhibitedSymbolDoubleTokenizer
 import org.gudelker.rules.ReadEnvTokenizer
 import org.gudelker.rules.ReadInputTokenizer
+import org.gudelker.rules.RuleTokenizer
 import org.gudelker.rules.SemicolonTokenizer
 import org.gudelker.rules.StringTokenizer
 import org.gudelker.rules.StringTypeTokenizer

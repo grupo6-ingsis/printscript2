@@ -1,6 +1,4 @@
-package org.gudelker
-
-import org.gudelker.components.org.gudelker.TokenType
+package org.gudelker.token
 
 data class Token(
     private val type: TokenType,

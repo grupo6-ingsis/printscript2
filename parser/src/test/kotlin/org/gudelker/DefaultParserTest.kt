@@ -1,9 +1,11 @@
 package org.gudelker
 
-import org.gudelker.components.org.gudelker.TokenType
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.result.Valid
 import org.gudelker.parser.tokenstream.TokenStream
+import org.gudelker.token.Position
+import org.gudelker.token.Token
+import org.gudelker.token.TokenType
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -1,6 +1,5 @@
 package org.gudelker.analyzer
 
-import org.gudelker.DefaultFormatter
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.expressions.LiteralBoolean
@@ -8,6 +7,7 @@ import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
 import org.gudelker.expressions.Unary
+import org.gudelker.formatter.DefaultFormatter
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.statements.VariableReassignment

@@ -1,6 +1,6 @@
 package org.gudelker.analyzers
-import org.gudelker.Linter
-import org.gudelker.LinterConfig
+import org.gudelker.linter.Linter
+import org.gudelker.linter.LinterConfig
 import org.gudelker.result.LinterResult
 import org.gudelker.statements.interfaces.Statement
 

@@ -1,6 +1,6 @@
 package org.gudelker.analyzer
 
-import org.gudelker.DefaultFormatter
+import org.gudelker.formatter.DefaultFormatter
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement
 
