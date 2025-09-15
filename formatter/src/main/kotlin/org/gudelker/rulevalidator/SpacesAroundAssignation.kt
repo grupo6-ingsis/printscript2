@@ -17,14 +17,21 @@ class SpacesAroundAssignation : RuleValidatorFormatter {
     ): String {
         // Check if no-spacing rule is enabled
         if (formatterRuleMap["enforce-no-spacing-around-equals"]?.on == true) {
-            // Only apply if spaces exist
-            if (string.contains(Regex("\\s+=")) || string.contains(Regex("=\\s+"))) {
-                var result = string
-                result = result.replace(Regex("\\s+="), "=")
-                result = result.replace(Regex("=\\s+"), "=")
-                return result
-            }
-            return string
+            var result = string
+
+            // More precise pattern to handle spaces around equals sign
+            // This pattern looks for a non-whitespace character, followed by spaces,
+            // followed by an equals sign, optionally followed by spaces, followed by a non-whitespace character
+            val pattern = "([^\\s])(\\s+)=(\\s*)([^\\s])".toRegex()
+
+            result =
+                pattern.replace(result) { matchResult ->
+                    val before = matchResult.groupValues[1]
+                    val after = matchResult.groupValues[4]
+                    "$before=$after"
+                }
+
+            return result
         }
 
         // Original logic for adding spaces
@@ -36,21 +43,19 @@ class SpacesAroundAssignation : RuleValidatorFormatter {
         var result = string
 
         // Only apply if the required spacing doesn't already exist
-        if (!string.contains(Regex("\\S$spaceString=$spaceString\\S"))) {
-            val patternBefore = "([^ ])( *)=".toRegex()
-            result =
-                patternBefore.replace(result) { matchResult ->
-                    val char = matchResult.groupValues[1]
-                    "$char$spaceString="
-                }
+        val patternBefore = "([^ ])( *)=".toRegex()
+        result =
+            patternBefore.replace(result) { matchResult ->
+                val char = matchResult.groupValues[1]
+                "$char$spaceString="
+            }
 
-            val patternAfter = "=( *)([^ ])".toRegex()
-            result =
-                patternAfter.replace(result) { matchResult ->
-                    val char = matchResult.groupValues[2]
-                    "=$spaceString$char"
-                }
-        }
+        val patternAfter = "=( *)([^ ])".toRegex()
+        result =
+            patternAfter.replace(result) { matchResult ->
+                val char = matchResult.groupValues[2]
+                "=$spaceString$char"
+            }
 
         return result
     }
