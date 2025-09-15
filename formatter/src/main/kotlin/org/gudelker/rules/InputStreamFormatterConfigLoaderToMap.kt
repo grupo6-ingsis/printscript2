@@ -3,29 +3,73 @@ package org.gudelker.rules
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.InputStream
+import kotlin.text.get
 
 class InputStreamFormatterConfigLoaderToMap(
     private val inputStream: InputStream,
 ) : FormatterConfigLoader {
-    private val gson = GsonBuilder().create()
+    private val defaultRules =
+        mapOf(
+            "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = false, quantity = 1),
+            "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = false, quantity = 0),
+            "enforce-spacing-around-equals" to FormatterRule(on = false, quantity = 1),
+            "line-breaks-after-println" to FormatterRule(on = false, quantity = 1),
+            "indent-inside-if" to FormatterRule(on = false, quantity = 4),
+            "mandatory-single-space-separation" to FormatterRule(on = false, quantity = 1),
+            "mandatory-space-surrounding-operations" to FormatterRule(on = false, quantity = 1),
+            "mandatory-line-break-after-statement" to FormatterRule(on = false, quantity = 1),
+            "if-brace-same-line" to FormatterRule(on = false, quantity = 1),
+            "if-brace-below-line" to FormatterRule(on = false, quantity = 1),
+        )
 
     override fun loadConfig(): Map<String, FormatterRule> {
-        val reader = inputStream.bufferedReader()
-        val type = object : TypeToken<Map<String, Any>>() {}.type
-        val rawMap: Map<String, Any> = gson.fromJson(reader, type)
+        val gson =
+            GsonBuilder()
+                .registerTypeAdapter(FormatterRule::class.java, FormatterRuleDeserializer())
+                .create()
 
-        return rawMap.mapValues { (key, value) ->
-            when (value) {
-                is Boolean -> {
-                    if (key.startsWith("enforce-no-spacing")) {
-                        FormatterRule(on = value, quantity = 0)
-                    } else {
-                        FormatterRule(on = value, quantity = 1)
-                    }
-                }
-                is Number -> FormatterRule(on = true, quantity = value.toInt())
-                else -> throw IllegalArgumentException("Valor inesperado en config: $value")
+        val json = inputStream.bufferedReader().readText()
+        val type = object : TypeToken<Map<String, Any>>() {}.type
+        val inputRules: Map<String, Any> =
+            try {
+                gson.fromJson(json, type)
+            } catch (e: Exception) {
+                return defaultRules
+            }
+
+        // Start with all rules disabled
+        val resultRules =
+            defaultRules.keys.associateWith {
+                FormatterRule(on = false, quantity = defaultRules[it]?.quantity ?: 0)
+            }.toMutableMap()
+
+        // Handle the special case for enforce-no-spacing-around-equals
+        if (inputRules.containsKey("enforce-no-spacing-around-equals")) {
+            val rule = gson.fromJson(gson.toJson(inputRules["enforce-no-spacing-around-equals"]), FormatterRule::class.java)
+            if (rule.on) {
+                resultRules["enforce-spacing-around-equals"] = FormatterRule(on = false, quantity = 0)
+                return resultRules
             }
         }
+
+        // Process the input rule - there should be just one rule in the JSON
+        if (inputRules.isNotEmpty()) {
+            val entry = inputRules.entries.first()
+            val key = entry.key
+            val ruleValue = entry.value
+
+            // Convert to FormatterRule
+            val rule =
+                when (ruleValue) {
+                    is Boolean -> FormatterRule(on = ruleValue, quantity = 1)
+                    is Number -> FormatterRule(on = true, quantity = ruleValue.toInt())
+                    else -> gson.fromJson(gson.toJson(ruleValue), FormatterRule::class.java)
+                }
+
+            // Set just this rule
+            resultRules[key] = rule
+        }
+
+        return resultRules
     }
 }

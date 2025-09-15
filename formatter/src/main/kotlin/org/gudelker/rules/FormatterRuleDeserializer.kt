@@ -3,7 +3,6 @@ package org.gudelker.rules
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
-import com.google.gson.JsonParseException
 import java.lang.reflect.Type
 
 class FormatterRuleDeserializer : JsonDeserializer<FormatterRule> {
@@ -13,21 +12,21 @@ class FormatterRuleDeserializer : JsonDeserializer<FormatterRule> {
         context: JsonDeserializationContext,
     ): FormatterRule {
         return when {
+            json.isJsonPrimitive -> {
+                val primitive = json.asJsonPrimitive
+                when {
+                    primitive.isBoolean -> FormatterRule(on = primitive.asBoolean, quantity = 1)
+                    primitive.isNumber -> FormatterRule(on = true, quantity = primitive.asInt)
+                    else -> FormatterRule(on = false, quantity = 0)
+                }
+            }
             json.isJsonObject -> {
                 val obj = json.asJsonObject
-                val on = obj.get("on").asBoolean
-                val quantity = if (obj.has("quantity")) obj.get("quantity").asInt else 1
-                FormatterRule(on, quantity)
+                val on = obj.get("on")?.asBoolean ?: true
+                val quantity = obj.get("quantity")?.asInt ?: 1
+                FormatterRule(on = on, quantity = quantity)
             }
-            json.isJsonPrimitive && json.asJsonPrimitive.isBoolean -> {
-                // Caso booleano
-                FormatterRule(on = json.asBoolean, quantity = 1)
-            }
-            json.isJsonPrimitive && json.asJsonPrimitive.isNumber -> {
-                // Caso número
-                FormatterRule(on = true, quantity = json.asInt)
-            }
-            else -> throw JsonParseException("Formato de regla no soportado: $json")
+            else -> FormatterRule(on = false, quantity = 0)
         }
     }
 }

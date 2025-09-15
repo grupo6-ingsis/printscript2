@@ -1,22 +1,22 @@
 {
   "enforce-spacing-after-colon-in-declaration": {
-    "on": true,
+    "on": false,
     "quantity": 1
   },
   "enforce-spacing-before-colon-in-declaration": {
-    "on": true,
+    "on": false,
     "quantity": 1
   },
   "enforce-spacing-around-equals": {
-    "on": true,
+    "on": false,
     "quantity": 1
   },
   "line-breaks-after-println": {
-    "on": true,
+    "on": false,
     "quantity": 1
   },
   "indent-inside-if": {
-    "on": true,
+    "on": false,
     "quantity": 1
   }
 
