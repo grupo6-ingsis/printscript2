@@ -15,7 +15,7 @@ class InputStreamFormatterConfigLoaderToMap(
             "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = false, quantity = 0),
             "enforce-spacing-around-equals" to FormatterRule(on = false, quantity = 1),
             "line-breaks-after-println" to FormatterRule(on = false, quantity = 1),
-            "indent-inside-if" to FormatterRule(on = false, quantity = 4),
+            "indent-inside-if" to FormatterRule(on = false, quantity = 2),
             "mandatory-single-space-separation" to FormatterRule(on = false, quantity = 1),
             "mandatory-space-surrounding-operations" to FormatterRule(on = false, quantity = 1),
             "mandatory-line-break-after-statement" to FormatterRule(on = false, quantity = 1),
