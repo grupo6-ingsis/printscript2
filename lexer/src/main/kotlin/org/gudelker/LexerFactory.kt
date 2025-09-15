@@ -17,7 +17,6 @@ import org.gudelker.rules.LetTokenizer
 import org.gudelker.rules.NewLineTokenizer
 import org.gudelker.rules.NotAllowedCharsTokenizer
 import org.gudelker.rules.NotLineAfterSemicolonTokenizer
-import org.gudelker.rules.NotSpaceOperationTokenizer
 import org.gudelker.rules.NumberTypeTokenizer
 import org.gudelker.rules.OperationTokenizer
 import org.gudelker.rules.ParenthesisTokenizer
@@ -45,7 +44,7 @@ object LexerFactory {
                 StringTokenizer(),
                 WhitespaceTokenizer(),
                 AssignationTokenizer(),
-                NotSpaceOperationTokenizer(),
+//                NotSpaceOperationTokenizer(),
                 ProhibitedSymbolDoubleTokenizer(),
                 StringTypeTokenizer(),
                 NumberTypeTokenizer(),

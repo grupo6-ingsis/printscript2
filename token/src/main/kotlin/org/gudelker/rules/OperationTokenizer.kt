@@ -13,7 +13,7 @@ class OperationTokenizer : RuleTokenizer {
         nextChar: Char?,
     ): Boolean {
         return (actualWord == "+" || actualWord == "-" || actualWord == "*" || actualWord == "/") &&
-            (nextChar == null || !nextChar.isDigit() || nextChar.isWhitespace())
+            (nextChar == null || nextChar.isWhitespace() || nextChar.isDigit())
     }
 
     override fun generateToken(

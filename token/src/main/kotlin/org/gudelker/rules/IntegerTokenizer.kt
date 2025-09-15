@@ -20,7 +20,7 @@ class IntegerTokenizer : RuleTokenizer {
                 nextChar == null || nextChar == '=' || nextChar == '>' ||
                     nextChar == '<' || nextChar == ';' || nextChar == ')' ||
                     nextChar == ',' || nextChar == ' ' || nextChar == '\n' ||
-                    nextChar == '\t'
+                    nextChar == '\t' || (nextChar == '+' || nextChar == '-' || nextChar == '*' || nextChar == '/')
             )
     }
 

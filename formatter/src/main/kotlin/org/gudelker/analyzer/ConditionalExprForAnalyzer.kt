@@ -18,36 +18,59 @@ class ConditionalExprForAnalyzer(
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val conditionalExpression = statement as ConditionalExpression
-        val ifKeyword = conditionalExpression.ifKeyword.value
-        val condition = conditionalExpression.condition
-        val ifBody = conditionalExpression.ifBody
-        val elseBody = conditionalExpression.elseBody
+        if (statement !is ConditionalExpression) {
+            return ""
+        }
+        val ifKeyword = statement.ifKeyword.value
+        val condition = statement.condition
 
         val formattedCondition = formatter.format(condition, formatterRuleMap)
 
-        val formattedIfBody =
-            ifBody.joinToString("") {
-                formatter.format(it, formatterRuleMap)
-            }.trimEnd('\n')
+        var resultString = "$ifKeyword ($formattedCondition)"
 
-        var result =
-            if (elseBody != null) {
-                val formattedElseBody =
-                    elseBody.joinToString("") {
-                        formatter.format(it, formatterRuleMap)
-                    }.trimEnd('\n')
-                "$ifKeyword ($formattedCondition) {\n$formattedIfBody\n} else {\n$formattedElseBody\n}"
-            } else {
-                "$ifKeyword ($formattedCondition) {\n$formattedIfBody\n}"
-            }
+        val openBrace = statement.ifOpenBracket
+        val openBraceColumnDiff = openBrace!!.position.startLine - statement.ifKeyword.position.startLine
+        val newLines = "\n".repeat(openBraceColumnDiff)
+
+        // veo donde poner el {
+        if (openBraceColumnDiff > 0) {
+            val spacesBeforeOpenBrace = " ".repeat(openBrace.position.startColumn - 1)
+            resultString += newLines
+            resultString += spacesBeforeOpenBrace
+            resultString += openBrace.value
+        } else {
+            val spacesBeforeOpenBrace =
+                " ".repeat(
+                    (openBrace.position.startColumn - statement.closeParenthesis.position.endColumn) - 1,
+                )
+            resultString += spacesBeforeOpenBrace
+            resultString += openBrace.value
+        }
+
+        val ifBody = statement.ifBody
+        val elseBody = statement.elseBody
+
+        val formattedIfBody = ifBody.joinToString("\n") { formatter.format(it, formatterRuleMap).trimEnd() }
+
+        val ifColumn = statement.ifKeyword.position.startColumn - 1
+        val indentClosingBrace = " ".repeat(ifColumn)
+
+        resultString += "\n$formattedIfBody\n$indentClosingBrace}"
+
+        if (elseBody != null) {
+            val formattedElseBody =
+                statement.elseBody?.let {
+                    it.joinToString("\n") { stmt -> formatter.format(stmt, formatterRuleMap).trimEnd() }
+                }
+            resultString += formattedElseBody
+        }
 
         ruleValidators.forEach { validator ->
             if (validator.matches(formatterRuleMap)) {
-                result = validator.applyRule(result, statement, formatterRuleMap)
+                resultString = validator.applyRule(resultString, statement, formatterRuleMap)
             }
         }
 
-        return result
+        return resultString
     }
 }

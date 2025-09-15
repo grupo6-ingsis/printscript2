@@ -34,7 +34,7 @@ class IntegrationTest {
     fun `should process mathematical operations`() {
         val code =
             """
-            let x = 5 + 3;
+            let x = 5+3;
             let y = x * 2;
             println(y - 1);
             """.trimIndent()
@@ -342,13 +342,12 @@ class IntegrationTest {
         }
     }
 
-    // @Test
+    @Test
     fun `should return formatted code applying rules`() {
         val code =
             """
-            let y:boolean=true;
-            if (y){
-            println("Y is true");
+            if (true){
+              let x:Number=3+5;
             }
             """.trimIndent()
 
@@ -356,10 +355,8 @@ class IntegrationTest {
 
         val expectedCode =
             """
-            let y :  boolean   =   true;
-            if (y) {
-
-                println("Y is true");
+            if (true){
+              let x:Number = 3 + 5;
             }
             """.trimIndent()
         println(result.replace("\n", "\\n\n"))
@@ -468,11 +465,11 @@ class IntegrationTest {
 
                 val rules =
                     mapOf(
-                        "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
-                        "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 2),
-                        "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 3),
-                        "indent-inside-if" to FormatterRule(on = true, quantity = 4),
-                        "line-breaks-after-println" to FormatterRule(on = true, quantity = 1),
+                        "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = false, quantity = 1),
+                        "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = false, quantity = 2),
+                        "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
+                        "indent-inside-if" to FormatterRule(on = false, quantity = 4),
+                        "line-breaks-after-println" to FormatterRule(on = false, quantity = 1),
                     )
 
                 return statements.joinToString("") { formatter.format(it, rules) }

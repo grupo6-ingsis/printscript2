@@ -91,6 +91,8 @@ class LinterV2Test {
                             LiteralNumber(ComboValuePosition(100, StatementPosition(3, 18, 3, 21))),
                         ),
                     ),
+                    ComboValuePosition("(", StatementPosition(4, 1, 4, 1)),
+                    ComboValuePosition(")", StatementPosition(4, 13, 4, 13)),
                     elseBody =
                         listOf(
                             VariableDeclaration(
@@ -154,6 +156,8 @@ class LinterV2Test {
                             LiteralNumber(ComboValuePosition(100, StatementPosition(3, 18, 3, 21))),
                         ),
                     ),
+                    ComboValuePosition("(", StatementPosition(4, 1, 4, 1)),
+                    ComboValuePosition(")", StatementPosition(4, 13, 4, 13)),
                     elseBody =
                         listOf(
                             VariableDeclaration(

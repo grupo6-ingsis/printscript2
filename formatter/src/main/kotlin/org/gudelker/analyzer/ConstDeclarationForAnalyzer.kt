@@ -1,10 +1,18 @@
 package org.gudelker.analyzer
 
 import org.gudelker.DefaultFormatter
+import org.gudelker.expressions.Binary
+import org.gudelker.expressions.CanBeCallStatement
+import org.gudelker.expressions.LiteralBoolean
+import org.gudelker.expressions.LiteralIdentifier
+import org.gudelker.expressions.LiteralNumber
+import org.gudelker.expressions.LiteralString
+import org.gudelker.expressions.Unary
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.statements.declarations.ConstDeclaration
 import org.gudelker.statements.interfaces.Statement
+import org.gudelker.stmtposition.ComboValuePosition
 
 class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
@@ -16,26 +24,73 @@ class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidato
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val constDeclaration = statement as ConstDeclaration
-
-        val keyword = constDeclaration.keywordCombo.value
-        val identifier = constDeclaration.identifierCombo.value
-        val typeStr = constDeclaration.type
-        val valueFormatted = formatter.formatNode(constDeclaration.value, formatterRuleMap)
-
-        var string =
-            if (typeStr == null) {
-                "$keyword $identifier=$valueFormatted;\n"
-            } else {
-                "$keyword $identifier:$typeStr=$valueFormatted;\n"
+        if (statement is ConstDeclaration) {
+            val keyword = statement.keywordCombo.value
+            val identifier = statement.identifierCombo.value
+            var resultString = "$keyword $identifier"
+            if (statement.colon != null) {
+                val numberOfSpacesBeforeColon =
+                    statement.colon!!.position.startColumn - statement.identifierCombo.position.startColumn
+                val spacesBeforeColon = " ".repeat(numberOfSpacesBeforeColon - 1)
+                val numberOfSpacesAfterColon = statement.type?.position!!.startColumn - statement.colon!!.position.startColumn
+                val spacesAfterColon = " ".repeat(numberOfSpacesAfterColon - 1)
+                resultString += "$spacesBeforeColon${statement.colon!!.value}$spacesAfterColon${statement.type!!.value}"
             }
 
-        rulesValidators.forEach { validator ->
-            if (validator.matches(formatterRuleMap)) {
-                string = validator.applyRule(string, statement, formatterRuleMap)
+            val numberOfSpacesBeforeEquals = statement.equals!!.position.startColumn - statement.type!!.position.startColumn
+            val spacesBeforeEquals = " ".repeat(numberOfSpacesBeforeEquals - 1)
+            val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(statement.value!!, statement.equals!!)
+            val spacesAfterEquals = " ".repeat(numberOfSpacesAfterEquals - 1)
+
+            val valueFormatted = formatter.formatNode(statement.value!!, formatterRuleMap)
+            resultString += "$spacesBeforeEquals${statement.equals!!.value}$spacesAfterEquals$valueFormatted"
+
+            resultString += ";\n"
+            rulesValidators.forEach { validator ->
+                if (validator.matches(formatterRuleMap)) {
+                    resultString = validator.applyRule(resultString, statement, formatterRuleMap)
+                }
             }
+
+            return resultString
         }
+        return ""
+    }
 
-        return string
+    private fun calculateSpacesAfterEquals(
+        value: CanBeCallStatement,
+        equals: ComboValuePosition<String>,
+    ): Int {
+        return when (value) {
+            is LiteralBoolean -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.startColumn
+            }
+            is LiteralNumber -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.endColumn
+            }
+            is LiteralString -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.endColumn
+            }
+            is LiteralIdentifier -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.endColumn
+            }
+            is Binary -> {
+                val valuePos = value.position
+                valuePos!!.startColumn - equals.position.endColumn
+            }
+            is Unary -> {
+                val valuePos = value.operator.position
+                valuePos.startColumn - equals.position.startColumn
+            }
+//            is Grouping -> {
+//                val valuePos = value.openParenthesis
+//                valuePos!!.startColumn - equals.position.endColumn
+//            }
+            else -> 0
+        }
     }
 }

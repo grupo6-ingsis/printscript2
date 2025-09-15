@@ -1,10 +1,18 @@
 package org.gudelker.analyzer
 
 import org.gudelker.DefaultFormatter
+import org.gudelker.expressions.Binary
+import org.gudelker.expressions.CanBeCallStatement
+import org.gudelker.expressions.LiteralBoolean
+import org.gudelker.expressions.LiteralIdentifier
+import org.gudelker.expressions.LiteralNumber
+import org.gudelker.expressions.LiteralString
+import org.gudelker.expressions.Unary
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.statements.VariableReassignment
 import org.gudelker.statements.interfaces.Statement
+import org.gudelker.stmtposition.ComboValuePosition
 
 class VariableReassignmentForAnalyzer(
     private val ruleValidators: List<RuleValidatorFormatter>,
@@ -20,14 +28,58 @@ class VariableReassignmentForAnalyzer(
     ): String {
         val reassignment = statement as VariableReassignment
         val identifier = reassignment.identifier
+        val numberOfSpacesBeforeEquals =
+            reassignment.equals.position.startColumn - reassignment.identifier.position.endColumn
+        val spacesBeforeEquals = " ".repeat(numberOfSpacesBeforeEquals - 1)
+        val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(reassignment.value, reassignment.equals)
+        val spacesAfterEquals = " ".repeat(numberOfSpacesAfterEquals - 1)
         val value = formatter.format(reassignment.value, formatterRuleMap)
-        var string = "$identifier=$value;\n"
+        var result = "$identifier$spacesBeforeEquals=$spacesAfterEquals$value;\n"
         ruleValidators.forEach { validator ->
             if (validator.matches(formatterRuleMap)) {
-                string = validator.applyRule(string, statement, formatterRuleMap)
+                result = validator.applyRule(result, statement, formatterRuleMap)
             }
         }
 
-        return string
+        return result
+    }
+
+    private fun calculateSpacesAfterEquals(
+        value: CanBeCallStatement,
+        equals: ComboValuePosition<String>,
+    ): Int {
+        return when (value) {
+            is LiteralBoolean -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.startColumn
+            }
+
+            is LiteralNumber -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.endColumn
+            }
+
+            is LiteralString -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.endColumn
+            }
+
+            is LiteralIdentifier -> {
+                val valuePos = value.value.position
+                valuePos.startColumn - equals.position.endColumn
+            }
+
+            is Binary -> {
+                val valuePos = value.position
+                valuePos!!.startColumn - equals.position.endColumn
+            }
+
+            is Unary -> {
+                val valuePos = value.operator.position
+                valuePos.startColumn - equals.position.startColumn
+            }
+
+            else -> 0
+        }
     }
 }

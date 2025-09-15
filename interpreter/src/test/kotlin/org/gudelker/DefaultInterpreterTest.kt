@@ -218,6 +218,8 @@ class DefaultInterpreterTest {
                         listOf(
                             LiteralNumber(ComboValuePosition(42.0, StatementPosition(2, 5, 2, 7))),
                         ),
+                    ComboValuePosition("(", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition(")", StatementPosition(1, 1, 1, 1)),
                     elseBody =
                         listOf(
                             LiteralNumber(ComboValuePosition(0.0, StatementPosition(4, 5, 4, 5))),
@@ -248,6 +250,8 @@ class DefaultInterpreterTest {
                         listOf(
                             LiteralString(ComboValuePosition("true path", StatementPosition(2, 5, 2, 15))),
                         ),
+                    ComboValuePosition("(", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition(")", StatementPosition(1, 1, 1, 1)),
                     elseBody =
                         listOf(
                             LiteralString(ComboValuePosition("false path", StatementPosition(4, 5, 4, 16))),

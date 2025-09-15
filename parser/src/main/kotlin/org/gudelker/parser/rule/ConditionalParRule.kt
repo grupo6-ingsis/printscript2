@@ -40,6 +40,15 @@ class ConditionalParRule(
         if (openParenToken == null) {
             return ParseResult(ParserSyntaxError("Se esperaba '(' después de 'if'"), streamAfterIf)
         }
+        val openParenPos = openParenToken.getPosition()
+        val openParenthesisPosition =
+            StatementPosition(
+                openParenPos.startLine,
+                openParenPos.startColumn,
+                openParenPos.endLine,
+                openParenPos.endColumn,
+            )
+        val openParenthesisCombo = ComboValuePosition(openParenToken.getValue(), openParenthesisPosition)
 
         // Parse boolean expression
         val booleanResult = booleanExpressionRule.parse(streamAfterOpenParen)
@@ -53,6 +62,15 @@ class ConditionalParRule(
         if (closeParenToken == null) {
             return ParseResult(ParserSyntaxError("Se esperaba ')' después de la condición"), booleanResult.tokenStream)
         }
+        val closeParenthesisPos = closeParenToken.getPosition()
+        val closeParenthesisPosition =
+            StatementPosition(
+                closeParenthesisPos.startLine,
+                closeParenthesisPos.startColumn,
+                closeParenthesisPos.endLine,
+                closeParenthesisPos.endColumn,
+            )
+        val closeParenthesisCombo = ComboValuePosition(closeParenToken.getValue(), closeParenthesisPosition)
 
         // Consume '{'
         val (openBracketToken, streamAfterOpenBracket) = streamAfterCloseParen.consume(TokenType.OPEN_BRACKET)
@@ -91,13 +109,18 @@ class ConditionalParRule(
         // Check for optional 'else'
         val currentToken = streamAfterCloseBracket.current()
         return if (currentToken?.getType() == TokenType.ELSE_KEYWORD) {
-            parseElseBlock(streamAfterCloseBracket, ifToken, position, booleanExpression, ifBody, ifOpenBracketCombo, ifCloseBracketCombo)
+            parseElseBlock(
+                streamAfterCloseBracket, ifToken, position, booleanExpression, ifBody, ifOpenBracketCombo,
+                ifCloseBracketCombo, openParenthesisCombo, closeParenthesisCombo,
+            )
         } else {
             val conditional =
                 ConditionalExpression(
                     ComboValuePosition(ifToken.getValue(), position),
                     booleanExpression,
                     ifBody,
+                    openParenthesisCombo,
+                    closeParenthesisCombo,
                     null,
                     ifOpenBracketCombo,
                     ifCloseBracketCombo,
@@ -117,6 +140,8 @@ class ConditionalParRule(
         ifBody: List<Statement>,
         ifOpenBracket: ComboValuePosition<String>?,
         ifCloseBracket: ComboValuePosition<String>?,
+        closeParenthesis: ComboValuePosition<String>,
+        openCloseParenthesis: ComboValuePosition<String>,
     ): ParseResult {
         // Consume 'else'
         val (elseToken, streamAfterElse) = tokenStream.consume(TokenType.ELSE_KEYWORD)
@@ -171,6 +196,8 @@ class ConditionalParRule(
                 ComboValuePosition(ifToken.getValue(), position),
                 booleanExpression,
                 ifBody,
+                openCloseParenthesis,
+                closeParenthesis,
                 elseBody,
                 ifOpenBracket,
                 ifCloseBracket,
