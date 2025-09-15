@@ -34,7 +34,7 @@ class VariableReassignmentForAnalyzer(
         val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(reassignment.value, reassignment.equals)
         val spacesAfterEquals = " ".repeat(numberOfSpacesAfterEquals - 1)
         val value = formatter.format(reassignment.value, formatterRuleMap)
-        var result = "$identifier$spacesBeforeEquals=$spacesAfterEquals$value;\n"
+        var result = "$identifier$spacesBeforeEquals=$spacesAfterEquals$value;"
         ruleValidators.forEach { validator ->
             if (validator.matches(formatterRuleMap)) {
                 result = validator.applyRule(result, statement, formatterRuleMap)

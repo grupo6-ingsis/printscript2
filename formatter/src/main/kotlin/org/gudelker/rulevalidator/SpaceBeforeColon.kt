@@ -2,7 +2,6 @@ package org.gudelker.rulevalidator
 
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement
-import org.gudelker.utils.FormatterUtils
 
 class SpaceBeforeColon : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
@@ -16,7 +15,17 @@ class SpaceBeforeColon : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val spacesBefore = FormatterUtils.getDeclarationSpaces("enforce-spacing-before-colon-in-declaration", formatterRuleMap)
-        return string.replace(":", "$spacesBefore:")
+        val requiredSpaces = formatterRuleMap["enforce-spacing-before-colon-in-declaration"]?.quantity ?: 0
+        val spaceString = " ".repeat(requiredSpaces)
+        val pattern = "([^ ])( *):".toRegex()
+        return pattern.replace(string) { matchResult ->
+            val char = matchResult.groupValues[1]
+            val currentSpaces = matchResult.groupValues[2]
+            if (currentSpaces.length == requiredSpaces) {
+                matchResult.value
+            } else {
+                "$char$spaceString:"
+            }
+        }
     }
 }

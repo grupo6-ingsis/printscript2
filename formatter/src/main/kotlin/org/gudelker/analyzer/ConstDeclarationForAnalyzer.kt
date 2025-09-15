@@ -45,7 +45,7 @@ class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidato
             val valueFormatted = formatter.formatNode(statement.value!!, formatterRuleMap)
             resultString += "$spacesBeforeEquals${statement.equals!!.value}$spacesAfterEquals$valueFormatted"
 
-            resultString += ";\n"
+            resultString += ";"
             rulesValidators.forEach { validator ->
                 if (validator.matches(formatterRuleMap)) {
                     resultString = validator.applyRule(resultString, statement, formatterRuleMap)

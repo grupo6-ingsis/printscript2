@@ -38,7 +38,12 @@ class IfIndentation : RuleValidatorFormatter {
                     insideBlock = true
                 }
                 insideBlock && line.trim().isNotEmpty() -> {
-                    processedLines.add("$indentSpaces$line")
+                    val leadingWhitespace = line.takeWhile { it.isWhitespace() }
+                    if (leadingWhitespace.length >= rule.quantity) {
+                        processedLines.add(line)
+                    } else {
+                        processedLines.add("$indentSpaces${line.trimStart()}")
+                    }
                 }
                 else -> {
                     processedLines.add(line)

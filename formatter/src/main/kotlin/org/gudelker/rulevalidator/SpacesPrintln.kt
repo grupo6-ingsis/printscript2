@@ -2,7 +2,6 @@ package org.gudelker.rulevalidator
 
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement
-import org.gudelker.utils.FormatterUtils
 
 class SpacesPrintln : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
@@ -16,7 +15,23 @@ class SpacesPrintln : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val newLines = FormatterUtils.generateNewLines("line-breaks-after-println", formatterRuleMap)
-        return string.replace("println", "${newLines}println")
+        val requiredNewlines = formatterRuleMap["line-breaks-after-println"]?.quantity ?: 1
+
+        // Find println statements and check existing newlines after them
+        val pattern = "(println\\([^;]*;)(\\s*)".toRegex()
+
+        return pattern.replace(string) { matchResult ->
+            val printlnStmt = matchResult.groupValues[1] // The println statement including semicolon
+            val existingWhitespace = matchResult.groupValues[2] // Any existing whitespace after the println
+
+            val existingNewlines = existingWhitespace.count { it == '\n' }
+
+            if (existingNewlines >= requiredNewlines) {
+                matchResult.value // Keep original if newlines are already sufficient
+            } else {
+                val newLineString = "\n".repeat(requiredNewlines - existingNewlines)
+                "$printlnStmt$existingWhitespace$newLineString" // Add only the additional newlines needed
+            }
+        }
     }
 }

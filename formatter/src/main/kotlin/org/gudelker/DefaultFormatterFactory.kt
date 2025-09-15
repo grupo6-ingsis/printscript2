@@ -15,6 +15,7 @@ import org.gudelker.analyzer.UnaryForAnalyzer
 import org.gudelker.analyzer.VariableDeclarationForAnalyzer
 import org.gudelker.analyzer.VariableReassignmentForAnalyzer
 import org.gudelker.rulevalidator.IfIndentation
+import org.gudelker.rulevalidator.LineBreakAfterStatement
 import org.gudelker.rulevalidator.SpaceAfterColon
 import org.gudelker.rulevalidator.SpaceBeforeColon
 import org.gudelker.rulevalidator.SpacesAroundAssignation
@@ -35,6 +36,7 @@ object DefaultFormatterFactory {
                 SpaceBeforeColon(),
                 SpaceAfterColon(),
                 SpacesAroundAssignation(),
+                LineBreakAfterStatement(),
             )
         val analyzers =
             listOf(
@@ -63,6 +65,7 @@ object DefaultFormatterFactory {
                 SpaceBeforeColon(),
                 SpaceAfterColon(),
                 SpacesAroundAssignation(),
+                LineBreakAfterStatement(),
                 IfIndentation(),
             )
         val analyzers =

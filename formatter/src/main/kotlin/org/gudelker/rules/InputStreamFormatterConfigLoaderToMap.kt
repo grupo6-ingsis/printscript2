@@ -37,13 +37,13 @@ class InputStreamFormatterConfigLoaderToMap(
                 return defaultRules
             }
 
-        // Start with all rules disabled
         val resultRules =
             defaultRules.keys.associateWith {
                 FormatterRule(on = false, quantity = defaultRules[it]?.quantity ?: 0)
             }.toMutableMap()
 
-        // Handle the special case for enforce-no-spacing-around-equals
+        resultRules["mandatory-line-break-after-statement"] =
+            FormatterRule(on = true, quantity = defaultRules["mandatory-line-break-after-statement"]?.quantity ?: 1)
         if (inputRules.containsKey("enforce-no-spacing-around-equals")) {
             val rule = gson.fromJson(gson.toJson(inputRules["enforce-no-spacing-around-equals"]), FormatterRule::class.java)
             if (rule.on) {
@@ -51,22 +51,16 @@ class InputStreamFormatterConfigLoaderToMap(
                 return resultRules
             }
         }
-
-        // Process the input rule - there should be just one rule in the JSON
         if (inputRules.isNotEmpty()) {
             val entry = inputRules.entries.first()
             val key = entry.key
             val ruleValue = entry.value
-
-            // Convert to FormatterRule
             val rule =
                 when (ruleValue) {
                     is Boolean -> FormatterRule(on = ruleValue, quantity = 1)
                     is Number -> FormatterRule(on = true, quantity = ruleValue.toInt())
                     else -> gson.fromJson(gson.toJson(ruleValue), FormatterRule::class.java)
                 }
-
-            // Set just this rule
             resultRules[key] = rule
         }
 
