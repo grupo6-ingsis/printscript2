@@ -44,7 +44,7 @@ class InputStreamFormatterConfigLoaderToMap(
         resultRules["mandatory-line-break-after-statement"] =
             FormatterRule(on = true, quantity = defaultRules["mandatory-line-break-after-statement"]?.quantity ?: 1)
 
-        // Set indent-inside-if to default value initially
+        // Set indent-inside-if to default value initially 1
         resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
 
         if (inputRules.containsKey("enforce-no-spacing-around-equals")) {
