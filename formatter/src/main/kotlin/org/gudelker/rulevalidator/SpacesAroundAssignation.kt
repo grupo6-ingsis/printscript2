@@ -17,21 +17,9 @@ class SpacesAroundAssignation : RuleValidatorFormatter {
     ): String {
         // Check if no-spacing rule is enabled
         if (formatterRuleMap["enforce-no-spacing-around-equals"]?.on == true) {
-            var result = string
-
-            // More precise pattern to handle spaces around equals sign
-            // This pattern looks for a non-whitespace character, followed by spaces,
-            // followed by an equals sign, optionally followed by spaces, followed by a non-whitespace character
-            val pattern = "([^\\s])(\\s+)=(\\s*)([^\\s])".toRegex()
-
-            result =
-                pattern.replace(result) { matchResult ->
-                    val before = matchResult.groupValues[1]
-                    val after = matchResult.groupValues[4]
-                    "$before=$after"
-                }
-
-            return result
+            // Remove all spaces around equals sign
+            val pattern = "\\s*=\\s*".toRegex()
+            return pattern.replace(string) { "=" }
         }
 
         // Original logic for adding spaces
