@@ -3,8 +3,6 @@ package org.gudelker.rules
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.io.InputStream
-import kotlin.text.get
-import kotlin.text.set
 
 class InputStreamFormatterConfigLoaderToMap(
     private val inputStream: InputStream,
@@ -42,8 +40,13 @@ class InputStreamFormatterConfigLoaderToMap(
             defaultRules.keys.associateWith {
                 FormatterRule(on = false, quantity = defaultRules[it]?.quantity ?: 0)
             }.toMutableMap()
+
         resultRules["mandatory-line-break-after-statement"] =
             FormatterRule(on = true, quantity = defaultRules["mandatory-line-break-after-statement"]?.quantity ?: 1)
+
+        // Set indent-inside-if to default value initially
+        resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
+
         if (inputRules.containsKey("enforce-no-spacing-around-equals")) {
             val rule = gson.fromJson(gson.toJson(inputRules["enforce-no-spacing-around-equals"]), FormatterRule::class.java)
             if (rule.on) {
@@ -51,19 +54,25 @@ class InputStreamFormatterConfigLoaderToMap(
                 resultRules["enforce-spacing-around-equals"] = FormatterRule(on = false, quantity = 1)
             }
         }
-        if (inputRules.isNotEmpty()) {
-            val entry = inputRules.entries.first()
+
+        // Process all input rules
+        for (entry in inputRules.entries) {
             val key = entry.key
             if (key != "enforce-no-spacing-around-equals") {
                 val ruleValue = entry.value
                 val rule =
                     when (ruleValue) {
-                        is Boolean -> FormatterRule(on = ruleValue, quantity = 1)
+                        is Boolean -> FormatterRule(on = ruleValue, quantity = defaultRules[key]?.quantity ?: 1)
                         is Number -> FormatterRule(on = true, quantity = ruleValue.toInt())
                         else -> gson.fromJson(gson.toJson(ruleValue), FormatterRule::class.java)
                     }
                 resultRules[key] = rule
             }
+        }
+
+        // If indent-inside-if was not in input rules, ensure it's enabled with default value
+        if (!inputRules.containsKey("indent-inside-if")) {
+            resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
         }
 
         return resultRules
