@@ -10,7 +10,7 @@ class InputStreamFormatterConfigLoaderToMap(
     private val defaultRules =
         mapOf(
             "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = false, quantity = 1),
-            "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = false, quantity = 0),
+            "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = false, quantity = 1),
             "enforce-spacing-around-equals" to FormatterRule(on = false, quantity = 1),
             "line-breaks-after-println" to FormatterRule(on = false, quantity = 1),
             "indent-inside-if" to FormatterRule(on = true, quantity = 2),
