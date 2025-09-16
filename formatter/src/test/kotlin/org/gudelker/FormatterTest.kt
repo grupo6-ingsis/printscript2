@@ -25,16 +25,16 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FormatterTest {
-    //  @Test
+    @Test
     fun `test espacio antes de dos puntos en declaracion - con espacio`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("number", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("x", StatementPosition(1, 3, 1, 3)),
+                ComboValuePosition(":", StatementPosition(1, 4, 1, 4)),
+                ComboValuePosition("Number", StatementPosition(1, 5, 1, 5)),
+                ComboValuePosition("=", StatementPosition(1, 6, 1, 6)),
+                LiteralNumber(ComboValuePosition(5, StatementPosition(1, 7, 1, 7))),
             )
         val rules =
             mapOf(
@@ -49,20 +49,20 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x : Number = 5;\n", result)
-        assertEquals("let x : Number = 5;\n", result2)
+        assertEquals("let x : Number = 5;", result)
+        assertEquals("let x : Number = 5;", result2)
     }
 
-    // @Test
+    @Test
     fun `test espacio antes de dos puntos en declaracion - sin espacio`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("number", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("x", StatementPosition(1, 3, 1, 3)),
+                ComboValuePosition(":", StatementPosition(1, 5, 1, 5)),
+                ComboValuePosition("Number", StatementPosition(1, 7, 1, 7)),
+                ComboValuePosition("=", StatementPosition(1, 8, 1, 8)),
+                LiteralNumber(ComboValuePosition(5, StatementPosition(1, 9, 1, 9))),
             )
         val rules =
             mapOf(
@@ -77,20 +77,20 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x: Number = 5;\n", result)
-        assertEquals("let x: Number = 5;\n", result2)
+        assertEquals("let x: Number = 5;", result)
+        assertEquals("let x: Number = 5;", result2)
     }
 
-    // @Test
+    @Test
     fun `test espacio despues de dos puntos en declaracion - con espacio`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("string", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                LiteralString(ComboValuePosition("hello", StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("y", StatementPosition(1, 3, 1, 3)),
+                ComboValuePosition(":", StatementPosition(1, 7, 1, 7)),
+                ComboValuePosition("String", StatementPosition(1, 10, 1, 10)),
+                ComboValuePosition("=", StatementPosition(1, 13, 1, 13)),
+                LiteralString(ComboValuePosition("hello", StatementPosition(1, 16, 1, 16))),
             )
         val rules =
             mapOf(
@@ -105,20 +105,20 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let y:String=\"hello\";\n", result)
-        assertEquals("let y:String=\"hello\";\n", result2)
+        assertEquals("let y:String=\"hello\";", result)
+        assertEquals("let y:String=\"hello\";", result2)
     }
 
-    // @Test
+    @Test
     fun `test espacio despues de dos puntos en declaracion - sin espacio`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("string", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                LiteralString(ComboValuePosition("hello", StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("y", StatementPosition(1, 3, 1, 3)),
+                ComboValuePosition(":", StatementPosition(1, 7, 1, 7)),
+                ComboValuePosition("String", StatementPosition(1, 10, 1, 10)),
+                ComboValuePosition("=", StatementPosition(1, 13, 1, 13)),
+                LiteralString(ComboValuePosition("hello", StatementPosition(1, 16, 1, 16))),
             )
         val rules =
             mapOf(
@@ -133,20 +133,20 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let y:String = \"hello\";\n", result)
-        assertEquals("let y:String = \"hello\";\n", result2)
+        assertEquals("let y:String = \"hello\";", result)
+        assertEquals("let y:String = \"hello\";", result2)
     }
 
-    // @Test
+    @Test
     fun `test espacio antes y despues del igual en asignacion - con espacios`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("number", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                LiteralNumber(ComboValuePosition(10, StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("x", StatementPosition(1, 4, 1, 4)),
+                ComboValuePosition(":", StatementPosition(1, 5, 1, 5)),
+                ComboValuePosition("Number", StatementPosition(1, 7, 1, 7)),
+                ComboValuePosition("=", StatementPosition(1, 8, 1, 8)),
+                LiteralNumber(ComboValuePosition(10, StatementPosition(1, 9, 1, 9))),
             )
         val rules =
             mapOf(
@@ -161,20 +161,20 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x:Number = 10;\n", result)
-        assertEquals("let x:Number = 10;\n", result2)
+        assertEquals("let x:Number = 10;", result)
+        assertEquals("let x:Number = 10;", result2)
     }
 
-    // @Test
+    @Test
     fun `test espacio antes y despues del igual en asignacion - sin espacios`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("number", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                LiteralNumber(ComboValuePosition(10, StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("x", StatementPosition(1, 4, 1, 4)),
+                ComboValuePosition(":", StatementPosition(1, 5, 1, 5)),
+                ComboValuePosition("Number", StatementPosition(1, 7, 1, 7)),
+                ComboValuePosition("=", StatementPosition(1, 8, 1, 8)),
+                LiteralNumber(ComboValuePosition(10, StatementPosition(1, 9, 1, 9))),
             )
         val rules =
             mapOf(
@@ -189,16 +189,16 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x:Number=10;\n", result)
-        assertEquals("let x:Number=10;\n", result2)
+        assertEquals("let x:Number=10;", result)
+        assertEquals("let x:Number=10;", result2)
     }
 
-    // @Test
+    @Test
     fun `test salto de linea antes de println - 0 espacios`() {
         val printlnStatement =
             Callable(
-                ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
-                LiteralString(ComboValuePosition("test", StatementPosition(1, 1, 1, 6))),
+                ComboValuePosition("println", StatementPosition(1, 1, 1, 1)),
+                LiteralString(ComboValuePosition("test", StatementPosition(1, 3, 1, 3))),
             )
         val rules =
             mapOf(
@@ -211,16 +211,16 @@ class FormatterTest {
         val result = formatter.format(printlnStatement, rules)
         val result2 = formatter2.format(printlnStatement, rules)
 
-        assertEquals("println(\"test\");\n", result)
-        assertEquals("println(\"test\");\n", result2)
+        assertEquals("println(\"test\");", result)
+        assertEquals("println(\"test\");", result2)
     }
 
-    //  @Test
+//      @Test
     fun `test salto de linea antes de println - 1 espacio`() {
         val printlnStatement =
             Callable(
-                ComboValuePosition("println", StatementPosition(1, 2, 3, 4)),
-                LiteralString(ComboValuePosition("test", StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition("println", StatementPosition(1, 1, 1, 1)),
+                LiteralString(ComboValuePosition("test", StatementPosition(1, 3, 1, 3))),
             )
         val rules =
             mapOf(
@@ -264,8 +264,8 @@ class FormatterTest {
         val binaryExpression =
             Binary(
                 LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
-                ComboValuePosition(AdditionOperator(), StatementPosition(1, 1, 1, 1)),
-                LiteralNumber(ComboValuePosition(3, StatementPosition(1, 1, 1, 1))),
+                ComboValuePosition(AdditionOperator(), StatementPosition(1, 2, 1, 2)),
+                LiteralNumber(ComboValuePosition(3, StatementPosition(1, 4, 1, 4))),
             )
         val rules = emptyMap<String, FormatterRule>()
 
@@ -326,28 +326,28 @@ class FormatterTest {
         val statements =
             listOf(
                 VariableDeclaration(
-                    ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                    ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                    ComboValuePosition(":", StatementPosition(1, 1, 1, 1)),
-                    ComboValuePosition("string", StatementPosition(1, 1, 1, 1)),
-                    ComboValuePosition("=", StatementPosition(1, 1, 1, 1)),
-                    LiteralString(ComboValuePosition("hello", StatementPosition(1, 1, 1, 1))),
+                    ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("x", StatementPosition(1, 3, 1, 3)),
+                    ComboValuePosition(":", StatementPosition(1, 4, 1, 4)),
+                    ComboValuePosition("String", StatementPosition(1, 5, 1, 5)),
+                    ComboValuePosition("=", StatementPosition(1, 6, 1, 6)),
+                    LiteralString(ComboValuePosition("hello", StatementPosition(1, 7, 1, 7))),
                 ),
                 VariableDeclaration(
-                    ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                    ComboValuePosition("name", StatementPosition(1, 5, 1, 9)),
-                    ComboValuePosition(":", StatementPosition(1, 5, 1, 9)),
-                    ComboValuePosition("string", StatementPosition(1, 5, 1, 1)),
-                    ComboValuePosition("=", StatementPosition(1, 5, 1, 1)),
+                    ComboValuePosition("let", StatementPosition(2, 1, 2, 1)),
+                    ComboValuePosition("name", StatementPosition(2, 3, 2, 3)),
+                    ComboValuePosition(":", StatementPosition(2, 5, 1, 5)),
+                    ComboValuePosition("String", StatementPosition(2, 7, 2, 7)),
+                    ComboValuePosition("=", StatementPosition(2, 8, 2, 8)),
                     LiteralString(
-                        ComboValuePosition("John", StatementPosition(1, 1, 1, 1)),
+                        ComboValuePosition("John", StatementPosition(2, 9, 1, 9)),
                     ),
                 ),
                 Binary(
-                    LiteralIdentifier(ComboValuePosition("x", StatementPosition(1, 2, 3, 4))),
-                    ComboValuePosition(AdditionOperator(), StatementPosition(1, 1, 1, 1)),
+                    LiteralIdentifier(ComboValuePosition("x", StatementPosition(2, 12, 2, 12))),
+                    ComboValuePosition(AdditionOperator(), StatementPosition(2, 13, 2, 13)),
                     LiteralNumber(
-                        ComboValuePosition(10, StatementPosition(1, 1, 1, 1)),
+                        ComboValuePosition(10, StatementPosition(14, 14, 2, 14)),
                     ),
                 ),
             )
@@ -366,7 +366,7 @@ class FormatterTest {
 
         val expected =
             listOf(
-                "let x : Number = 5;\n",
+                "let x : String = \"hello\";\n",
                 "let name : String = \"John\";\n",
                 "x + 10",
             )
@@ -377,7 +377,7 @@ class FormatterTest {
 
         val expected2 =
             listOf(
-                "let x : Number = 5;\n",
+                "let x : String = \"hello\";\n",
                 "let name : String = \"John\";\n",
                 "x + 10",
             )
@@ -385,7 +385,7 @@ class FormatterTest {
         assertEquals(expected2, results2)
     }
 
-    // @Test
+//     @Test NullPointer
     fun `test declaracion sin tipo`() {
         val statement =
             VariableDeclaration(
@@ -409,21 +409,21 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let x = 42;\n", result)
-        assertEquals("let x = 42;\n", result2)
+        assertEquals("let x = 42;", result)
+        assertEquals("let x = 42;", result2)
     }
 
-    // @Test
+    @Test
     fun `test multiples espacios configurables`() {
         val statement =
             VariableDeclaration(
-                ComboValuePosition("let", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("variable", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition(":", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("Boolean", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("=", StatementPosition(1, 5, 1, 9)),
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("variable", StatementPosition(1, 3, 1, 3)),
+                ComboValuePosition(":", StatementPosition(1, 5, 1, 5)),
+                ComboValuePosition("Boolean", StatementPosition(1, 7, 1, 7)),
+                ComboValuePosition("=", StatementPosition(1, 9, 1, 9)),
                 LiteralString(
-                    ComboValuePosition("true", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("true", StatementPosition(1, 10, 1, 10)),
                 ),
             )
         val rules =
@@ -439,18 +439,18 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("let variable   :  Boolean    =    \"true\";\n", result)
-        assertEquals("let variable   :  Boolean    =    \"true\";\n", result2)
+        assertEquals("let variable   :  Boolean    =    \"true\";", result)
+        assertEquals("let variable   :  Boolean    =    \"true\";", result2)
     }
 
-    // @Test
+    @Test
     fun `test variable reassignment con espacios`() {
         val statement =
             VariableReassignment(
-                ComboValuePosition("x", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("=", StatementPosition(1, 5, 1, 9)),
+                ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("=", StatementPosition(1, 2, 1, 2)),
                 LiteralNumber(
-                    ComboValuePosition(42, StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition(42, StatementPosition(1, 3, 1, 3)),
                 ),
             )
         val rules =
@@ -464,17 +464,17 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("x = 42;\n", result)
-        assertEquals("x = 42;\n", result2)
+        assertEquals("x = 42;", result)
+        assertEquals("x = 42;", result2)
     }
 
-    // @Test
+    @Test
     fun `test variable reassignment sin espacios`() {
         val statement =
             VariableReassignment(
-                ComboValuePosition("variable", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("=", StatementPosition(1, 5, 1, 9)),
-                LiteralString(ComboValuePosition("newValue", StatementPosition(1, 5, 1, 9))),
+                ComboValuePosition("variable", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("=", StatementPosition(1, 9, 1, 9)),
+                LiteralString(ComboValuePosition("newValue", StatementPosition(1, 20, 1, 20))),
             )
         val rules =
             mapOf(
@@ -487,21 +487,21 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("variable=\"newValue\";\n", result)
-        assertEquals("variable=\"newValue\";\n", result2)
+        assertEquals("variable=\"newValue\";", result)
+        assertEquals("variable=\"newValue\";", result2)
     }
 
-    // @Test
+//     @Test NullPointer
     fun `test variable reassignment con multiples espacios`() {
         val statement =
             VariableReassignment(
-                ComboValuePosition("count", StatementPosition(1, 5, 1, 9)),
-                ComboValuePosition("=", StatementPosition(1, 5, 1, 9)),
+                ComboValuePosition("count", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("=", StatementPosition(1, 2, 1, 2)),
                 Binary(
-                    LiteralIdentifier(ComboValuePosition("count", StatementPosition(1, 2, 3, 4))),
-                    ComboValuePosition(AdditionOperator(), StatementPosition(1, 2, 3, 4)),
+                    LiteralIdentifier(ComboValuePosition("count", StatementPosition(1, 3, 1, 3))),
+                    ComboValuePosition(AdditionOperator(), StatementPosition(1, 4, 1, 4)),
                     LiteralNumber(
-                        ComboValuePosition(1, StatementPosition(1, 1, 1, 1)),
+                        ComboValuePosition(1, StatementPosition(1, 5, 1, 5)),
                     ),
                 ),
             )
@@ -516,8 +516,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter2.format(statement, rules)
 
-        assertEquals("count   =   count + 1;\n", result)
-        assertEquals("count   =   count + 1;\n", result2)
+        assertEquals("count   =   count + 1;", result)
+        assertEquals("count   =   count + 1;", result2)
     }
 
     @Test
@@ -558,28 +558,28 @@ class FormatterTest {
         assertEquals("+5", result2)
     }
 
-    // @Test
+    @Test
     fun `test if indentation - con 2 espacios`() {
         val statement =
             ConditionalExpression(
-                ComboValuePosition("if", StatementPosition(1, 1, 1, 3)),
+                ComboValuePosition("if", StatementPosition(1, 1, 1, 1)),
                 BooleanExpression(
-                    LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
+                    LiteralNumber(ComboValuePosition(5, StatementPosition(1, 3, 1, 3))),
                     Greater(),
-                    LiteralNumber(ComboValuePosition(3, StatementPosition(1, 1, 1, 1))),
+                    LiteralNumber(ComboValuePosition(3, StatementPosition(1, 5, 1, 5))),
                 ),
                 listOf(
                     Binary(
-                        LiteralNumber(ComboValuePosition(5, StatementPosition(1, 1, 1, 1))),
-                        ComboValuePosition(AdditionOperator(), StatementPosition(1, 1, 1, 1)),
-                        LiteralNumber(ComboValuePosition(2, StatementPosition(1, 1, 1, 1))),
+                        LiteralNumber(ComboValuePosition(5, StatementPosition(2, 1, 2, 1))),
+                        ComboValuePosition(AdditionOperator(), StatementPosition(2, 2, 2, 2)),
+                        LiteralNumber(ComboValuePosition(2, StatementPosition(2, 3, 2, 3))),
                     ),
                 ),
-                ComboValuePosition("(", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition(")", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("(", StatementPosition(1, 2, 1, 2)),
+                ComboValuePosition(")", StatementPosition(1, 6, 1, 6)),
                 null,
-                ComboValuePosition("{", StatementPosition(1, 1, 1, 1)),
-                ComboValuePosition("}", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("{", StatementPosition(1, 8, 1, 8)),
+                ComboValuePosition("}", StatementPosition(3, 1, 3, 1)),
             )
         val rules =
             mapOf(
@@ -595,7 +595,7 @@ class FormatterTest {
         assertEquals(expected, result2)
     }
 
-    // @Test
+    // @Test Muchos juntos no hace \n
     fun `test readInput and readEnv formatted correctly`() {
         val statement =
             CallableCall(
