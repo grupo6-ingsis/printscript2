@@ -17,7 +17,7 @@ class ConditionalEvaluator : Evaluator<Any> {
                         val conditionValue = conditionEval.value
                         if (conditionValue !is Boolean) {
                             return Result.failure(
-                                IllegalArgumentException(
+                                Exception(
                                     "La condición debe evaluar a un booleano, pero fue: ${conditionValue?.let { it::class.simpleName }}",
                                 ),
                             )
@@ -45,7 +45,7 @@ class ConditionalEvaluator : Evaluator<Any> {
             }
             else ->
                 Result.failure(
-                    IllegalArgumentException("Expected ConditionalExpression, got ${statement::class.simpleName}"),
+                    Exception("Expected ConditionalExpression, got ${statement::class.simpleName}"),
                 )
         }
     }

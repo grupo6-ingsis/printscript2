@@ -10,7 +10,7 @@ data class ConstVariableContext(
         value: Any,
     ): ConstVariableContext {
         if (hasConstant(name)) {
-            throw IllegalArgumentException("Constante ya declarada: $name")
+            throw Exception("Constante ya declarada: $name")
         }
         return copy(constants = constants + (name to value))
     }
@@ -32,7 +32,7 @@ data class ConstVariableContext(
 
     fun getVariable(name: String): Any {
         if (!hasVariable(name)) {
-            throw IllegalArgumentException("Variable no declarada: $name")
+            throw Exception("Variable no declarada: $name")
         } else {
             return variables[name]!! // !! para decir que no es nulo.
         }
@@ -40,7 +40,7 @@ data class ConstVariableContext(
 
     fun getConstant(name: String): Any {
         if (!hasConstant(name)) {
-            throw IllegalArgumentException("Variable no declarada: $name")
+            throw Exception("Variable no declarada: $name")
         } else {
             return constants[name]!! // !! para decir que no es nulo.
         }
@@ -51,7 +51,7 @@ data class ConstVariableContext(
         value: Any,
     ): ConstVariableContext {
         if (!variables.containsKey(name)) {
-            throw IllegalArgumentException("Variable no declarada: $name")
+            throw Exception("Variable no declarada: $name")
         }
         return copy(variables = variables + (name to value))
     }

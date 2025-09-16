@@ -23,7 +23,7 @@ class LiteralNumberEvaluator : Evaluator<Number> {
                     }
                 Result.success(EvaluationResult(parsedValue, context))
             }
-            else -> Result.failure(IllegalArgumentException("Expected LiteralNumber, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Expected LiteralNumber, got ${statement::class.simpleName}"))
         }
     }
 }

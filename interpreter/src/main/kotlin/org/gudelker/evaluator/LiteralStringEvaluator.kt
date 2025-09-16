@@ -11,7 +11,7 @@ class LiteralStringEvaluator : Evaluator<String> {
     ): Result<EvaluationResult> {
         return when (statement) {
             is LiteralString -> Result.success(EvaluationResult(statement.value.value, context))
-            else -> Result.failure(IllegalArgumentException("Expected LiteralString, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Expected LiteralString, got ${statement::class.simpleName}"))
         }
     }
 }

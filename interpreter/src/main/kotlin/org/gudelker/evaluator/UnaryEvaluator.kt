@@ -24,7 +24,7 @@ class UnaryEvaluator(
                     onFailure = { Result.failure(it) },
                 )
             }
-            else -> Result.failure(IllegalArgumentException("Expected Unary, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Expected Unary, got ${statement::class.simpleName}"))
         }
     }
 

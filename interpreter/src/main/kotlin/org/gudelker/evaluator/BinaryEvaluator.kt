@@ -35,7 +35,7 @@ class BinaryEvaluator(
                     onFailure = { Result.failure(it) },
                 )
             }
-            else -> Result.failure(IllegalArgumentException("Expected Binary, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Expected Binary, got ${statement::class.simpleName}"))
         }
     }
 

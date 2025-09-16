@@ -20,7 +20,7 @@ class LiteralIdentifierEvaluator : Evaluator<Any> {
                     }
                 Result.success(EvaluationResult(value, context))
             }
-            else -> Result.failure(IllegalArgumentException("Expected LiteralIdentifier, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Expected LiteralIdentifier, got ${statement::class.simpleName}"))
         }
     }
 }

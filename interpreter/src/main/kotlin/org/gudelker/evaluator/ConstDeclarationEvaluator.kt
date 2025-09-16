@@ -18,12 +18,12 @@ class ConstDeclarationEvaluator(
                     val name = statement.identifierCombo.value
                     if (context.hasVariable(name)) {
                         return Result.failure(
-                            IllegalArgumentException("No se puede declarar constante '$name': ya existe como variable"),
+                            Exception("No se puede declarar constante '$name': ya existe como variable"),
                         )
                     }
                     if (context.hasConstant(name)) {
                         return Result.failure(
-                            IllegalArgumentException("Constante '$name' ya declarada"),
+                            Exception("Constante '$name' ya declarada"),
                         )
                     }
                     val valueResult = Analyzer.analyze(statement.value, context, evaluators)
@@ -33,12 +33,12 @@ class ConstDeclarationEvaluator(
                         val validator = acceptedTypes[expectedType]
                         if (validator == null) {
                             return Result.failure(
-                                IllegalArgumentException("Tipo '$expectedType' no soportado"),
+                                Exception("Tipo '$expectedType' no soportado"),
                             )
                         }
                         if (value != null && !validator.isInstance(value)) {
                             return Result.failure(
-                                IllegalArgumentException(
+                                Exception(
                                     "Tipo de dato inválido para variable '$name': " +
                                         "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
                                 ),
@@ -50,7 +50,7 @@ class ConstDeclarationEvaluator(
                 }
                 else ->
                     Result.failure(
-                        IllegalArgumentException("Expected ConstDeclaration, got ${statement::class.simpleName}"),
+                        Exception("Expected ConstDeclaration, got ${statement::class.simpleName}"),
                     )
             }
         } catch (e: Exception) {

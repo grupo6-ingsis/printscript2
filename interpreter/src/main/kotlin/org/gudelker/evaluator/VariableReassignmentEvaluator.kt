@@ -18,7 +18,7 @@ class VariableReassignmentEvaluator(
                     val name = statement.identifier.value
                     if (!context.hasVariable(name)) {
                         return Result.failure(
-                            IllegalArgumentException("Variable '$name' no declarada"),
+                            Exception("Variable '$name' no declarada"),
                         )
                     }
                     val expectedType = context.getVariableType(name)
@@ -29,12 +29,12 @@ class VariableReassignmentEvaluator(
                         val validator = acceptedTypes[expectedType]
                         if (validator == null) {
                             return Result.failure(
-                                IllegalArgumentException("Tipo '$expectedType' no soportado"),
+                                Exception("Tipo '$expectedType' no soportado"),
                             )
                         }
                         if (value != null && !validator.isInstance(value)) {
                             return Result.failure(
-                                IllegalArgumentException(
+                                Exception(
                                     "Tipo de dato inválido para variable '$name': " +
                                         "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
                                 ),
@@ -46,7 +46,7 @@ class VariableReassignmentEvaluator(
                 }
                 else ->
                     Result.failure(
-                        IllegalArgumentException("Expected VariableReassignment, got ${statement::class.simpleName}"),
+                        Exception("Expected VariableReassignment, got ${statement::class.simpleName}"),
                     )
             }
         } catch (e: Exception) {

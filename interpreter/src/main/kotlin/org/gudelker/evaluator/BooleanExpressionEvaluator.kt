@@ -34,7 +34,7 @@ class BooleanExpressionEvaluator(
                     onFailure = { Result.failure(it) },
                 )
             }
-            else -> Result.failure(IllegalArgumentException("Expected BooleanExpression, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Expected BooleanExpression, got ${statement::class.simpleName}"))
         }
     }
 

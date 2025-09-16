@@ -18,7 +18,7 @@ class VariableDeclarationEvaluator(
                     val name = statement.identifierCombo.value
                     if (context.hasVariable(name) || context.hasConstant(name)) {
                         return Result.failure(
-                            IllegalArgumentException("Variable o constante '$name' ya declarada"),
+                            Exception("Variable o constante '$name' ya declarada"),
                         )
                     }
                     val expectedType = statement.type?.value?.lowercase()
@@ -35,12 +35,12 @@ class VariableDeclarationEvaluator(
                         val validator = acceptedTypes[expectedType]
                         if (validator == null) {
                             return Result.failure(
-                                IllegalArgumentException("Tipo '$expectedType' no soportado"),
+                                Exception("Tipo '$expectedType' no soportado"),
                             )
                         }
                         if (hasValue && value != null && !validator.isInstance(value)) {
                             return Result.failure(
-                                IllegalArgumentException(
+                                Exception(
                                     "Tipo de dato inválido para variable '$name': " +
                                         "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
                                 ),
@@ -58,14 +58,14 @@ class VariableDeclarationEvaluator(
                         // Si no hay tipo, solo permite si hay valor
                         if (!hasValue) {
                             return Result.failure(
-                                IllegalArgumentException("Debe especificar un tipo o un valor para la variable '$name'"),
+                                Exception("Debe especificar un tipo o un valor para la variable '$name'"),
                             )
                         }
                         // Inferencia extensible usando acceptedTypes
                         val inferredType = acceptedTypes.entries.firstOrNull { it.value.isInstance(value!!) }?.key
                         if (inferredType == null) {
                             return Result.failure(
-                                IllegalArgumentException("No se pudo inferir el tipo de la variable '$name'"),
+                                Exception("No se pudo inferir el tipo de la variable '$name'"),
                             )
                         }
                         val newContext = context.setVariableWithType(name, value!!, inferredType)
@@ -74,7 +74,7 @@ class VariableDeclarationEvaluator(
                 }
                 else ->
                     Result.failure(
-                        IllegalArgumentException("Expected VariableDeclaration, got ${statement::class.simpleName}"),
+                        Exception("Expected VariableDeclaration, got ${statement::class.simpleName}"),
                     )
             }
         } catch (e: Exception) {
