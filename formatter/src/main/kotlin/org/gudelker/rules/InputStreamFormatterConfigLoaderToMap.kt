@@ -45,7 +45,7 @@ class InputStreamFormatterConfigLoaderToMap(
             FormatterRule(on = true, quantity = defaultRules["mandatory-line-break-after-statement"]?.quantity ?: 1)
 
         // Set indent-inside-if to default value initially 1
-        resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
+//        resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
 
         if (inputRules.containsKey("enforce-no-spacing-around-equals")) {
             val rule = gson.fromJson(gson.toJson(inputRules["enforce-no-spacing-around-equals"]), FormatterRule::class.java)
@@ -71,9 +71,9 @@ class InputStreamFormatterConfigLoaderToMap(
         }
 
         // If indent-inside-if was not in input rules, ensure it's enabled with default value1
-        if (!inputRules.containsKey("indent-inside-if")) {
-            resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
-        }
+//        if (!inputRules.containsKey("indent-inside-if")) {
+//            resultRules["indent-inside-if"] = FormatterRule(on = true, quantity = 2)
+//        }
 
         return resultRules
     }
