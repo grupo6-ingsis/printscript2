@@ -18,6 +18,7 @@ import org.gudelker.rulevalidator.IfBraceBelowLine
 import org.gudelker.rulevalidator.IfBraceSameLine
 import org.gudelker.rulevalidator.IfIndentation
 import org.gudelker.rulevalidator.LineBreakAfterStatement
+import org.gudelker.rulevalidator.NormalizeDeclarationIndentation
 import org.gudelker.rulevalidator.SingleSpaceSeparationRule
 import org.gudelker.rulevalidator.SpaceAfterColon
 import org.gudelker.rulevalidator.SpaceBeforeColon
@@ -40,6 +41,7 @@ object DefaultFormatterFactory {
                 SpaceAfterColon(),
                 SpacesAroundAssignation(),
                 LineBreakAfterStatement(),
+                NormalizeDeclarationIndentation(),
                 SingleSpaceSeparationRule(),
             )
         val analyzers =
@@ -70,6 +72,7 @@ object DefaultFormatterFactory {
                 SpaceAfterColon(),
                 SpacesAroundAssignation(),
                 LineBreakAfterStatement(),
+                NormalizeDeclarationIndentation(),
                 IfIndentation(),
                 SingleSpaceSeparationRule(),
             )
