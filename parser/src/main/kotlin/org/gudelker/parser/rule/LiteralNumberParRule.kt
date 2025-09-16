@@ -35,7 +35,7 @@ class LiteralNumberParRule : SyntaxParRule {
     private fun getNumberValue(token: Token): Number {
         val value =
             if (token.getValue().contains(".")) {
-                token.getValue().toFloat()
+                token.getValue().toDouble()
             } else {
                 token.getValue().toInt()
             }
