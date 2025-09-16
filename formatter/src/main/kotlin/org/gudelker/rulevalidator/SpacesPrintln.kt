@@ -19,29 +19,26 @@ class SpacesPrintln : RuleValidatorFormatter {
         val rule = formatterRuleMap["line-breaks-after-println"] ?: return string
         val requiredNewlines = rule.quantity
 
-        // Direct handling for CallableCall statements
+        // Only process if it's a println statement
         if (statement is Callable && statement.functionName.value == "println") {
-            val semicolonIndex = string.indexOf(';')
-            if (semicolonIndex != -1) {
-                // Count existing newlines after semicolon
-                var afterIndex = semicolonIndex + 1
-                while (afterIndex < string.length && string[afterIndex] == '\n') {
-                    afterIndex++
+            val semicolonIndex = string.lastIndexOf(';')
+            if (semicolonIndex != -1 && semicolonIndex < string.length) {
+                // Get the parts before and after the semicolon
+                val prefix = string.substring(0, semicolonIndex + 1)
+
+                // Remove any existing newlines after the semicolon
+                var restIndex = semicolonIndex + 1
+                while (restIndex < string.length && string[restIndex] == '\n') {
+                    restIndex++
                 }
 
-                // Add exactly the required number of newlines
-                val prefix = string.substring(0, semicolonIndex + 1)
-                val suffix = if (afterIndex < string.length) string.substring(afterIndex) else ""
+                val suffix = if (restIndex < string.length) string.substring(restIndex) else ""
+
+                // Add the required number of newlines
                 return prefix + "\n".repeat(requiredNewlines) + suffix
             }
         }
 
-        // For other cases or multiple println statements in a string
-        val pattern = "(println\\s*\\([^;]*;)(\\n*)".toRegex()
-
-        return pattern.replace(string) { matchResult ->
-            val printlnStmt = matchResult.groupValues[1] // The println statement with semicolon
-            "$printlnStmt${"\n".repeat(requiredNewlines)}"
-        }
+        return string
     }
 }
