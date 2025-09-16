@@ -18,8 +18,11 @@ class CallableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatte
     ): String {
         val callable = statement as Callable
         val name = callable.functionName.value
+        val position = callable.functionName.position
+        val spacesBeforeName = " ".repeat(position.startColumn - 1)
+
         val formattedExpression = formatter.format(callable.expression, formatterRuleMap)
-        var string = "$name($formattedExpression);\n"
+        var string = "$spacesBeforeName$name($formattedExpression);"
 
         ruleValidators.forEach { rule ->
             if (rule.matches(formatterRuleMap)) {
