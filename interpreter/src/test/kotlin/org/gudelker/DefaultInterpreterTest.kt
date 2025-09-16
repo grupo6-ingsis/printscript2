@@ -9,6 +9,7 @@ import org.gudelker.compare.operators.NotEquals
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.Callable
+import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.ConditionalExpression
 import org.gudelker.expressions.Grouping
 import org.gudelker.expressions.LiteralIdentifier
@@ -16,16 +17,21 @@ import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
 import org.gudelker.expressions.Unary
 import org.gudelker.inputprovider.CLIInputProvider
+import org.gudelker.interpreter.ChunkBaseFactory
 import org.gudelker.interpreter.InterpreterFactory
 import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.MinusOperator
+import org.gudelker.result.InvalidInterpreterResult
+import org.gudelker.result.ValidInterpretResult
 import org.gudelker.statements.VariableReassignment
+import org.gudelker.statements.declarations.ConstDeclaration
 import org.gudelker.statements.declarations.VariableDeclaration
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import kotlin.collections.get
 
 class DefaultInterpreterTest {
     @Test
@@ -322,7 +328,7 @@ class DefaultInterpreterTest {
     }
 
     @Test
-    fun `should throw exception for unsupported comparator`() {
+    fun `greater equals`() {
         val statement =
             BooleanExpression(
                 LiteralNumber(ComboValuePosition(5.0, StatementPosition(1, 1, 1, 1))),
@@ -337,5 +343,211 @@ class DefaultInterpreterTest {
 
         assertEquals(1, result.size)
         assertEquals(true, result[0])
+    }
+
+    @Test
+    fun `callable calls`() {
+        val statatements =
+            listOf(
+                CallableCall(
+                    ComboValuePosition("readEnv", StatementPosition(2, 1, 2, 1)),
+                    LiteralString(ComboValuePosition("BOCA", StatementPosition(2, 3, 2, 3))),
+                ),
+            )
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statatements)
+        if (result is InvalidInterpreterResult) {
+            throw result.exception
+        }
+        result as ValidInterpretResult
+        assertEquals(1, result.value.size)
+    }
+
+    @Test
+    fun `error al usar operador no soportado`() {
+        val statements =
+            listOf(
+                Binary(
+                    LiteralString(ComboValuePosition("Hola", StatementPosition(1, 1, 1, 4))),
+                    ComboValuePosition(MinusOperator(), StatementPosition(1, 6, 1, 6)),
+                    LiteralString(ComboValuePosition("Mundo", StatementPosition(1, 8, 1, 12))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `error al usar callable inexistente`() {
+        val statements =
+            listOf(
+                Callable(
+                    ComboValuePosition("funcionInexistente", StatementPosition(1, 1, 1, 17)),
+                    LiteralString(ComboValuePosition("Hola", StatementPosition(1, 19, 1, 24))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `error en variable con tipo incorrecto`() {
+        val statements =
+            listOf(
+                VariableDeclaration(
+                    keywordCombo = ComboValuePosition("let", StatementPosition(1, 1, 1, 3)),
+                    identifierCombo = ComboValuePosition("x", StatementPosition(1, 5, 1, 5)),
+                    colon = ComboValuePosition(":", StatementPosition(1, 6, 1, 6)),
+                    type = ComboValuePosition("number", StatementPosition(1, 8, 1, 13)),
+                    equals = ComboValuePosition("=", StatementPosition(1, 15, 1, 15)),
+                    value = LiteralString(ComboValuePosition("esto es string", StatementPosition(1, 17, 1, 30))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `error al reasignar variable no declarada`() {
+        val statements =
+            listOf(
+                VariableReassignment(
+                    ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
+                    ComboValuePosition("=", StatementPosition(1, 3, 1, 3)),
+                    LiteralNumber(ComboValuePosition(20.0, StatementPosition(1, 5, 1, 5))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `debería evaluar correctamente la declaración de una constante`() {
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    keywordCombo = ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    identifierCombo = ComboValuePosition("PI", StatementPosition(1, 7, 1, 8)),
+                    colon = null,
+                    type = null,
+                    equals = ComboValuePosition("=", StatementPosition(1, 10, 1, 10)),
+                    value = LiteralNumber(ComboValuePosition(3.14, StatementPosition(1, 12, 1, 15))),
+                ),
+                LiteralIdentifier(ComboValuePosition("PI", StatementPosition(2, 1, 2, 2))),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is ValidInterpretResult)
+        val validResult = result as ValidInterpretResult
+        assertEquals(2, validResult.value.size)
+        assertEquals(Unit, validResult.value[0])
+        assertEquals(3.14, validResult.value[1])
+    }
+
+    @Test
+    fun `error al intentar redeclarar una constante`() {
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    keywordCombo = ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    identifierCombo = ComboValuePosition("PI", StatementPosition(1, 7, 1, 8)),
+                    colon = null,
+                    type = null,
+                    equals = ComboValuePosition("=", StatementPosition(1, 10, 1, 10)),
+                    value = LiteralNumber(ComboValuePosition(3.14, StatementPosition(1, 12, 1, 15))),
+                ),
+                ConstDeclaration(
+                    keywordCombo = ComboValuePosition("const", StatementPosition(2, 1, 2, 5)),
+                    identifierCombo = ComboValuePosition("PI", StatementPosition(2, 7, 2, 8)),
+                    colon = null,
+                    type = null,
+                    equals = ComboValuePosition("=", StatementPosition(2, 10, 2, 10)),
+                    value = LiteralNumber(ComboValuePosition(3.14159, StatementPosition(2, 12, 2, 18))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `error al intentar reasignar una constante`() {
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    keywordCombo = ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    identifierCombo = ComboValuePosition("MAX_VALUE", StatementPosition(1, 7, 1, 15)),
+                    colon = null,
+                    type = null,
+                    equals = ComboValuePosition("=", StatementPosition(1, 17, 1, 17)),
+                    value = LiteralNumber(ComboValuePosition(100.0, StatementPosition(1, 19, 1, 23))),
+                ),
+                VariableReassignment(
+                    ComboValuePosition("MAX_VALUE", StatementPosition(2, 1, 2, 9)),
+                    ComboValuePosition("=", StatementPosition(2, 11, 2, 11)),
+                    LiteralNumber(ComboValuePosition(200.0, StatementPosition(2, 13, 2, 17))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `error al declarar constante con tipo incorrecto`() {
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    keywordCombo = ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    identifierCombo = ComboValuePosition("ID", StatementPosition(1, 7, 1, 8)),
+                    colon = ComboValuePosition(":", StatementPosition(1, 9, 1, 9)),
+                    type = ComboValuePosition("number", StatementPosition(1, 11, 1, 16)),
+                    equals = ComboValuePosition("=", StatementPosition(1, 18, 1, 18)),
+                    value = LiteralString(ComboValuePosition("ABC123", StatementPosition(1, 20, 1, 27))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
+    }
+
+    @Test
+    fun `error al declarar constante con tipo no soportado`() {
+        val statements =
+            listOf(
+                ConstDeclaration(
+                    keywordCombo = ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                    identifierCombo = ComboValuePosition("X", StatementPosition(1, 7, 1, 7)),
+                    colon = ComboValuePosition(":", StatementPosition(1, 8, 1, 8)),
+                    type = ComboValuePosition("array", StatementPosition(1, 10, 1, 14)),
+                    equals = ComboValuePosition("=", StatementPosition(1, 16, 1, 16)),
+                    value = LiteralNumber(ComboValuePosition(10.0, StatementPosition(1, 18, 1, 21))),
+                ),
+            )
+
+        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
+        val result = interpreter.interpret(statements)
+
+        assert(result is InvalidInterpreterResult)
     }
 }

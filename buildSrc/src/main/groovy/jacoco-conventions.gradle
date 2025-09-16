@@ -3,23 +3,68 @@ plugins {
 }
 
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = "0.8.11"
 }
 
-jacocoTestReport {
+tasks.withType(Test) {
+    finalizedBy jacocoTestReport
+}
+
+tasks.withType(JacocoReport) {
     dependsOn test
     reports {
         xml.required = true
-        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+        html.required = true
+        csv.required = false
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/model/**',
+                    '**/config/**',
+                    '**/*Main*.*',
+                    '**/*Main$*.*',
+                    '**/rules/JsonReaderFormatterToMap*.*',
+                    '**/InputStreamFormatterConfigLoaderToMap*.*',
+                    '**/FormatterConfigLoader*.*'
+            ])
+        }))
     }
 }
 
-jacocoTestCoverageVerification {
-    dependsOn jacocoTestReport
+tasks.register('jacocoMergedReport', JacocoReport) {
+    description = 'Generates an aggregate report from all subprojects'
+    group = 'Verification'
+
+    dependsOn(subprojects.test)
+
+    additionalSourceDirs.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.from = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.from = files(subprojects.sourceSets.main.output)
+    executionData.from = files(subprojects.jacocoTestReport.executionData)
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+}
+
+tasks.withType(JacocoCoverageVerification) {
     violationRules {
         rule {
             limit {
-                minimum = 0.001
+                minimum = 0.8
+            }
+        }
+
+        rule {
+            element = 'CLASS'
+            excludes = ['**/model/**', '**/config/**', '**/*Main*', '**/rules/JsonReaderFormatterToMap*',
+                        '**/InputStreamFormatterConfigLoaderToMap*', '**/FormatterConfigLoader*']
+            limit {
+                minimum = 0.0
             }
         }
     }
