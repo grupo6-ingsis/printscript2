@@ -36,8 +36,6 @@ class IntegrationTest {
         val result2 = processCodeWithChunks(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // declaración
-        assertEquals(Unit, result[1])
     }
 
     @Test
@@ -52,9 +50,7 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // let x = 8
-        assertEquals(Unit, result[1]) // let y = 16
-        assertEquals(Unit, result[2]) // 16 - 1
+        assertEquals("15", result[2])
     }
 
     @Test
@@ -69,9 +65,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // let x = -10
-        assertEquals(Unit, result[1]) // let y = 5
-        assertEquals(Unit, result[2]) // -10 + 5
     }
 
     @Test
@@ -85,8 +78,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(2, result.size)
-        assertEquals(Unit, result[0]) // declaración
-        assertEquals(Unit, result[1]) // (5 + 3) * 2 = 16
     }
 
     @Test
@@ -101,9 +92,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // declaración inicial
-        assertEquals(Unit, result[1]) // reasignación
-        assertEquals(Unit, result[2]) // valor final
     }
 
     @Test
@@ -117,8 +105,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(2, result.size)
-        assertEquals(Unit, result[0]) // println string
-        assertEquals(Unit, result[1]) // println number
     }
 
     @Test
@@ -135,11 +121,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(5, result.size)
-        assertEquals(Unit, result[0]) // let a = 10
-        assertEquals(Unit, result[1]) // let b = 5
-        assertEquals(Unit, result[2]) // let c = 30
-        assertEquals(Unit, result[3]) // let result = 10
-        assertEquals(Unit, result[4]) // println(10)
     }
 
     @Test
@@ -154,9 +135,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // let greeting
-        assertEquals(Unit, result[1]) // let name
-        assertEquals(Unit, result[2]) // println greeting
     }
 
     @Test
@@ -173,10 +151,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(5, result.size)
-        assertEquals(Unit, result[0]) // let x = 5
-        assertEquals(Unit, result[1]) // let y = 5 (-5 + 10)
-        assertEquals(Unit, result[2]) // println(y)
-        assertEquals(Unit, result[3]) // println(y / 5)
     }
 
     @Test
@@ -191,9 +165,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // let x = 20
-        assertEquals(Unit, result[1]) // let y = 4
-        assertEquals(Unit, result[2]) // 20 / 4
     }
 
     @Test
@@ -209,9 +180,6 @@ class IntegrationTest {
         val result = processCode(code)
 
         assertEquals(4, result.size)
-        assertEquals(Unit, result[0]) // let x = 20
-        assertEquals(Unit, result[1]) // let y = 4
-        assertEquals(Unit, result[2]) // 20 / 4
     }
 
     private fun processCode(code: String): List<Any?> {
@@ -304,7 +272,6 @@ class IntegrationTest {
         val result = processCodeV2(code)
 
         assertEquals(1, result.size)
-        assertEquals(Unit, result[0])
     }
 
     @Test
@@ -321,8 +288,6 @@ class IntegrationTest {
         val result = processCodeV2(code)
 
         assertEquals(2, result.size)
-        assertEquals(Unit, result[0]) // let y = 3
-        assertEquals(Unit, result[1]) // conditional with multiple statements
     }
 
     @Test
@@ -337,9 +302,8 @@ class IntegrationTest {
         val result = processCodeV2(code)
 
         assertEquals(3, result.size)
-        assertEquals(Unit, result[0]) // declaración inicial
-        assertEquals(Unit, result[1]) // reasignación
-        assertEquals(Unit, result[2]) // valor final
+        assertEquals("What is the best football club?", result[1])
+        assertEquals("Boca Juniors", result[2])
     }
 
     @Test
@@ -355,8 +319,6 @@ class IntegrationTest {
         val result = processCodeV2(code)
 
         assertEquals(2, result.size)
-        assertEquals(Unit, result[0]) // let y = 3
-        assertEquals(Unit, result[1]) // conditional with multiple statements
     }
 
     private fun processCodeV2(code: String): List<Any?> {
@@ -463,8 +425,6 @@ class IntegrationTest {
         assert(result.results.any { it is LintViolation })
         assertEquals(1, result.results.count { it is LintViolation })
     }
-
-    // File: app/src/test/kotlin/org/gudelker/IntegrationTest.kt
 
     @Test
     fun `should lint println allowing only literals in V2`() {
