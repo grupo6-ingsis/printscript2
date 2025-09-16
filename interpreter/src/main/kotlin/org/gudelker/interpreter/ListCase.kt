@@ -24,7 +24,7 @@ import org.gudelker.evaluator.LiteralStringEvaluator
 import org.gudelker.evaluator.UnaryEvaluator
 import org.gudelker.evaluator.VariableDeclarationEvaluator
 import org.gudelker.evaluator.VariableReassignmentEvaluator
-import org.gudelker.inputprovider.TestInputProvider
+import org.gudelker.inputprovider.CLIInputProvider
 import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.DivisionOperator
 import org.gudelker.operators.MinusOperator
@@ -114,11 +114,7 @@ class ListCase {
                             listOf(
                                 ReadEnv(),
                                 ReadInput(
-                                    TestInputProvider(
-                                        mutableListOf(
-                                            "hola",
-                                        ),
-                                    ),
+                                    CLIInputProvider(),
                                 ),
                             ),
                         ),
