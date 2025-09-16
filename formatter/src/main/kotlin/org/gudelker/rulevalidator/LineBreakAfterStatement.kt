@@ -23,6 +23,6 @@ class LineBreakAfterStatement : RuleValidatorFormatter {
             } else {
                 string + lineBreaks
             }
-        return result.split("\n").joinToString("\n") { it.trimStart() }
+        return result
     }
 }

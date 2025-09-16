@@ -385,7 +385,7 @@ class FormatterTest {
         assertEquals(expected2, results2)
     }
 
-//     @Test NullPointer
+    @Test
     fun `test declaracion sin tipo`() {
         val statement =
             VariableDeclaration(
@@ -491,7 +491,7 @@ class FormatterTest {
         assertEquals("variable=\"newValue\";", result2)
     }
 
-//     @Test NullPointer
+    // @Test
     fun `test variable reassignment con multiples espacios`() {
         val statement =
             VariableReassignment(
@@ -595,7 +595,7 @@ class FormatterTest {
         assertEquals(expected, result2)
     }
 
-    // @Test Muchos juntos no hace \n
+    @Test
     fun `test readInput and readEnv formatted correctly`() {
         val statement =
             CallableCall(

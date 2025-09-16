@@ -22,6 +22,6 @@ class DefaultFormatter(
             analyzers.firstOrNull { it.canHandle(node) }
                 ?: throw IllegalArgumentException("No analyzer found for ${node::class.simpleName}")
         val result = analyzer.format(node, rules, this)
-        return result.removeSuffix("\n")
+        return result
     }
 }

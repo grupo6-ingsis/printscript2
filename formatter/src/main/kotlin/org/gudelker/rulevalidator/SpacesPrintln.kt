@@ -35,7 +35,7 @@ class SpacesPrintln : RuleValidatorFormatter {
                 val suffix = if (restIndex < string.length) string.substring(restIndex) else ""
 
                 // Add the required number of newlines
-                return prefix + "\n".repeat(requiredNewlines) + suffix
+                return "\n".repeat(requiredNewlines) + prefix + suffix
             }
         }
 

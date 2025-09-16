@@ -84,7 +84,7 @@ object DefaultFormatterFactory {
                 GroupingForAnalyzer(),
                 UnaryForAnalyzer(),
                 CallableForAnalyzer(
-                    listOf(SpacesPrintln(), SingleSpaceSeparationRule()),
+                    listOf(SpacesPrintln(), LineBreakAfterStatement(), SingleSpaceSeparationRule()),
                 ),
                 CallableCallForAnalyzer(emptyList()),
                 BinaryForAnalyzer(),
