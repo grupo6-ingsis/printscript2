@@ -1,6 +1,7 @@
 package org.gudelker
 
 import org.gudelker.formatter.DefaultFormatterFactory
+import org.gudelker.interpreter.ChunkBaseFactory
 import org.gudelker.interpreter.InterpreterFactory
 import org.gudelker.lexer.LexerFactory
 import org.gudelker.linter.DefaultLinterFactory
@@ -9,8 +10,10 @@ import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.result.Valid
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.result.CompoundResult
+import org.gudelker.result.InvalidInterpreterResult
 import org.gudelker.result.LexerSyntaxError
 import org.gudelker.result.LintViolation
+import org.gudelker.result.ValidInterpretResult
 import org.gudelker.result.ValidTokens
 import org.gudelker.rules.FormatterRule
 import org.gudelker.sourcereader.StringSourceReader
@@ -30,6 +33,7 @@ class IntegrationTest {
             """.trimIndent()
 
         val result = processCode(code)
+        val result2 = processCodeWithChunks(code)
 
         assertEquals(3, result.size)
         assertEquals(Unit, result[0]) // declaración
@@ -238,6 +242,46 @@ class IntegrationTest {
                 val interpreter = InterpreterFactory.createInterpreter(Version.V1)
                 val intResult = interpreter.interpret(statements)
                 return intResult.getOrElse { throw RuntimeException("Interpreter error: $it") }
+            }
+        }
+    }
+
+    private fun processCodeWithChunks(code: String): List<Any?> {
+        // 1. Lexical Analysis
+        val lexer = LexerFactory.createLexer(Version.V1)
+        val sourceReader = StringSourceReader(code)
+        val tokenResult = lexer.lex(sourceReader)
+
+        when (tokenResult) {
+            is LexerSyntaxError ->
+                throw RuntimeException("Lexer error: $tokenResult")
+
+            is ValidTokens -> {
+                val tokens = tokenResult.getList()
+
+                // 2. Syntax Analysis
+                val tokenStream = TokenStream(tokens)
+                val parser = DefaultParserFactory.createParser(Version.V1)
+                val parseResult = parser.parse(tokenStream)
+
+                if (parseResult !is Valid) {
+                    throw RuntimeException("Parser error: $parseResult")
+                }
+
+                val statements = parseResult.getStatements()
+
+                // 3. Interpretation
+                val interpreter = ChunkBaseFactory.createInterpreter(Version.V1)
+                val intResult = interpreter.interpret(statements)
+                when (intResult) {
+                    is InvalidInterpreterResult -> {
+                        throw intResult.exception
+                    }
+
+                    is ValidInterpretResult -> {
+                        return intResult.value
+                    }
+                }
             }
         }
     }
