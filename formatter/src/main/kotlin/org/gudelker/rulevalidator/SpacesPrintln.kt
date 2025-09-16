@@ -1,6 +1,6 @@
 package org.gudelker.rulevalidator
 
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.Callable
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement
 
@@ -20,7 +20,7 @@ class SpacesPrintln : RuleValidatorFormatter {
         val requiredNewlines = rule.quantity
 
         // Direct handling for CallableCall statements
-        if (statement is CallableCall && statement.functionName.value == "println") {
+        if (statement is Callable && statement.functionName.value == "println") {
             val semicolonIndex = string.indexOf(';')
             if (semicolonIndex != -1) {
                 // Count existing newlines after semicolon
