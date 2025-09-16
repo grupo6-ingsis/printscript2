@@ -3,9 +3,9 @@ package org.gudelker.rulevalidator
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement
 
-class LineBreakAfterStatement : RuleValidatorFormatter {
+class LineBreakForIf : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
-        val ruleName = "mandatory-line-break-after-statement"
+        val ruleName = "mandatory-line-break-for-if"
         val rule = formatterRuleMap[ruleName] ?: return false
         return formatterRuleMap.containsKey(ruleName) && rule.on
     }
@@ -15,7 +15,7 @@ class LineBreakAfterStatement : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val rule = formatterRuleMap["mandatory-line-break-after-statement"] ?: return string
+        val rule = formatterRuleMap["mandatory-line-break-for-if"] ?: return string
         val lineBreaks = "\n".repeat(rule.quantity)
         val result =
             if (string.endsWith("\n")) {
@@ -23,7 +23,6 @@ class LineBreakAfterStatement : RuleValidatorFormatter {
             } else {
                 string + lineBreaks
             }
-
-        return result.split("\n").joinToString("\n") { it.trimStart() }
+        return result
     }
 }

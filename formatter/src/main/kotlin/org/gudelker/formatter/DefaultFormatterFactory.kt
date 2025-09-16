@@ -53,7 +53,7 @@ object DefaultFormatterFactory {
                 GroupingForAnalyzer(),
                 UnaryForAnalyzer(),
                 CallableForAnalyzer(
-                    listOf(SpacesPrintln(), SingleSpaceSeparationRule()),
+                    listOf(SpacesPrintln(), LineBreakAfterStatement(), SingleSpaceSeparationRule()),
                 ),
                 BinaryForAnalyzer(),
                 VariableReassignmentForAnalyzer(
