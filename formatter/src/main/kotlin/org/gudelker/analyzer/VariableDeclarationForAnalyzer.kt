@@ -40,7 +40,17 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
                 resultString += "$spacesBeforeColon${statement.colon!!.value}$spacesAfterColon${statement.type!!.value}"
             }
 
-            if (statement.equals != null) {
+            if (statement.equals != null && statement.type == null) {
+                val numberOfSpacesBeforeEquals = statement.equals!!.position.startColumn - statement.identifierCombo.position.startColumn
+                val spacesBeforeEquals = " ".repeat(numberOfSpacesBeforeEquals - 1)
+                val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(statement.value!!, statement.equals!!)
+                val spacesAfterEquals = " ".repeat(numberOfSpacesAfterEquals - 1)
+
+                val valueFormatted = formatter.formatNode(statement.value!!, formatterRuleMap)
+                resultString += "$spacesBeforeEquals${statement.equals!!.value}$spacesAfterEquals$valueFormatted"
+            }
+
+            if (statement.equals != null && statement.type != null) {
                 val numberOfSpacesBeforeEquals = statement.equals!!.position.startColumn - statement.type!!.position.startColumn
                 val spacesBeforeEquals = " ".repeat(numberOfSpacesBeforeEquals - 1)
                 val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(statement.value!!, statement.equals!!)
