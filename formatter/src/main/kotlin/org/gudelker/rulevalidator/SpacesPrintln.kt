@@ -1,5 +1,6 @@
 package org.gudelker.rulevalidator
 
+import org.gudelker.expressions.CallableCall
 import org.gudelker.rules.FormatterRule
 import org.gudelker.statements.interfaces.Statement
 
@@ -18,22 +19,29 @@ class SpacesPrintln : RuleValidatorFormatter {
         val rule = formatterRuleMap["line-breaks-after-println"] ?: return string
         val requiredNewlines = rule.quantity
 
-        // Pattern to match println statements and capture any following newlines
+        // Direct handling for CallableCall statements
+        if (statement is CallableCall && statement.functionName.value == "println") {
+            val semicolonIndex = string.indexOf(';')
+            if (semicolonIndex != -1) {
+                // Count existing newlines after semicolon
+                var afterIndex = semicolonIndex + 1
+                while (afterIndex < string.length && string[afterIndex] == '\n') {
+                    afterIndex++
+                }
+
+                // Add exactly the required number of newlines
+                val prefix = string.substring(0, semicolonIndex + 1)
+                val suffix = if (afterIndex < string.length) string.substring(afterIndex) else ""
+                return prefix + "\n".repeat(requiredNewlines) + suffix
+            }
+        }
+
+        // For other cases or multiple println statements in a string
         val pattern = "(println\\s*\\([^;]*;)(\\n*)".toRegex()
 
         return pattern.replace(string) { matchResult ->
-            val printlnStmt = matchResult.groupValues[1] // The println statement
-            val existingNewlines = matchResult.groupValues[2] // Existing newlines
-
-            val existingCount = existingNewlines.length
-
-            if (existingCount >= requiredNewlines) {
-                // If we already have enough newlines, keep them
-                "$printlnStmt$existingNewlines"
-            } else {
-                // If we don't have enough, add only what's missing
-                "$printlnStmt$existingNewlines${"\n".repeat(requiredNewlines - existingCount)}"
-            }
+            val printlnStmt = matchResult.groupValues[1] // The println statement with semicolon
+            "$printlnStmt${"\n".repeat(requiredNewlines)}"
         }
     }
 }
