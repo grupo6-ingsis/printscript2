@@ -270,7 +270,7 @@ class IntegrationTest {
 
                 val statements = parseResult.getStatements()
 
-                // 3. Interpretation
+                // 3. Interpretation with chunk
                 val interpreter = ChunkBaseFactory.createInterpreter(Version.V1)
                 val intResult = interpreter.interpret(statements)
                 when (intResult) {
