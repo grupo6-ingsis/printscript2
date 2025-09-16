@@ -1,11 +1,15 @@
 package org.gudelker
 
+import org.gudelker.compare.operators.Equals
 import org.gudelker.compare.operators.Greater
+import org.gudelker.compare.operators.Lesser
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.Callable
 import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.ConditionalExpression
+import org.gudelker.expressions.Grouping
+import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
@@ -16,13 +20,20 @@ import org.gudelker.operators.DivisionOperator
 import org.gudelker.operators.MinusOperator
 import org.gudelker.operators.MultiplyOperator
 import org.gudelker.rules.FormatterRule
+import org.gudelker.rules.InputStreamFormatterConfigLoaderToMap
 import org.gudelker.statements.VariableReassignment
+import org.gudelker.statements.declarations.ConstDeclaration
 import org.gudelker.statements.declarations.VariableDeclaration
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.utilities.Version
+import org.junit.jupiter.api.io.TempDir
+import java.io.ByteArrayInputStream
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class FormatterTest {
     @Test
@@ -622,5 +633,308 @@ class FormatterTest {
 
         assertEquals(expected, result)
         assertEquals(expected2, result2)
+    }
+
+    @Test
+    fun `test conditional expression con else`() {
+        val statement =
+            ConditionalExpression(
+                ComboValuePosition("if", StatementPosition(1, 1, 1, 1)),
+                BooleanExpression(
+                    LiteralIdentifier(ComboValuePosition("x", StatementPosition(1, 5, 1, 5))),
+                    Equals(),
+                    LiteralNumber(ComboValuePosition(10, StatementPosition(1, 9, 1, 9))),
+                ),
+                listOf(
+                    VariableReassignment(
+                        ComboValuePosition("result", StatementPosition(2, 3, 2, 8)),
+                        ComboValuePosition("=", StatementPosition(2, 10, 2, 10)),
+                        LiteralString(ComboValuePosition("equal", StatementPosition(2, 12, 2, 18))),
+                    ),
+                ),
+                ComboValuePosition("(", StatementPosition(1, 4, 1, 4)),
+                ComboValuePosition(")", StatementPosition(1, 10, 1, 10)),
+                null,
+                ComboValuePosition("{", StatementPosition(1, 12, 1, 12)),
+                ComboValuePosition("}", StatementPosition(3, 1, 3, 1)),
+                null,
+                null,
+                null,
+            )
+        val rules =
+            mapOf(
+                "indent-inside-if" to FormatterRule(on = true, quantity = 2),
+                "if-brace-same-line" to FormatterRule(on = true, quantity = 1),
+            )
+
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+        val result2 = formatter2.format(statement, rules)
+
+        val expected = "if (x == 10) {\n  result = \"equal\";\n}"
+        assertEquals(expected, result2)
+    }
+
+    @Test
+    fun `test conditional expression con if-brace-below-line`() {
+        val statement =
+            ConditionalExpression(
+                ComboValuePosition("if", StatementPosition(1, 1, 1, 1)),
+                BooleanExpression(
+                    LiteralNumber(ComboValuePosition(5, StatementPosition(1, 5, 1, 5))),
+                    Lesser(),
+                    LiteralNumber(ComboValuePosition(10, StatementPosition(1, 9, 1, 9))),
+                ),
+                listOf(
+                    Callable(
+                        ComboValuePosition("println", StatementPosition(2, 3, 2, 9)),
+                        LiteralString(ComboValuePosition("Menor", StatementPosition(2, 11, 2, 17))),
+                    ),
+                ),
+                ComboValuePosition("(", StatementPosition(1, 4, 1, 4)),
+                ComboValuePosition(")", StatementPosition(1, 10, 1, 10)),
+                null,
+                ComboValuePosition("{", StatementPosition(2, 1, 2, 1)),
+                ComboValuePosition("}", StatementPosition(3, 1, 3, 1)),
+            )
+        val rules =
+            mapOf(
+                "indent-inside-if" to FormatterRule(on = true, quantity = 2),
+                "if-brace-below-line" to FormatterRule(on = true, quantity = 1),
+            )
+
+        val formatter2 = DefaultFormatterFactory.createFormatter(Version.V2)
+        val result2 = formatter2.format(statement, rules)
+
+        val expected = "if (5 < 10)\n{\n  println(\"Menor\");\n}"
+        assertEquals(expected, result2)
+    }
+
+    @Test
+    fun `test grouping expression`() {
+        val statement =
+            Grouping(
+                "(",
+                Binary(
+                    LiteralNumber(ComboValuePosition(5, StatementPosition(1, 2, 1, 2))),
+                    ComboValuePosition(AdditionOperator(), StatementPosition(1, 4, 1, 4)),
+                    LiteralNumber(ComboValuePosition(3, StatementPosition(1, 6, 1, 6))),
+                ),
+                ")",
+            )
+
+        val rules = emptyMap<String, FormatterRule>()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+
+        val result = formatter.format(statement, rules)
+        assertEquals("(5 + 3)", result)
+    }
+
+    @Test
+    fun `test literal boolean formatter`() {
+        val trueStatement = LiteralBoolean(ComboValuePosition(true, StatementPosition(1, 1, 1, 4)))
+        val falseStatement = LiteralBoolean(ComboValuePosition(false, StatementPosition(1, 1, 1, 5)))
+
+        val rules = emptyMap<String, FormatterRule>()
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+
+        assertEquals("true", formatter.format(trueStatement, rules))
+        assertEquals("false", formatter.format(falseStatement, rules))
+    }
+
+//    @Test
+//    fun `test formatter rule deserializer`() {
+//        val deserializer = FormatterRuleDeserializer()
+//
+//        // Test boolean primitive
+//        val booleanJson = JsonPrimitive(true)
+//        val booleanRule = deserializer.deserialize(booleanJson, FormatterRule::class.java, null)
+//        assertTrue(booleanRule.on)
+//        assertEquals(1, booleanRule.quantity)
+//
+//        // Test number primitive
+//        val numberJson = JsonPrimitive(4)
+//        val numberRule = deserializer.deserialize(numberJson, FormatterRule::class.java, null)
+//        assertTrue(numberRule.on)
+//        assertEquals(4, numberRule.quantity)
+//
+//        // Test string primitive (no debería pasar, pero igual probamos el caso)
+//        val stringJson = JsonPrimitive("test")
+//        val stringRule = deserializer.deserialize(stringJson, FormatterRule::class.java, null)
+//        assertFalse(stringRule.on)
+//        assertEquals(0, stringRule.quantity)
+//
+//        // Test JSON object
+//        val jsonObject = JsonObject()
+//        jsonObject.addProperty("on", false)
+//        jsonObject.addProperty("quantity", 2)
+//        val objectRule = deserializer.deserialize(jsonObject, FormatterRule::class.java, null)
+//        assertFalse(objectRule.on)
+//        assertEquals(2, objectRule.quantity)
+//    }
+
+    @Test
+    fun `test const declaration formatting`() {
+        val statement =
+            ConstDeclaration(
+                ComboValuePosition("const", StatementPosition(1, 1, 1, 5)),
+                ComboValuePosition("PI", StatementPosition(1, 7, 1, 8)),
+                ComboValuePosition(":", StatementPosition(1, 9, 1, 9)),
+                ComboValuePosition("Number", StatementPosition(1, 11, 1, 16)),
+                ComboValuePosition("=", StatementPosition(1, 18, 1, 18)),
+                LiteralNumber(ComboValuePosition(3.14159, StatementPosition(1, 20, 1, 27))),
+            )
+
+        val rules =
+            mapOf(
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = true, quantity = 1),
+                "enforce-spacing-around-equals" to FormatterRule(on = true, quantity = 1),
+            )
+
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+        val result = formatter.format(statement, rules)
+
+        assertEquals("const PI : Number = 3.14159;", result)
+    }
+
+    @Test
+    fun `test input stream formatter config loader with valid json`(
+        @TempDir tempDir: File,
+    ) {
+        val jsonContent =
+            """
+            {
+              "enforce-spacing-before-colon-in-declaration": true,
+              "enforce-spacing-after-colon-in-declaration": {"on": true, "quantity": 2},
+              "indent-inside-if": 4
+            }
+            """.trimIndent()
+
+        val inputStream = ByteArrayInputStream(jsonContent.toByteArray())
+        val configLoader = InputStreamFormatterConfigLoaderToMap(inputStream)
+        val rules = configLoader.loadConfig()
+
+        assertTrue(rules["enforce-spacing-before-colon-in-declaration"]?.on == true)
+        assertTrue(rules["enforce-spacing-after-colon-in-declaration"]?.on == true)
+        assertEquals(2, rules["enforce-spacing-after-colon-in-declaration"]?.quantity)
+        assertTrue(rules["indent-inside-if"]?.on == true)
+        assertEquals(4, rules["indent-inside-if"]?.quantity)
+    }
+
+    @Test
+    fun `test input stream formatter config loader with invalid json`() {
+        val invalidJson = "{ this is not valid JSON }"
+        val inputStream = ByteArrayInputStream(invalidJson.toByteArray())
+        val configLoader = InputStreamFormatterConfigLoaderToMap(inputStream)
+        val rules = configLoader.loadConfig()
+
+        // Debe devolver las reglas predeterminadas
+        assertTrue(rules.containsKey("indent-inside-if"))
+        assertTrue(rules["indent-inside-if"]?.on == true)
+        assertEquals(2, rules["indent-inside-if"]?.quantity)
+    }
+
+    @Test
+    fun `test input stream formatter config loader with enforce-no-spacing-around-equals`() {
+        val jsonContent =
+            """
+            {
+              "enforce-no-spacing-around-equals": true
+            }
+            """.trimIndent()
+
+        val inputStream = ByteArrayInputStream(jsonContent.toByteArray())
+        val configLoader = InputStreamFormatterConfigLoaderToMap(inputStream)
+        val rules = configLoader.loadConfig()
+
+        assertTrue(rules["enforce-no-spacing-around-equals"]?.on == true)
+        assertEquals(0, rules["enforce-no-spacing-around-equals"]?.quantity)
+        assertFalse(rules["enforce-spacing-around-equals"]?.on == true)
+    }
+
+//    @Test
+//    fun `test single space separation rule`() {
+//        val statement = VariableReassignment(
+//            ComboValuePosition("x", StatementPosition(1, 1, 1, 1)),
+//            ComboValuePosition("=", StatementPosition(1, 3, 1, 3)),
+//            Binary(
+//                LiteralNumber(ComboValuePosition(5, StatementPosition(1, 5, 1, 5))),
+//                ComboValuePosition(AdditionOperator(), StatementPosition(1, 7, 1, 7)),
+//                LiteralNumber(ComboValuePosition(3, StatementPosition(1, 9, 1, 9)))
+//            )
+//        )
+//
+//        val rules = mapOf(
+//            "mandatory-single-space-separation" to FormatterRule(on = true, quantity = 1)
+//        )
+//
+//        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+//        val result = formatter.format(statement, rules)
+//
+//        assertEquals("x = 5 + 3 ;", result)
+//    }
+
+    @Test
+    fun `test Line Break After Statement rule`() {
+        val statement =
+            VariableDeclaration(
+                ComboValuePosition("let", StatementPosition(1, 1, 1, 1)),
+                ComboValuePosition("x", StatementPosition(1, 5, 1, 5)),
+                null,
+                null,
+                ComboValuePosition("=", StatementPosition(1, 7, 1, 7)),
+                LiteralNumber(ComboValuePosition(42, StatementPosition(1, 9, 1, 10))),
+            )
+
+        val rules =
+            mapOf(
+                "mandatory-line-break-after-statement" to FormatterRule(on = true, quantity = 2),
+            )
+
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+        val result = formatter.format(statement, rules)
+
+        assertEquals("let x = 42;\n\n", result)
+    }
+
+    @Test
+    fun `test spaces println rule`() {
+        val statement =
+            Callable(
+                ComboValuePosition("println", StatementPosition(1, 1, 1, 7)),
+                LiteralString(ComboValuePosition("Hello, world!", StatementPosition(1, 9, 1, 22))),
+            )
+
+        val rules =
+            mapOf(
+                "line-breaks-after-println" to FormatterRule(on = true, quantity = 2),
+            )
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+        val result = formatter.format(statement, rules)
+
+        assertEquals("\n\nprintln(\"Hello, world!\");", result)
+    }
+
+    @Test
+    fun `test normalize declaration indentation`() {
+        val statement =
+            VariableDeclaration(
+                ComboValuePosition("let", StatementPosition(1, 5, 1, 7)),
+                ComboValuePosition("x", StatementPosition(1, 9, 1, 9)),
+                null,
+                null,
+                ComboValuePosition("=", StatementPosition(1, 11, 1, 11)),
+                LiteralNumber(ComboValuePosition(42, StatementPosition(1, 13, 1, 14))),
+            )
+
+        val rules =
+            mapOf(
+                "mandatory-line-break-after-statement" to FormatterRule(on = true, quantity = 1),
+            )
+
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+        val result = formatter.format(statement, rules)
+
+        assertEquals("let x = 42;\n", result)
     }
 }

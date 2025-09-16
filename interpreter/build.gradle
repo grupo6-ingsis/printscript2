@@ -20,6 +20,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    environment "BOCA", "Boca Juniors"
 }
 tasks.named('check') {
     dependsOn 'ktlintCheck'
