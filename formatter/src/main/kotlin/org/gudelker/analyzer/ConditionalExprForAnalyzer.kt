@@ -31,8 +31,6 @@ class ConditionalExprForAnalyzer(
         val openBrace = statement.ifOpenBracket
         val openBraceColumnDiff = openBrace!!.position.startLine - statement.ifKeyword.position.startLine
         val newLines = "\n".repeat(openBraceColumnDiff)
-
-        // veo donde poner el {
         if (openBraceColumnDiff > 0) {
             val spacesBeforeOpenBrace = " ".repeat(openBrace.position.startColumn - 1)
             resultString += newLines

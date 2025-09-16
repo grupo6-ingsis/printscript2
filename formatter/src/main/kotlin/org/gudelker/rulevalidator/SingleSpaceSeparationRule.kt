@@ -25,8 +25,6 @@ class SingleSpaceSeparationRule : RuleValidatorFormatter {
         var i = 0
         while (i < string.length) {
             val char = string[i]
-
-            // Toggle string literal state
             if (char == '"' || char == '\'') {
                 inString = !inString
                 processed.append(char)
