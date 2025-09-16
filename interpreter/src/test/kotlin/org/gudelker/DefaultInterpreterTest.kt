@@ -200,7 +200,7 @@ class DefaultInterpreterTest {
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
-        assertEquals(Unit, result[0])
+        assertEquals("Hello, World!", result[0])
     }
 
     @Test
