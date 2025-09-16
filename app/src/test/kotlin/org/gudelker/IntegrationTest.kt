@@ -1,6 +1,7 @@
 package org.gudelker
 
 import org.gudelker.formatter.DefaultFormatterFactory
+import org.gudelker.inputprovider.CLIInputProvider
 import org.gudelker.interpreter.ChunkBaseFactory
 import org.gudelker.interpreter.InterpreterFactory
 import org.gudelker.lexer.LexerFactory
@@ -207,7 +208,7 @@ class IntegrationTest {
                 val statements = parseResult.getStatements()
 
                 // 3. Interpretation
-                val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+                val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
                 val intResult = interpreter.interpret(statements)
                 return intResult.getOrElse { throw RuntimeException("Interpreter error: $it") }
             }
@@ -239,7 +240,7 @@ class IntegrationTest {
                 val statements = parseResult.getStatements()
 
                 // 3. Interpretation with chunk
-                val interpreter = ChunkBaseFactory.createInterpreter(Version.V1)
+                val interpreter = ChunkBaseFactory.createInterpreter(Version.V1, CLIInputProvider())
                 val intResult = interpreter.interpret(statements)
                 when (intResult) {
                     is InvalidInterpreterResult -> {
@@ -346,7 +347,7 @@ class IntegrationTest {
                 val statements = parseResult.getStatements()
 
                 // 3. Interpretation
-                val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+                val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
                 val intResult = interpreter.interpret(statements)
                 return intResult.getOrElse { throw RuntimeException("Interpreter error: $it") }
             }

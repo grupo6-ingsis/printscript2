@@ -15,6 +15,7 @@ import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
 import org.gudelker.expressions.Unary
+import org.gudelker.inputprovider.CLIInputProvider
 import org.gudelker.interpreter.InterpreterFactory
 import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.MinusOperator
@@ -34,7 +35,7 @@ class DefaultInterpreterTest {
                 LiteralNumber(ComboValuePosition(42.0, StatementPosition(1, 1, 1, 1))),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -48,7 +49,7 @@ class DefaultInterpreterTest {
                 LiteralString(ComboValuePosition("Hello World", StatementPosition(1, 1, 1, 1))),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -66,7 +67,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -84,7 +85,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -105,7 +106,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -127,7 +128,7 @@ class DefaultInterpreterTest {
                 LiteralIdentifier(ComboValuePosition("x", StatementPosition(2, 1, 2, 1))),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(2, result.size)
@@ -155,7 +156,7 @@ class DefaultInterpreterTest {
                 LiteralIdentifier(ComboValuePosition("x", StatementPosition(3, 1, 3, 1))),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(3, result.size)
@@ -179,7 +180,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -196,7 +197,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V1)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V1, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -228,7 +229,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -260,7 +261,7 @@ class DefaultInterpreterTest {
                 ),
             )
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -277,7 +278,7 @@ class DefaultInterpreterTest {
             )
         val statements = listOf(statement)
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -295,7 +296,7 @@ class DefaultInterpreterTest {
 
         val statements = listOf(statement)
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -313,7 +314,7 @@ class DefaultInterpreterTest {
 
         val statements = listOf(statement)
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)
@@ -331,7 +332,7 @@ class DefaultInterpreterTest {
 
         val statements = listOf(statement)
 
-        val interpreter = InterpreterFactory.createInterpreter(Version.V2)
+        val interpreter = InterpreterFactory.createInterpreter(Version.V2, CLIInputProvider())
         val result = interpreter.interpret(statements).getOrThrow()
 
         assertEquals(1, result.size)

@@ -24,7 +24,7 @@ import org.gudelker.evaluator.LiteralStringEvaluator
 import org.gudelker.evaluator.UnaryEvaluator
 import org.gudelker.evaluator.VariableDeclarationEvaluator
 import org.gudelker.evaluator.VariableReassignmentEvaluator
-import org.gudelker.inputprovider.ReadProvider
+import org.gudelker.inputprovider.InputProvider
 import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.DivisionOperator
 import org.gudelker.operators.MinusOperator
@@ -35,7 +35,10 @@ import org.gudelker.types.StringValidator
 import org.gudelker.utilities.Version
 
 class ListCase {
-    fun listForVersion(version: Version): List<Evaluator<out Any>> {
+    fun listForVersion(
+        version: Version,
+        provider: InputProvider,
+    ): List<Evaluator<out Any>> {
         val typeValidatorsV2 =
             mapOf(
                 "string" to StringValidator(),
@@ -114,7 +117,7 @@ class ListCase {
                             listOf(
                                 ReadEnv(),
                                 ReadInput(
-                                    ReadProvider("world"),
+                                    provider,
                                 ),
                             ),
                         ),

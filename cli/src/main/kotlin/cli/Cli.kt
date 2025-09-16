@@ -7,6 +7,7 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
 import org.gudelker.formatter.DefaultFormatterFactory
+import org.gudelker.inputprovider.CLIInputProvider
 import org.gudelker.interpreter.InterpreterFactory
 import org.gudelker.lexer.LexerFactory
 import org.gudelker.linter.DefaultLinterFactory
@@ -100,7 +101,7 @@ class Execution : CliktCommand("execution") {
             val tokens = lexSource(filePath, version)
             val ast = parseTokens(tokens, version)
             showProgress("Executing", 100)
-            val interpreter = InterpreterFactory.createInterpreter(parseVersion(version))
+            val interpreter = InterpreterFactory.createInterpreter(parseVersion(version), CLIInputProvider())
             interpreter.interpret(ast.getStatements())
             echo("✅ Execution finished")
         } catch (e: Exception) {
