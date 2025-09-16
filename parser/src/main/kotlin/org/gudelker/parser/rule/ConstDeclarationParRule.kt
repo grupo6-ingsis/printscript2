@@ -1,6 +1,6 @@
 package org.gudelker.parser.rule
 
-import org.gudelker.expressions.ExpressionStatement
+import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.parser.parsingtoken.TypeParseResult
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
@@ -102,7 +102,7 @@ class ConstDeclarationParRule(
             return errorResult("Error al parsear la expresión", expressionResult.tokenStream)
         }
         val expressionStatement = expressionResult.parserResult.getStatement()
-        if (expressionStatement !is ExpressionStatement) {
+        if (expressionStatement !is CanBeCallStatement) {
             return errorResult("No se puede parsear esta expresión", expressionResult.tokenStream)
         }
         val (semicolonToken, finalStream) = expressionResult.tokenStream.consume(TokenType.SEMICOLON)

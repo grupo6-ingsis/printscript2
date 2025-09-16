@@ -23,6 +23,7 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    environment "BEST_FOOTBALL_CLUB", "Boca Juniors"
 }
 tasks.named('check') {
     dependsOn 'ktlintCheck'

@@ -1,6 +1,7 @@
 package org.gudelker.interpreter
 
 import org.gudelker.callable.PrintLn
+import org.gudelker.callable.ReadEnv
 import org.gudelker.callable.ReadInput
 import org.gudelker.compare.operators.Equals
 import org.gudelker.compare.operators.Greater
@@ -111,6 +112,7 @@ class ListCase {
                         CallableEvaluator(listOf(PrintLn())),
                         CallableCallEvaluator(
                             listOf(
+                                ReadEnv(),
                                 ReadInput(
                                     TestInputProvider(
                                         mutableListOf(

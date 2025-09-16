@@ -28,7 +28,7 @@ class IntegrationTest {
         val code =
             """
             let x:number;
-            x = - 42;
+            x = - 42.2;
             println(x);
             """.trimIndent()
 
@@ -78,7 +78,7 @@ class IntegrationTest {
     fun `should process grouping expressions`() {
         val code =
             """
-            let x = (5 + 3) * 2;
+            let x = (5.3 + 5) - 2.0;
             println(x);
             """.trimIndent()
 
@@ -329,15 +329,14 @@ class IntegrationTest {
     fun `should not process const reassignment`() {
         val code =
             """
-            const y = 5;
-            let x = 10;
-            x = 20 + y;
-            println(x);
+            const name: string = readEnv("BEST_FOOTBALL_CLUB");
+            println("What is the best football club?");
+            println(name);
             """.trimIndent()
 
         val result = processCodeV2(code)
 
-        assertEquals(4, result.size)
+        assertEquals(3, result.size)
         assertEquals(Unit, result[0]) // declaración inicial
         assertEquals(Unit, result[1]) // reasignación
         assertEquals(Unit, result[2]) // valor final
