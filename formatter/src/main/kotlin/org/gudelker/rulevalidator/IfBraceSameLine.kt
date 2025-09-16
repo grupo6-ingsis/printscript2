@@ -11,13 +11,9 @@ class IfBraceSameLine : RuleValidatorFormatter {
         statement: Statement,
         formatterRuleMap: Map<String, FormatterRule>,
     ): String {
-        val pattern = Regex("if \\([^)]+\\)[ \\t]*\n[ \\t]*\\{")
-        return pattern.replace(string) { match ->
-            if (match.value.contains("{") && !match.value.contains("\n{")) {
-                match.value
-            } else {
-                match.value.replace("\n", " ")
-            }
+        val pattern = Regex("""(if\s*\([^)]+\))[ \t]*\n[ \t]*\{""")
+        return pattern.replace(string) { matchResult ->
+            "${matchResult.groupValues[1]} {"
         }
     }
 }
