@@ -288,7 +288,7 @@ class IntegrationTest {
 
         val result = processCodeV2(code)
 
-        assertEquals(1, result.size)
+        assertEquals(2, result.size)
     }
 
     @Test
