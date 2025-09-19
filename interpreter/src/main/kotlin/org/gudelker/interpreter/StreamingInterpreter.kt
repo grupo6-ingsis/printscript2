@@ -7,12 +7,14 @@ import org.gudelker.statements.interfaces.Statement
 
 sealed class StreamingInterpreterResult {
     data class StatementEvaluated(val result: Any?, val context: ConstVariableContext) : StreamingInterpreterResult()
+
     data class Error(val message: String) : StreamingInterpreterResult()
+
     object Finished : StreamingInterpreterResult()
 }
 
 class StreamingInterpreter(
-    private val evaluators: List<Evaluator<out Any>>
+    private val evaluators: List<Evaluator<out Any>>,
 ) {
     private var context = ConstVariableContext()
     private val results = mutableListOf<Any?>()
@@ -44,7 +46,6 @@ class StreamingInterpreter(
                 errorMessage = "Failed to analyze statement: ${result.exceptionOrNull()?.message}"
                 return StreamingInterpreterResult.Error(errorMessage)
             }
-
         } catch (e: Exception) {
             hasError = true
             errorMessage = "Interpreter error: ${e.message}"
@@ -58,7 +59,10 @@ class StreamingInterpreter(
     }
 
     fun getCurrentContext(): ConstVariableContext = context
+
     fun getResults(): List<Any?> = results.toList()
+
     fun hasError(): Boolean = hasError
+
     fun getError(): String? = if (hasError) errorMessage else null
 }

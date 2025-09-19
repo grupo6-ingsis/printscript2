@@ -12,9 +12,9 @@ import org.gudelker.parser.result.Valid
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.result.CompoundResult
 import org.gudelker.result.InvalidInterpreterResult
-import org.gudelker.resultlexer.LexerSyntaxError
 import org.gudelker.result.LintViolation
 import org.gudelker.result.ValidInterpretResult
+import org.gudelker.resultlexer.LexerSyntaxError
 import org.gudelker.resultlexer.ValidTokens
 import org.gudelker.rules.FormatterRule
 import org.gudelker.sourcereader.StringSourceReader

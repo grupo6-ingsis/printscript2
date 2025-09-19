@@ -11,14 +11,16 @@ import org.gudelker.sourcereader.SourceReader
 
 sealed class StreamingPipelineResult {
     data class StatementProcessed(val result: Any?) : StreamingPipelineResult()
+
     data class Error(val stage: String, val message: String) : StreamingPipelineResult()
+
     object Finished : StreamingPipelineResult()
 }
 
 class StreamingPipeline(
     private val streamingLexer: StreamingLexer,
     private val streamingParser: StreamingParser,
-    private val streamingInterpreter: StreamingInterpreter
+    private val streamingInterpreter: StreamingInterpreter,
 ) {
     private var isInitialized = false
     private var isFinished = false
@@ -40,11 +42,7 @@ class StreamingPipeline(
             return StreamingPipelineResult.Finished
         }
 
-        // Estrategia mejorada para alimentar el parser con tokens
-        var attemptCount = 0
-        val maxAttempts = 3
-
-        while (attemptCount < maxAttempts) {
+        while (streamingLexer.hasMore() || streamingParser.hasMore()) {
             // 1. Alimentar parser con tokens si es necesario y posible
             if (streamingLexer.hasMore()) {
                 val tokensToRequest = 5
@@ -81,14 +79,15 @@ class StreamingPipeline(
                 is StreamingParserResult.Error -> {
                     // Si necesita más tokens y el lexer puede proporcionar más, intentar de nuevo
                     if (parseResult.message.contains("Need more tokens", ignoreCase = true) &&
-                        streamingLexer.hasMore()) {
-                        attemptCount++
+                        streamingLexer.hasMore()
+                    ) {
                         continue // Intentar obtener más tokens en la siguiente iteración
                     }
 
                     // Si necesita más tokens pero el lexer terminó, es fin normal
                     if (parseResult.message.contains("Need more tokens", ignoreCase = true) &&
-                        !streamingLexer.hasMore()) {
+                        !streamingLexer.hasMore()
+                    ) {
                         isFinished = true
                         return StreamingPipelineResult.Finished
                     }
@@ -105,7 +104,7 @@ class StreamingPipeline(
         // Si llegamos aquí, hemos intentado múltiples veces sin éxito
         return StreamingPipelineResult.Error(
             "Parser",
-            "Could not parse statement after $maxAttempts attempts. Parser buffer size: ${streamingParser.getBufferSize()}"
+            "Could not parse statement after attempts. Parser buffer size: ${streamingParser.getBufferSize()}",
         )
     }
 
@@ -136,7 +135,7 @@ class StreamingPipeline(
         fun create(
             streamingLexer: StreamingLexer,
             streamingParser: StreamingParser,
-            evaluators: List<Evaluator<out Any>>
+            evaluators: List<Evaluator<out Any>>,
         ): StreamingPipeline {
             val streamingInterpreter = StreamingInterpreter(evaluators)
             return StreamingPipeline(streamingLexer, streamingParser, streamingInterpreter)

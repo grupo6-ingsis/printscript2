@@ -2,11 +2,8 @@ package org.gudelker
 
 import org.gudelker.inputprovider.CLIInputProvider
 import org.gudelker.interpreter.ChunkBaseFactory
-import org.gudelker.interpreter.InterpreterFactory
-import org.gudelker.lexer.DefaultLexer
 import org.gudelker.lexer.LexerFactory
 import org.gudelker.lexer.StreamingLexer
-import org.gudelker.parser.DefaultParser
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.StreamingParser
 import org.gudelker.pipeline.StreamingPipeline
@@ -17,30 +14,49 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class StreamingPipelineTest {
-
     @Test
     fun `should process simple variable declaration and usage with streaming pipeline`() {
-        val code = """
+        val code =
+            """
             let x:number;
             x = 42.2;
             println(x);
-        """.trimIndent()
+            """.trimIndent()
 
-        val results = processCodeWithStreamingPipeline(Version.V2,code)
+        val results = processCodeWithStreamingPipeline(Version.V2, code)
 
         assertEquals(3, results.size)
         assertEquals("42.2", results[2])
     }
 
     @Test
+    fun `should process if else with streaming pipeline`() {
+        val code =
+            """
+            if(false) {
+                let y:number = 2;
+                let x:number = 2;
+            }else {
+                println("else statement working correctly");
+            }
+            println("outside of conditional");
+            """.trimIndent()
+
+        val results = processCodeWithStreamingPipeline(Version.V2, code)
+
+        assertEquals(2, results.size)
+    }
+
+    @Test
     fun `should process mathematical operations with streaming pipeline`() {
-        val code = """
+        val code =
+            """
             let x = 5+3;
             let y = x * 2;
             println(y - 1);
-        """.trimIndent()
+            """.trimIndent()
 
-        val results = processCodeWithStreamingPipeline(Version.V2,code)
+        val results = processCodeWithStreamingPipeline(Version.V2, code)
 
         assertEquals(3, results.size)
         assertEquals("15", results[2])
@@ -48,13 +64,14 @@ class StreamingPipelineTest {
 
     @Test
     fun `should process complex expressions incrementally`() {
-        val code = """
+        val code =
+            """
             let a = 10;
             let b = 5;
             let c = (a + b);
             let result = c / 3;
             println(result);
-        """.trimIndent()
+            """.trimIndent()
 
         val results = mutableListOf<Any?>()
         val pipeline = createStreamingPipeline()
@@ -82,25 +99,27 @@ class StreamingPipelineTest {
 
     @Test
     fun `should process string operations with streaming pipeline`() {
-        val code = """
+        val code =
+            """
             let greeting = "Hello";
             let name = "World";
             println(greeting + " " + name);
-        """.trimIndent()
+            """.trimIndent()
 
-        val results = processCodeWithStreamingPipeline(Version.V2,code)
+        val results = processCodeWithStreamingPipeline(Version.V2, code)
 
         assertEquals(3, results.size)
     }
 
     @Test
     fun `should handle if-else statements with streaming pipeline`() {
-        val code = """
+        val code =
+            """
             if (true) {
                 println("Hello World!");
                 println("Greater than 5");
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val results = processCodeWithStreamingPipeline(Version.V2, code)
 
@@ -109,23 +128,25 @@ class StreamingPipelineTest {
 
     @Test
     fun `should process mixed operations with callback processing`() {
-        val code = """
+        val code =
+            """
             let x = 5;
             let y = - x + 10;
             let z = y * (x - 2);
             println(z);
             println(z / 5);
-        """.trimIndent()
+            """.trimIndent()
 
         val processedResults = mutableListOf<String>()
         val pipeline = createStreamingPipeline()
         pipeline.initialize(StringSourceReader(code))
 
         // Usar processAll con callback personalizado
-        val success = pipeline.processAll { result ->
-            processedResults.add(result.toString())
-            true // continuar procesando
-        }
+        val success =
+            pipeline.processAll { result ->
+                processedResults.add(result.toString())
+                true // continuar procesando
+            }
 
         assert(success)
         assertEquals(5, processedResults.size)
@@ -135,7 +156,8 @@ class StreamingPipelineTest {
 
     @Test
     fun `should handle early termination with callback`() {
-        val code = """
+        val code =
+            """
             let x = 1;
             let y = 2;
             println("First");
@@ -143,17 +165,18 @@ class StreamingPipelineTest {
             println("Second");
             let w = 4;
             println("Third");
-        """.trimIndent()
+            """.trimIndent()
 
         val processedResults = mutableListOf<Any?>()
         val pipeline = createStreamingPipeline()
         pipeline.initialize(StringSourceReader(code))
 
         // Procesar solo hasta el tercer statement
-        val success = pipeline.processAll { result ->
-            processedResults.add(result)
-            processedResults.size < 3 // parar después de 3 statements
-        }
+        val success =
+            pipeline.processAll { result ->
+                processedResults.add(result)
+                processedResults.size < 3 // parar después de 3 statements
+            }
 
         assert(success)
         assertEquals(3, processedResults.size)
@@ -170,12 +193,13 @@ class StreamingPipelineTest {
 
     @Test
     fun `should demonstrate step-by-step processing with detailed output`() {
-        val code = """
+        val code =
+            """
             let total = 0;
             let count = 5;
             total = total + count;
             println("Total: " + total);
-        """.trimIndent()
+            """.trimIndent()
 
         val pipeline = createStreamingPipeline()
         pipeline.initialize(StringSourceReader(code))
@@ -206,7 +230,10 @@ class StreamingPipelineTest {
         println("\nFinal results: $finalResults")
     }
 
-    private fun processCodeWithStreamingPipeline(version: Version = Version.V1, code: String): List<Any?> {
+    private fun processCodeWithStreamingPipeline(
+        version: Version = Version.V1,
+        code: String,
+    ): List<Any?> {
         val pipeline = createStreamingPipeline(version)
         pipeline.initialize(StringSourceReader(code))
 

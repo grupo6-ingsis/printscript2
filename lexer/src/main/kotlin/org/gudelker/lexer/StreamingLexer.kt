@@ -9,7 +9,9 @@ import org.gudelker.token.TokenType
 
 sealed class StreamingLexerResult {
     data class TokenBatch(val tokens: List<Token>) : StreamingLexerResult()
+
     data class Error(val message: String) : StreamingLexerResult()
+
     object Finished : StreamingLexerResult()
 }
 
@@ -110,7 +112,6 @@ class StreamingLexer(private val defaultLexer: DefaultLexer) {
 
             isFinished = true
             return Token(TokenType.EOF, "EOF", currentPosition)
-
         } catch (e: Exception) {
             hasError = true
             errorMessage = "Lexing error: ${e.message}"
