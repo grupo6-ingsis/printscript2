@@ -35,6 +35,7 @@ class IntegrationTest {
 
         val result = processCode(code)
         val result2 = processCodeWithChunks(code)
+        println(result)
 
         assertEquals(3, result.size)
     }
