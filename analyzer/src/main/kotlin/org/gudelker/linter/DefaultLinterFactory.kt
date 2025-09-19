@@ -7,6 +7,7 @@ import org.gudelker.analyzers.CallableLintAnalyzer
 import org.gudelker.analyzers.ConditionalExpressionLintAnalyzer
 import org.gudelker.analyzers.ConstDeclarationLintAnalyzer
 import org.gudelker.analyzers.GroupingExpressionLintAnalyzer
+import org.gudelker.analyzers.LinterAnalyzer
 import org.gudelker.analyzers.LiteralBooleanLintAnalyzer
 import org.gudelker.analyzers.LiteralIdentifierLintAnalyzer
 import org.gudelker.analyzers.LiteralNumberLintAnalyzer
@@ -28,53 +29,59 @@ import org.gudelker.utilities.Version
 
 object DefaultLinterFactory {
     fun createLinter(version: Version): DefaultLinter {
-        when (version) {
-            Version.V1 -> return createLinterV1()
-            Version.V2 -> return createLinterV2()
+        return when (version) {
+            Version.V1 -> createLinterV1()
+            Version.V2 -> createLinterV2()
         }
     }
 
     private fun createLinterV1(): DefaultLinter {
         val analyzers =
-            listOf(
-                VariableDeclarationLintAnalyzer(
-                    listOf(
-                        VariableDeclarationCamelCaseRule(),
-                        VariableDeclarationSnakeCaseRule(),
-                    ),
-                ),
-                CallableLintAnalyzer(
-                    listOf(
-                        RestrictPrintLnExpressions(
-                            listOf(
-                                LiteralString::class,
-                                LiteralNumber::class,
-                                LiteralIdentifier::class,
+            createAnalyzersV1() +
+                listOf(
+                    CallableLintAnalyzer(
+                        listOf(
+                            RestrictPrintLnExpressions(
+                                listOf(
+                                    LiteralString::class,
+                                    LiteralNumber::class,
+                                    LiteralIdentifier::class,
+                                ),
                             ),
                         ),
                     ),
-                ),
-                LiteralNumberLintAnalyzer(emptyList()),
-                BinaryExpressionLintAnalyzer(emptyList()),
-                UnaryExpressionLintAnalyzer(emptyList()),
-                GroupingExpressionLintAnalyzer(emptyList()),
-                VariableReassginationLintAnalyzer(emptyList()),
-                LiteralStringLintAnalyzer(emptyList()),
-                LiteralIdentifierLintAnalyzer(emptyList()),
-            )
+                )
         val linterV1 = DefaultLinter(analyzers)
         return linterV1
     }
 
     private fun createLinterV2(): DefaultLinter {
-        val analyzers =
-            listOf(
-                VariableDeclarationLintAnalyzer(
-                    listOf(
-                        VariableDeclarationCamelCaseRule(),
-                        VariableDeclarationSnakeCaseRule(),
-                    ),
+        val analyzers = createAnalyzersV2()
+        val linterV2 = DefaultLinter(analyzers)
+        return linterV2
+    }
+
+    private fun createAnalyzersV1(): List<LinterAnalyzer> {
+        return listOf(
+            VariableDeclarationLintAnalyzer(
+                listOf(
+                    VariableDeclarationCamelCaseRule(),
+                    VariableDeclarationSnakeCaseRule(),
                 ),
+            ),
+            LiteralNumberLintAnalyzer(emptyList()),
+            BinaryExpressionLintAnalyzer(emptyList()),
+            UnaryExpressionLintAnalyzer(emptyList()),
+            GroupingExpressionLintAnalyzer(emptyList()),
+            VariableReassginationLintAnalyzer(emptyList()),
+            LiteralStringLintAnalyzer(emptyList()),
+            LiteralIdentifierLintAnalyzer(emptyList()),
+        )
+    }
+
+    private fun createAnalyzersV2(): List<LinterAnalyzer> {
+        return createAnalyzersV1() +
+            listOf(
                 CallableLintAnalyzer(
                     listOf(
                         RestrictPrintLnExpressions(
@@ -100,18 +107,9 @@ object DefaultLinterFactory {
                     ),
                 ),
                 ConstDeclarationLintAnalyzer(listOf(ConstDeclarationCamelCaseRule(), ConstDeclarationSnakeCaseRule())),
-                BinaryExpressionLintAnalyzer(emptyList()),
                 ConditionalExpressionLintAnalyzer(emptyList()),
                 BooleanExpressionLintAnalyzer(emptyList()),
-                UnaryExpressionLintAnalyzer(emptyList()),
-                GroupingExpressionLintAnalyzer(emptyList()),
-                VariableReassginationLintAnalyzer(emptyList()),
-                LiteralStringLintAnalyzer(emptyList()),
-                LiteralIdentifierLintAnalyzer(emptyList()),
                 LiteralBooleanLintAnalyzer(emptyList()),
-                LiteralNumberLintAnalyzer(emptyList()),
             )
-        val linterV2 = DefaultLinter(analyzers)
-        return linterV2
     }
 }
