@@ -1,5 +1,6 @@
 package org.gudelker.formatter
 
+import org.gudelker.analyzer.Analyzer
 import org.gudelker.analyzer.BinaryForAnalyzer
 import org.gudelker.analyzer.BooleanExprForAnalyzer
 import org.gudelker.analyzer.CallableCallForAnalyzer
@@ -19,6 +20,7 @@ import org.gudelker.rulevalidator.IfBraceSameLine
 import org.gudelker.rulevalidator.IfIndentation
 import org.gudelker.rulevalidator.LineBreakAfterStatement
 import org.gudelker.rulevalidator.NormalizeDeclarationIndentation
+import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.rulevalidator.SingleSpaceSeparationRule
 import org.gudelker.rulevalidator.SpaceAfterColon
 import org.gudelker.rulevalidator.SpaceBeforeColon
@@ -35,79 +37,71 @@ object DefaultFormatterFactory {
     }
 
     private fun createFormatterV1(): DefaultFormatter {
-        val ruleValidors =
-            listOf(
-                SpaceBeforeColon(),
-                SpaceAfterColon(),
-                SpacesAroundAssignation(),
-                LineBreakAfterStatement(),
-                NormalizeDeclarationIndentation(),
-                SingleSpaceSeparationRule(),
-            )
-        val analyzers =
-            listOf(
-                VariableDeclarationForAnalyzer(
-                    ruleValidors,
-                ),
-                LiteralNumberForAnalyzer(),
-                LiteralIdentifierForAnalyzer(),
-                LiteralStringForAnalyzer(),
-                GroupingForAnalyzer(),
-                UnaryForAnalyzer(),
-                CallableForAnalyzer(
-                    listOf(SpacesPrintln(), LineBreakAfterStatement(), SingleSpaceSeparationRule()),
-                ),
-                BinaryForAnalyzer(),
-                VariableReassignmentForAnalyzer(
-                    listOf(SpacesAroundAssignation(), SingleSpaceSeparationRule()),
-                ),
-            )
+        val analyzers = createAnalyzersV1()
         return DefaultFormatter(analyzers)
     }
 
     private fun createFormatterV2(): DefaultFormatter {
-        val ruleValidators =
-            listOf(
-                SpaceBeforeColon(),
-                SpaceAfterColon(),
-                SpacesAroundAssignation(),
-                LineBreakAfterStatement(),
-                NormalizeDeclarationIndentation(),
-                IfIndentation(),
-                SingleSpaceSeparationRule(),
-            )
-        val analyzers =
-            listOf(
-                VariableDeclarationForAnalyzer(
-                    ruleValidators,
-                ),
-                LiteralNumberForAnalyzer(),
-                LiteralIdentifierForAnalyzer(),
-                LiteralStringForAnalyzer(),
-                GroupingForAnalyzer(),
-                UnaryForAnalyzer(),
-                CallableForAnalyzer(
-                    listOf(SpacesPrintln(), LineBreakAfterStatement(), SingleSpaceSeparationRule()),
-                ),
-                CallableCallForAnalyzer(emptyList()),
-                BinaryForAnalyzer(),
-                VariableReassignmentForAnalyzer(
-                    listOf(SpacesAroundAssignation(), SingleSpaceSeparationRule()),
-                ),
-                BooleanExprForAnalyzer(),
-                ConditionalExprForAnalyzer(
-                    listOf(
-                        IfBraceSameLine(),
-                        IfBraceBelowLine(),
-                        IfIndentation(),
-                        SingleSpaceSeparationRule(),
-                    ),
-                ),
-                ConstDeclarationForAnalyzer(
-                    ruleValidators,
-                ),
-                LiteralBooleanForAnalyzer(),
-            )
+        val analyzers = createAnalyzersV2()
         return DefaultFormatter(analyzers)
+    }
+
+    private fun createRuleValidatorsV1 () : List<RuleValidatorFormatter> {
+        return listOf(
+            SpaceBeforeColon(),
+            SpaceAfterColon(),
+            SpacesAroundAssignation(),
+            LineBreakAfterStatement(),
+            NormalizeDeclarationIndentation(),
+            SingleSpaceSeparationRule(),
+        )
+    }
+
+    private fun createRuleValidatorsV2 () : List<RuleValidatorFormatter> {
+        return createRuleValidatorsV1() + IfIndentation()
+    }
+
+    private fun createAnalyzersV1(): List<Analyzer> {
+        val ruleValidators = createRuleValidatorsV1()
+        val analyzers = listOf(
+            VariableDeclarationForAnalyzer(ruleValidators),
+            LiteralNumberForAnalyzer(),
+            LiteralIdentifierForAnalyzer(),
+            LiteralStringForAnalyzer(),
+            GroupingForAnalyzer(),
+            UnaryForAnalyzer(),
+            GroupingForAnalyzer(),
+            UnaryForAnalyzer(),
+            CallableForAnalyzer(
+                listOf(SpacesPrintln(), LineBreakAfterStatement(), SingleSpaceSeparationRule()),
+            ),
+            BinaryForAnalyzer(),
+            VariableReassignmentForAnalyzer(
+                listOf(SpacesAroundAssignation(), SingleSpaceSeparationRule()),
+            )
+        )
+        return analyzers
+    }
+
+    private fun createAnalyzersV2(): List<Analyzer> {
+        val ruleValidators = createRuleValidatorsV2()
+        val analyzers = createAnalyzersV1() + listOf(
+            CallableCallForAnalyzer(emptyList()),
+
+            BooleanExprForAnalyzer(),
+            ConditionalExprForAnalyzer(
+                listOf(
+                    IfBraceSameLine(),
+                    IfBraceBelowLine(),
+                    IfIndentation(),
+                    SingleSpaceSeparationRule(),
+                ),
+            ),
+            ConstDeclarationForAnalyzer(
+                ruleValidators,
+            ),
+            LiteralBooleanForAnalyzer(),
+        )
+        return analyzers
     }
 }
