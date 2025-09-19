@@ -1,14 +1,23 @@
 package org.gudelker
 
+import org.gudelker.formatter.DefaultFormatterFactory
 import org.gudelker.inputprovider.CLIInputProvider
 import org.gudelker.interpreter.ChunkBaseFactory
 import org.gudelker.lexer.LexerFactory
 import org.gudelker.lexer.StreamingLexer
+import org.gudelker.lexer.StreamingLexerResult
+import org.gudelker.linter.DefaultLinterFactory
+import org.gudelker.linter.LinterConfig
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.StreamingParser
+import org.gudelker.parser.StreamingParserResult
 import org.gudelker.pipeline.StreamingPipeline
 import org.gudelker.pipeline.StreamingPipelineResult
+import org.gudelker.result.CompoundResult
+import org.gudelker.rules.FormatterRule
 import org.gudelker.sourcereader.StringSourceReader
+import org.gudelker.statements.interfaces.Statement
+import org.gudelker.stmtposition.StatementStream
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -260,5 +269,187 @@ class StreamingPipelineTest {
 
         // 4. Crear pipeline
         return StreamingPipeline.create(streamingLexer, streamingParser, evaluators)
+    }
+
+    @Test
+    fun `should lint code with camelCase and snake_case identifiers`() {
+        val code =
+            """
+            const myConst = true;
+            let another_var = 42;
+            println(myConst);
+            """.trimIndent()
+
+        val result = lintCodeV2WithPipeline(code)
+        assert(result.results.any { true })
+        assertEquals(1, result.results.count { true })
+    }
+
+    @Test
+    fun `should lint code with multiple violations`() {
+        val code =
+            """
+            const bad_var = false;
+            let another_var = 7;
+            println(bad_var);
+            println(another_var);
+            """.trimIndent()
+
+        val result = lintCodeV2WithPipeline(code)
+        assert(result.results.any { true })
+        assertEquals(2, result.results.count { true })
+    }
+
+    @Test
+    fun `should lint code with restrictReadInputExpressions`() {
+        val code =
+            """
+            const myConst = true;
+            let another_var = 42;
+            println(myConst);
+            """.trimIndent()
+
+        val result = lintCodeV2WithPipeline(code)
+        assert(result.results.any { true })
+        assertEquals(1, result.results.count { true })
+    }
+
+    @Test
+    fun `should lint println allowing only literals in V2`() {
+        val code =
+            """
+            println("hello");
+            println(42);
+            println(true);
+            println(1 + 2);
+            let x = 5;
+            println(x);
+            """.trimIndent()
+
+        val result = lintCodeV2WithPipeline(code)
+        assert(result.results.any { true })
+        assertEquals(1, result.results.count { true })
+    }
+
+    private fun lintCodeV2WithPipeline(code: String): CompoundResult {
+        val defaultLexer = LexerFactory.createLexer(Version.V2)
+        val defaultParser = DefaultParserFactory.createParser(Version.V2)
+        val streamingLexer = StreamingLexer(defaultLexer)
+        val streamingParser = StreamingParser(defaultParser)
+        val sourceReader = StringSourceReader(code)
+
+        streamingLexer.initialize(sourceReader)
+
+        val statements = mutableListOf<org.gudelker.statements.interfaces.Statement>()
+        while (streamingLexer.hasMore() || streamingParser.hasMore()) {
+            if (streamingLexer.hasMore()) {
+                val lexerResult = streamingLexer.nextBatch(10)
+                if (lexerResult is StreamingLexerResult.TokenBatch) {
+                    streamingParser.addTokens(lexerResult.tokens)
+                }
+            }
+            val parseResult = streamingParser.nextStatement()
+            when (parseResult) {
+                is StreamingParserResult.StatementParsed -> statements.add(parseResult.statement)
+                is StreamingParserResult.Error -> {
+                    if (parseResult.message.contains("Need more tokens", ignoreCase = true)) continue
+                    break
+                }
+                StreamingParserResult.Finished -> break
+            }
+        }
+
+        val linter = DefaultLinterFactory.createLinter(Version.V2)
+        val rules =
+            mapOf(
+                "identifierFormat" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictPrintlnExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+                "restrictReadInputExpressions" to
+                    LinterConfig(
+                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
+                        restrictReadInputExpressions = true,
+                    ),
+            )
+        return linter.lint(org.gudelker.stmtposition.StatementStream(statements), rules)
+    }
+
+    @Test
+    fun `should return formatted code applying rules with pipeline`() {
+        val code =
+            """
+              let something:string = "a really cool thing";
+                let another_thing: string = "another really cool thing";
+            if (true) {
+              let x = 5;
+              let y = 10;
+            }
+            """.trimIndent()
+
+        val result = formatCodeV2WithPipeline(code)
+
+        val expectedCode =
+            """
+            let something:string = "a really cool thing";
+            let another_thing: string = "another really cool thing";
+            if (true) {
+            let x = 5;
+            let y = 10;
+            }
+            """.trimIndent()
+        println(result.replace("\n", "\\n\n"))
+        assertEquals(expectedCode, result)
+    }
+
+    private fun formatCodeV2WithPipeline(code: String): String {
+        val defaultLexer = LexerFactory.createLexer(Version.V2)
+        val defaultParser = DefaultParserFactory.createParser(Version.V2)
+        val streamingLexer = StreamingLexer(defaultLexer)
+        val streamingParser = StreamingParser(defaultParser)
+        val sourceReader = StringSourceReader(code)
+
+        streamingLexer.initialize(sourceReader)
+
+        val statements = mutableListOf<Statement>()
+        while (streamingLexer.hasMore() || streamingParser.hasMore()) {
+            if (streamingLexer.hasMore()) {
+                val lexerResult = streamingLexer.nextBatch(10)
+                if (lexerResult is StreamingLexerResult.TokenBatch) {
+                    streamingParser.addTokens(lexerResult.tokens)
+                }
+            }
+            val parseResult = streamingParser.nextStatement()
+            when (parseResult) {
+                is StreamingParserResult.StatementParsed -> statements.add(parseResult.statement)
+                is StreamingParserResult.Error -> {
+                    if (parseResult.message.contains("Need more tokens", ignoreCase = true)) continue
+                    break
+                }
+                StreamingParserResult.Finished -> break
+            }
+        }
+        val rules =
+            mapOf(
+                "enforce-spacing-before-colon-in-declaration" to FormatterRule(on = false, quantity = 1),
+                "enforce-spacing-after-colon-in-declaration" to FormatterRule(on = false, quantity = 2),
+                "enforce-spacing-around-equals" to FormatterRule(on = false, quantity = 1),
+                "line-breaks-after-println" to FormatterRule(on = true, quantity = 1),
+                "mandatory-line-break-after-statement" to FormatterRule(on = true, quantity = 1),
+                "indent-inside-if" to FormatterRule(on = false, quantity = 4),
+            )
+
+        val formatter = DefaultFormatterFactory.createFormatter(Version.V2)
+        val builder = StringBuilder()
+        for (statement in statements) {
+            builder.append(formatter.format(statement, rules))
+        }
+        return builder.toString()
     }
 }
