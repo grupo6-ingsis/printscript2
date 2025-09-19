@@ -57,4 +57,6 @@ class ChunkBaseInterpreter(
 
         return Result.success(results to context)
     }
+
+    fun getEvaluators(): List<Evaluator<out Any>> = evaluators
 }

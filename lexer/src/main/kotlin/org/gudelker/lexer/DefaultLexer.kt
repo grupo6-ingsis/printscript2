@@ -1,10 +1,10 @@
 package org.gudelker.lexer
 
-import org.gudelker.result.LexerError
-import org.gudelker.result.LexerResult
-import org.gudelker.result.LexerSyntaxError
-import org.gudelker.result.ValidToken
-import org.gudelker.result.ValidTokens
+import org.gudelker.resultlexer.LexerResult
+import org.gudelker.resultlexer.LexerSyntaxError
+import org.gudelker.resultlexer.ValidTokens
+import org.gudelker.resulttokenizers.LexerError
+import org.gudelker.resulttokenizers.ValidToken
 import org.gudelker.rules.RuleTokenizer
 import org.gudelker.sourcereader.SourceReader
 import org.gudelker.token.Position
@@ -59,7 +59,7 @@ class DefaultLexer(
         return lexRecursive("", listOf(), Position())
     }
 
-    private fun advancePosition(
+    fun advancePosition(
         position: Position,
         char: Char?,
     ): Position =
@@ -82,11 +82,13 @@ class DefaultLexer(
                 )
         }
 
-    private fun changingOffSet(
+    fun changingOffSet(
         position: Position,
         actualWord: String,
     ): Position =
         position.copy(
             endOffset = position.endOffset + actualWord.length,
         )
+
+    fun getRules(): List<RuleTokenizer> = rules
 }

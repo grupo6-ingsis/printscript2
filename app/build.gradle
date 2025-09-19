@@ -19,6 +19,8 @@ dependencies {
     implementation project(':formatter')
     implementation project(':analyzer')
     implementation project(':utilities')
+    implementation project(':cli')
+
 }
 
 test {

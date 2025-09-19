@@ -16,8 +16,8 @@ import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.Valid
 import org.gudelker.parser.tokenstream.TokenStream
-import org.gudelker.result.LexerSyntaxError
-import org.gudelker.result.ValidTokens
+import org.gudelker.resultlexer.LexerSyntaxError
+import org.gudelker.resultlexer.ValidTokens
 import org.gudelker.rules.JsonReaderFormatterToMap
 import org.gudelker.sourcereader.FileSourceReader
 import org.gudelker.stmtposition.StatementStream

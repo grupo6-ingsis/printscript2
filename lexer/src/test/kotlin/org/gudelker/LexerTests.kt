@@ -1,8 +1,8 @@
 package org.gudelker
 
 import org.gudelker.lexer.LexerFactory
-import org.gudelker.result.LexerSyntaxError
-import org.gudelker.result.ValidTokens
+import org.gudelker.resultlexer.LexerSyntaxError
+import org.gudelker.resultlexer.ValidTokens
 import org.gudelker.sourcereader.FileSourceReader
 import org.gudelker.sourcereader.StringSourceReader
 import org.gudelker.utilities.Version
