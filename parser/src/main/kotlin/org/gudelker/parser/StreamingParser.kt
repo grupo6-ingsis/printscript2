@@ -8,7 +8,9 @@ import org.gudelker.token.TokenType
 
 sealed class StreamingParserResult {
     data class StatementParsed(val statement: Statement) : StreamingParserResult()
+
     data class Error(val message: String) : StreamingParserResult()
+
     object Finished : StreamingParserResult()
 }
 
@@ -56,6 +58,12 @@ class StreamingParser(private val defaultParser: DefaultParser) {
                 try {
                     if (rule.matches(testStream)) {
                         val parseResult = rule.parse(testStream)
+                        val tokensUsed = parseResult.tokenStream.getCurrentIndex()
+                        val lastUsedToken = tokenBuffer.getOrNull(tokensUsed - 1)
+                        val bufferEndsAfterBlock = lastUsedToken?.getType() == TokenType.CLOSE_BRACKET && tokensUsed == tokenBuffer.size
+                        if (bufferEndsAfterBlock) {
+                            return StreamingParserResult.Error("Need more tokens")
+                        }
 
                         when (parseResult.parserResult) {
                             is ValidStatementParserResult -> {
@@ -69,10 +77,10 @@ class StreamingParser(private val defaultParser: DefaultParser) {
                                 }
 
                                 return StreamingParserResult.StatementParsed(
-                                    parseResult.parserResult.getStatement()
+                                    parseResult.parserResult.getStatement(),
                                 )
                             }
-                            else ->{
+                            else -> {
                                 return if (tokenBuffer.any { it.getType() == TokenType.EOF }) {
                                     hasError = true
                                     errorMessage = "Cannot parse remaining tokens"
@@ -110,7 +118,6 @@ class StreamingParser(private val defaultParser: DefaultParser) {
             hasError = true
             errorMessage = "No valid rule for token: ${currentToken?.getValue()}"
             return StreamingParserResult.Error(errorMessage)
-
         } catch (e: Exception) {
             hasError = true
             errorMessage = "Parse error: ${e.message}"
@@ -121,9 +128,9 @@ class StreamingParser(private val defaultParser: DefaultParser) {
     private fun isInsufficientTokensError(e: Exception): Boolean {
         val message = e.message?.lowercase() ?: ""
         return message.contains("token") ||
-                message.contains("eof") ||
-                message.contains("end") ||
-                message.contains("null")
+            message.contains("eof") ||
+            message.contains("end") ||
+            message.contains("null")
     }
 
     fun hasMore(): Boolean = !hasError && !isFinished && tokenBuffer.isNotEmpty()

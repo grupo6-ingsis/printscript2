@@ -1,10 +1,10 @@
 package org.gudelker.lexer
 
-import org.gudelker.resulttokenizers.LexerError
 import org.gudelker.resultlexer.LexerResult
 import org.gudelker.resultlexer.LexerSyntaxError
-import org.gudelker.resulttokenizers.ValidToken
 import org.gudelker.resultlexer.ValidTokens
+import org.gudelker.resulttokenizers.LexerError
+import org.gudelker.resulttokenizers.ValidToken
 import org.gudelker.rules.RuleTokenizer
 import org.gudelker.sourcereader.SourceReader
 import org.gudelker.token.Position
