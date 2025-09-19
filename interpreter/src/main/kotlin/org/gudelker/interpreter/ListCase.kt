@@ -55,75 +55,68 @@ class ListCase {
         val evaluators =
             when (version) {
                 Version.V1 ->
-                    listOf(
-                        LiteralNumberEvaluator(),
-                        LiteralStringEvaluator(),
-                        LiteralIdentifierEvaluator(),
-                        UnaryEvaluator(
-                            setOf(
-                                AdditionOperator::class.java,
-                                MinusOperator::class.java,
-                            ),
-                        ),
-                        BinaryEvaluator(
-                            setOf(
-                                AdditionOperator::class.java,
-                                MinusOperator::class.java,
-                                MultiplyOperator::class.java,
-                                DivisionOperator::class.java,
-                            ),
-                        ),
-                        GroupingEvaluator(),
-                        VariableDeclarationEvaluator(typeValidatorsV1),
-                        VariableReassignmentEvaluator(typeValidatorsV1),
-                        CallableEvaluator(listOf(PrintLn())),
+                    createEvaluatorsV1() + listOf(
+                            VariableDeclarationEvaluator(typeValidatorsV1),
+                            VariableReassignmentEvaluator(typeValidatorsV1)
                     )
                 Version.V2 ->
-                    listOf(
-                        LiteralNumberEvaluator(),
-                        LiteralStringEvaluator(),
-                        LiteralIdentifierEvaluator(),
-                        LiteralBooleanEvaluator(),
-                        UnaryEvaluator(
-                            setOf(
-                                AdditionOperator::class.java,
-                                MinusOperator::class.java,
-                            ),
-                        ),
-                        BinaryEvaluator(
-                            setOf(
-                                AdditionOperator::class.java,
-                                MinusOperator::class.java,
-                                MultiplyOperator::class.java,
-                                DivisionOperator::class.java,
-                            ),
-                        ),
-                        BooleanExpressionEvaluator(
-                            setOf(
-                                Equals::class.java,
-                                NotEquals::class.java,
-                                Greater::class.java,
-                                Lesser::class.java,
-                                GreaterEquals::class.java,
-                                LesserEquals::class.java,
-                            ),
-                        ),
-                        GroupingEvaluator(),
-                        ConstDeclarationEvaluator(typeValidatorsV2),
-                        VariableDeclarationEvaluator(typeValidatorsV2),
-                        VariableReassignmentEvaluator(typeValidatorsV2),
-                        CallableEvaluator(listOf(PrintLn())),
-                        CallableCallEvaluator(
-                            listOf(
-                                ReadEnv(),
-                                ReadInput(
-                                    provider,
-                                ),
-                            ),
-                        ),
-                        ConditionalEvaluator(),
+                    createEvaluatorsV2(provider) + listOf(
+                            ConstDeclarationEvaluator(typeValidatorsV2),
+                            VariableDeclarationEvaluator(typeValidatorsV2),
+                            VariableReassignmentEvaluator(typeValidatorsV2),
                     )
             }
+        return evaluators
+    }
+
+    private fun createEvaluatorsV1(): List<Evaluator<out Any>> {
+        val evaluators = listOf(
+            LiteralNumberEvaluator(),
+            LiteralStringEvaluator(),
+            LiteralIdentifierEvaluator(),
+            UnaryEvaluator(
+                setOf(
+                    AdditionOperator::class.java,
+                    MinusOperator::class.java,
+                ),
+            ),
+            BinaryEvaluator(
+                setOf(
+                    AdditionOperator::class.java,
+                    MinusOperator::class.java,
+                    MultiplyOperator::class.java,
+                    DivisionOperator::class.java,
+                ),
+            ),
+            GroupingEvaluator(),
+            CallableEvaluator(listOf(PrintLn()))
+        )
+        return evaluators
+    }
+
+    private fun createEvaluatorsV2(provider: InputProvider): List<Evaluator<out Any>> {
+        val evaluators = listOf(
+            LiteralBooleanEvaluator(),
+            BooleanExpressionEvaluator(
+                setOf(
+                    Equals::class.java,
+                    NotEquals::class.java,
+                    Greater::class.java,
+                    Lesser::class.java,
+                    GreaterEquals::class.java,
+                    LesserEquals::class.java,
+                ),
+            ),
+            CallableCallEvaluator(
+                listOf(
+                    ReadEnv(),
+                    ReadInput(
+                        provider,
+                    ),
+                ),
+            ),
+            ConditionalEvaluator(),
+        )
         return evaluators
     }
 }
