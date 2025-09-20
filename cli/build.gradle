@@ -5,6 +5,8 @@ plugins {
     id 'application'
 }
 
+version = rootProject.ext.versionCode
+
 repositories {
     mavenCentral()
 }

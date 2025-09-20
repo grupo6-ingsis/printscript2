@@ -6,6 +6,8 @@ plugins {
     id 'jacoco-conventions'
 }
 
+version = rootProject.ext.versionCode
+
 repositories {
     mavenCentral()
 }

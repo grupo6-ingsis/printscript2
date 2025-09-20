@@ -5,6 +5,7 @@ plugins {
     id 'buildlogic.kotlin-publish-conventions'
     id 'jacoco-conventions'
 }
+version = rootProject.ext.versionCode
 
 repositories {
     mavenCentral()
