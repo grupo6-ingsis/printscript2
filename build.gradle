@@ -1,30 +1,181 @@
-def versionFile = file('version.txt')
-def version = versionFile.text.trim()
+// Function to check if a specific version exists for an artifact
+def versionExists(artifactId, version) {
+    def gprUser = project.findProperty('gpr.user')
+    def gprKey = project.findProperty('gpr.key')
+    def gprOrg = project.findProperty('gpr.org') ?: gprUser
+    def repoName = project.findProperty('gpr.repository') ?: rootProject.name
 
-tasks.register('bumpVersion') {
+    if (!gprUser || !gprKey) {
+        return false
+    }
+
+    try {
+        def testUrl = "https://maven.pkg.github.com/${gprOrg}/${repoName}/org/gudelker/${artifactId}/${version}/${artifactId}-${version}.pom"
+        def connection = new URL(testUrl).openConnection()
+        connection.setRequestMethod("HEAD")
+        connection.setRequestProperty("Authorization", "token ${gprKey}")
+        connection.setConnectTimeout(5000)
+        connection.setReadTimeout(5000)
+
+        return connection.responseCode == 200
+    } catch (Exception e) {
+        return false
+    }
+}
+
+// Function to get the next available version for all modules
+def getNextAvailableVersion() {
+    def versionFile = file('version.txt')
+    def baseVersion = versionFile.text.trim()
+    def matcher = (baseVersion =~ /(\d+)\.(\d+)\.(\d+)/)
+
+    if (!matcher.find()) {
+        throw new GradleException("No valid version found in version.txt")
+    }
+
+    def major = matcher.group(1).toInteger()
+    def minor = matcher.group(2).toInteger()
+    def basePatch = matcher.group(3).toInteger()
+
+    // Get all subprojects that have publication
+    def artifactIds = []
+    subprojects.each { subproject ->
+        if (subproject.tasks.findByName('publish')) {
+            artifactIds.add(subproject.name)
+        }
+    }
+
+    if (artifactIds.isEmpty()) {
+        println "No subprojects with publication found, using simple increment"
+        return "${major}.${minor}.${basePatch + 1}"
+    }
+
+    println "Checking versions for artifacts: ${artifactIds}"
+
+    // Find the first version that doesn't exist for ANY artifact
+    for (int patch = Math.max(basePatch, 0); patch < basePatch + 20; patch++) {
+        def testVersion = "${major}.${minor}.${patch}"
+        def allVersionsAvailable = true
+
+        println "Checking version ${testVersion}..."
+
+        for (String artifactId : artifactIds) {
+            if (versionExists(artifactId, testVersion)) {
+                println "  x ${artifactId} already exists in version ${testVersion}"
+                allVersionsAvailable = false
+                break
+            } else {
+                println "  √ ${artifactId} available in version ${testVersion}"
+            }
+        }
+
+        if (allVersionsAvailable) {
+            println "Version ${testVersion} available for all artifacts"
+            return testVersion
+        }
+    }
+
+    // If we reach here, use a high version as fallback
+    println "No available version found in range, using fallback"
+    return "${major}.${minor}.${basePatch + 20}"
+}
+
+// Task to get and display the next available version
+tasks.register('getNextVersion') {
     doLast {
-        def matcher = (version =~ /(\d+)\.(\d+)\.(\d+)/)
-        if (matcher.find()) {
-            def major = matcher.group(1).toInteger()
-            def minor = matcher.group(2).toInteger()
-            def patch = matcher.group(3).toInteger() + 1
-            def newVersion = "${major}.${minor}.${patch}"
-            versionFile.text = newVersion
-            println "Version updated to ${newVersion}"
-        } else {
-            throw new GradleException("No se encontrÃ³ versiÃ³n vÃ¡lida en version.txt")
+        def nextVersion = getNextAvailableVersion()
+        println "Next available version for all modules: ${nextVersion}"
+    }
+}
+
+// Task to change the version (separate from publish)
+tasks.register('changeVersion') {
+    doLast {
+        def versionFile = file('version.txt')
+        def nextVersion = getNextAvailableVersion()
+        versionFile.text = nextVersion
+        println "Version updated from ${versionFile.text.trim()} to ${nextVersion}"
+        println "Now you can run: ./gradlew publish"
+    }
+}
+
+// Task to show the status of versions by module
+tasks.register('checkVersionStatus') {
+    doLast {
+        def versionFile = file('version.txt')
+        def baseVersion = versionFile.text.trim()
+        def matcher = (baseVersion =~ /(\d+)\.(\d+)\.(\d+)/)
+
+        if (!matcher.find()) {
+            println "Invalid version in version.txt"
+            return
+        }
+
+        def major = matcher.group(1).toInteger()
+        def minor = matcher.group(2).toInteger()
+        def basePatch = matcher.group(3).toInteger()
+
+        println "Version status by module:"
+        println "Current version: ${baseVersion}"
+        println ""
+
+        subprojects.each { subproject ->
+            if (subproject.tasks.findByName('publish')) {
+                println "${subproject.name}:"
+                for (int patch = basePatch; patch < basePatch + 5; patch++) {
+                    def testVersion = "${major}.${minor}.${patch}"
+                    def exists = versionExists(subproject.name, testVersion)
+                    def status = exists ? "x EXISTS" : "√ AVAILABLE"
+                    def current = (testVersion == baseVersion) ? " <- CURRENT" : ""
+                    println "  ${testVersion}: ${status}${current}"
+                }
+                println ""
+            }
         }
     }
 }
 
-ext {
-    versionCode = version
+tasks.register('publishWithVersionBump') {
+    dependsOn 'changeVersion'
+
+    doLast {
+        println "Running publication with automatic version bump"
+        println "Now run: ./gradlew changeVersion && ./gradlew publish"
+    }
 }
 
-subprojects {
-    tasks.matching { it.name == 'publish' }.configureEach {
-        dependsOn rootProject.tasks.named('bumpVersion')
+// Alternative task that executes both steps automatically
+tasks.register('bumpAndPublish') {
+    doLast {
+        println "Step 1: Updating version..."
+
+        // Execute changeVersion
+        def changeVersionTask = tasks.getByName('changeVersion')
+        changeVersionTask.actions.each { action ->
+            action.execute(changeVersionTask)
+        }
+
+        println "Step 2: Running publication..."
+        println "Executing: ./gradlew publish"
+
+        // Execute publish tasks of all subprojects
+        subprojects.each { subproject ->
+            def publishTask = subproject.tasks.findByName('publish')
+            if (publishTask) {
+                publishTask.actions.each { action ->
+                    action.execute(publishTask)
+                }
+            }
+        }
     }
+}
+
+// Read current version from file
+def versionFile = file('version.txt')
+def currentVersion = versionFile.text.trim()
+
+ext {
+    versionCode = currentVersion
 }
 
 allprojects {
