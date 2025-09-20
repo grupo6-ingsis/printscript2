@@ -7,12 +7,12 @@ tasks.register('bumpVersion') {
         if (matcher.find()) {
             def major = matcher.group(1).toInteger()
             def minor = matcher.group(2).toInteger()
-            def patch = matcher.group(3).toInteger()
-            def newVersion = "${major}.${minor}.${patch+1}"
+            def patch = matcher.group(3).toInteger() + 1
+            def newVersion = "${major}.${minor}.${patch}"
             versionFile.text = newVersion
-            println "version updated to ${major}.${minor}.${patch+1} for next build"
+            println "Version updated to ${newVersion}"
         } else {
-            throw new GradleException("No se encontró versión válida en version.txt")
+            throw new GradleException("No se encontrÃ³ versiÃ³n vÃ¡lida en version.txt")
         }
     }
 }
