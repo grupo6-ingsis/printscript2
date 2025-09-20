@@ -1,31 +1,32 @@
-ext {
-    versionCode = '1.2.3'
-}
+def versionFile = file('version.txt')
+def version = versionFile.text.trim()
 
-allprojects {
-    version = rootProject.ext.versionCode
-}
 tasks.register('bumpVersion') {
     doLast {
-        def file = rootProject.file('build.gradle')
-        def text = file.text
-        def matcher = (text =~ /versionCode = '(\d+)\.(\d+)\.(\d+)'/)
+        def matcher = (version =~ /(\d+)\.(\d+)\.(\d+)/)
         if (matcher.find()) {
             def major = matcher.group(1).toInteger()
             def minor = matcher.group(2).toInteger()
-            def patch = matcher.group(3).toInteger() + 1
-            def newVersion = "${major}.${minor}.${patch}"
-            def newText = text.replaceFirst(/versionCode = '.*'/, "versionCode = '${newVersion}'")
-            file.text = newText
-            println "Versión actualizada a ${newVersion}"
+            def patch = matcher.group(3).toInteger()
+            def newVersion = "${major}.${minor}.${patch+1}"
+            versionFile.text = newVersion
+            println "version updated to ${major}.${minor}.${patch+1} for next build"
         } else {
-            throw new GradleException("No se encontró versionCode en build.gradle")
+            throw new GradleException("No se encontró versión válida en version.txt")
         }
     }
+}
+
+ext {
+    versionCode = version
 }
 
 subprojects {
     tasks.matching { it.name == 'publish' }.configureEach {
         dependsOn rootProject.tasks.named('bumpVersion')
     }
+}
+
+allprojects {
+    version = rootProject.ext.versionCode
 }

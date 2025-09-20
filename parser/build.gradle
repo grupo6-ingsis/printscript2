@@ -16,7 +16,7 @@ dependencies {
     implementation project(':utilities')
     implementation project(':lexer')
 }
-
+version = rootProject.ext.versionCode
 test {
     useJUnitPlatform()
 }
