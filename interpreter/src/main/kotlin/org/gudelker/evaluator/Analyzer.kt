@@ -8,17 +8,19 @@ object Analyzer {
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): Result<EvaluationResult> {
+        var firstError: Throwable? = null
         for (evaluator in evaluators) {
-            val result =
-                try {
-                    evaluator.evaluate(statement, context, evaluators)
-                } catch (e: IllegalArgumentException) {
-                    Result.failure<EvaluationResult>(e)
-                }
-            if (result.isSuccess) {
-                return result
+            val result = evaluator.evaluate(statement, context, evaluators)
+            if (result.isSuccess) return result
+            val exception = result.exceptionOrNull()
+            if (exception != null && exception.message != "Not evaluator for: ${statement::class.simpleName}") {
+                firstError = exception
             }
         }
-        return Result.failure(IllegalArgumentException("No se encontró evaluador para: ${statement::class.simpleName}"))
+        return if (firstError != null) {
+            Result.failure(firstError)
+        } else {
+            Result.failure(IllegalArgumentException("Not evaluator for: ${statement::class.simpleName}"))
+        }
     }
 }

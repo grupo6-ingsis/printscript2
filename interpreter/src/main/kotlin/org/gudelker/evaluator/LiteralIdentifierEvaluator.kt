@@ -20,7 +20,7 @@ class LiteralIdentifierEvaluator : Evaluator<Any> {
                     }
                 Result.success(EvaluationResult(value, context))
             }
-            else -> Result.failure(Exception("Expected LiteralIdentifier, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Not evaluator for: ${statement::class.simpleName}"))
         }
     }
 }

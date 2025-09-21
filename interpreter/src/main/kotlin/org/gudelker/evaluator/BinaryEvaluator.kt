@@ -35,7 +35,7 @@ class BinaryEvaluator(
                     onFailure = { Result.failure(it) },
                 )
             }
-            else -> Result.failure(Exception("Expected Binary, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Not evaluator for: ${statement::class.simpleName}"))
         }
     }
 

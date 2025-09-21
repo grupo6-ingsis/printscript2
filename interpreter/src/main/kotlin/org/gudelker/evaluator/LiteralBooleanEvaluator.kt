@@ -11,7 +11,7 @@ class LiteralBooleanEvaluator : Evaluator<Any> {
     ): Result<EvaluationResult> {
         return when (statement) {
             is LiteralBoolean -> Result.success(EvaluationResult(statement.value.value, context))
-            else -> return Result.failure(Exception("Expected LiteralIdentifier, got ${statement::class.simpleName}"))
+            else -> return Result.failure(Exception("Not evaluator for: ${statement::class.simpleName}"))
         }
     }
 }

@@ -43,7 +43,7 @@ class StreamingInterpreter(
                 return StreamingInterpreterResult.StatementEvaluated(value, context)
             } else {
                 hasError = true
-                errorMessage = "Failed to analyze statement: ${result.exceptionOrNull()?.message}"
+                errorMessage = result.exceptionOrNull()?.message ?: "Unknown analysis error"
                 return StreamingInterpreterResult.Error(errorMessage)
             }
         } catch (e: Exception) {

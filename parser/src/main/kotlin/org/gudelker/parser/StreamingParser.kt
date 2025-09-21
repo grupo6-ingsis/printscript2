@@ -1,10 +1,12 @@
 package org.gudelker.parser
 
+import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.statements.interfaces.Statement
 import org.gudelker.token.Token
 import org.gudelker.token.TokenType
+import kotlin.text.matches
 
 sealed class StreamingParserResult {
     data class StatementParsed(val statement: Statement) : StreamingParserResult()
@@ -65,20 +67,24 @@ class StreamingParser(private val defaultParser: DefaultParser) {
                             return StreamingParserResult.Error("Need more tokens")
                         }
 
-                        when (parseResult.parserResult) {
+                        when (val result = parseResult.parserResult) {
                             is ValidStatementParserResult -> {
                                 val tokensUsed = parseResult.tokenStream.getCurrentIndex()
-
-                                // Remover tokens usados del buffer
                                 repeat(tokensUsed) {
                                     if (tokenBuffer.isNotEmpty()) {
                                         tokenBuffer.removeAt(0)
                                     }
                                 }
-
-                                return StreamingParserResult.StatementParsed(
-                                    parseResult.parserResult.getStatement(),
-                                )
+                                return StreamingParserResult.StatementParsed(result.getStatement())
+                            }
+                            is ParserSyntaxError -> {
+                                if (tokenBuffer.any { it.getType() == TokenType.EOF }) {
+                                    errorMessage = result.getError()
+                                    hasError = true
+                                    return StreamingParserResult.Error(errorMessage)
+                                } else {
+                                    return StreamingParserResult.Error("Need more tokens")
+                                }
                             }
                             else -> {
                                 return if (tokenBuffer.any { it.getType() == TokenType.EOF }) {
@@ -86,21 +92,18 @@ class StreamingParser(private val defaultParser: DefaultParser) {
                                     errorMessage = "Cannot parse remaining tokens"
                                     StreamingParserResult.Error(errorMessage)
                                 } else {
-                                    // Necesitamos más tokens, pero no es un error aún
                                     StreamingParserResult.Error("Need more tokens")
                                 }
                             }
                         }
                     }
                 } catch (e: Exception) {
-                    // Si es error por tokens insuficientes, necesitamos más tokens
                     if (isInsufficientTokensError(e)) {
                         return if (tokenBuffer.any { it.getType() == TokenType.EOF }) {
                             hasError = true
                             errorMessage = "Cannot parse remaining tokens: ${e.message}"
                             StreamingParserResult.Error(errorMessage)
                         } else {
-                            // Necesitamos más tokens, pero no es un error aún
                             StreamingParserResult.Error("Need more tokens")
                         }
                     }
@@ -108,7 +111,6 @@ class StreamingParser(private val defaultParser: DefaultParser) {
                 }
             }
 
-            // No se encontró regla válida
             val currentToken = tokenBuffer.firstOrNull()
             if (currentToken?.getType() == TokenType.EOF) {
                 isFinished = true

@@ -17,7 +17,7 @@ class GroupingEvaluator : Evaluator<Any> {
                     Result.success(EvaluationResult(Unit, context))
                 }
             }
-            else -> Result.failure(Exception("Expected Grouping, got ${statement::class.simpleName}"))
+            else -> Result.failure(Exception("Not evaluator for: ${statement::class.simpleName}"))
         }
     }
 }
