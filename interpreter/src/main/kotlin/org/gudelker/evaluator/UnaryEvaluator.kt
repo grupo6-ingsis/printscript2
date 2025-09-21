@@ -37,7 +37,7 @@ class UnaryEvaluator(
             operator.performUnaryOperation(valueEvalResult.value)
                 .map { EvaluationResult(it, valueEvalResult.context) }
         } else {
-            Result.failure(UnsupportedOperationException("Operador binario no soportado: ${operator::class.simpleName}"))
+            Result.failure(UnsupportedOperationException("Operador unoario no soportado: ${operator::class.simpleName}"))
         }
     }
 
