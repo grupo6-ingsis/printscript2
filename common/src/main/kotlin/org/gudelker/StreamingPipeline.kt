@@ -1,4 +1,4 @@
-package org.gudelker.pipeline
+package org.gudelker
 
 import org.gudelker.evaluator.Evaluator
 import org.gudelker.interpreter.StreamingInterpreter

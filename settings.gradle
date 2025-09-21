@@ -23,3 +23,5 @@ include 'analyzer'
 include 'cli'
 include 'utilities'
 
+
+include 'common'

@@ -20,6 +20,7 @@ dependencies {
     implementation project(':analyzer')
     implementation project(':utilities')
     implementation project(':cli')
+    implementation project(':common')
 
 }
 
