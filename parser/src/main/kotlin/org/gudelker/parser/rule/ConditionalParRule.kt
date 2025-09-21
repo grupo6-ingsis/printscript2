@@ -55,7 +55,13 @@ class ConditionalParRule(
         if (booleanResult.parserResult !is ValidStatementParserResult) {
             return ParseResult(ParserSyntaxError("Error al parsear la condición booleana"), booleanResult.tokenStream)
         }
-        val booleanExpression = booleanResult.parserResult.getStatement() as BooleanExpressionStatement
+        val booleanExpression = booleanResult.parserResult.getStatement()
+        if (booleanExpression !is BooleanExpressionStatement) {
+            return ParseResult(
+                ParserSyntaxError("Se esperaba un booleano en el if"),
+                booleanResult.tokenStream,
+            )
+        }
 
         // Consume ')'
         val (closeParenToken, streamAfterCloseParen) = booleanResult.tokenStream.consume(TokenType.CLOSE_PARENTHESIS)

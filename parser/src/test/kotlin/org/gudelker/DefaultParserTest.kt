@@ -10,6 +10,7 @@ import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import kotlin.collections.get
 
 class DefaultParserTest {
     @Test
@@ -19,10 +20,10 @@ class DefaultParserTest {
             listOf(
                 Token(TokenType.KEYWORD, "let", Position()),
                 Token(TokenType.IDENTIFIER, "x", Position()),
-//        Token(TokenType.COLON, ":", Position()),
-//        Token(TokenType.TYPE, "Number", Position()),
-                Token(TokenType.ASSIGNATION, "=", Position()),
-                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.COLON, ":", Position()),
+                Token(TokenType.TYPE, "Number", Position()),
+//                Token(TokenType.ASSIGNATION, "=", Position()),
+//                Token(TokenType.NUMBER, "10", Position()),
                 Token(TokenType.SEMICOLON, ";", Position()),
                 Token(TokenType.EOF, "", Position()),
             )
@@ -624,5 +625,81 @@ class DefaultParserTest {
         assertEquals(1, statements.size)
         println("If with complex boolean expression:")
         println(statements[0])
+    }
+
+    @Test
+    fun `should parse function call readInput`() {
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "userInput", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.FUNCTION, "readInput", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("ReadInput function call:")
+        print(statements[0])
+    }
+
+    @Test
+    fun `should parse function call readEnv with argument`() {
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "path", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.FUNCTION, "readEnv", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.STRING, "\"PATH\"", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("ReadEnv function call with argument:")
+        print(statements[0])
+    }
+
+    @Test
+    fun `should parse nested function calls`() {
+        val tokens =
+            listOf(
+                Token(TokenType.FUNCTION, "println", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.FUNCTION, "readInput", Position()),
+                Token(TokenType.OPEN_PARENTHESIS, "(", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.CLOSE_PARENTHESIS, ")", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val tokenStream = TokenStream(tokens)
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val result = parser.parse(tokenStream)
+
+        assertTrue(result is Valid)
+        val statements = (result as Valid).getStatements()
+        assertEquals(1, statements.size)
+        println("Nested function calls:")
+        print(statements[0])
     }
 }
