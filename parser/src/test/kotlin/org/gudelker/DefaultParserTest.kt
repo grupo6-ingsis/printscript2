@@ -1,8 +1,15 @@
 package org.gudelker
 
+import org.gudelker.expressions.Binary
+import org.gudelker.expressions.LiteralIdentifier
+import org.gudelker.expressions.LiteralNumber
 import org.gudelker.parser.DefaultParserFactory
+import org.gudelker.parser.StreamingParser
+import org.gudelker.parser.StreamingParserResult
 import org.gudelker.parser.result.Valid
 import org.gudelker.parser.tokenstream.TokenStream
+import org.gudelker.statements.declarations.VariableDeclaration
+import org.gudelker.statements.interfaces.Statement
 import org.gudelker.token.Position
 import org.gudelker.token.Token
 import org.gudelker.token.TokenType
@@ -701,5 +708,134 @@ class DefaultParserTest {
         assertEquals(1, statements.size)
         println("Nested function calls:")
         print(statements[0])
+    }
+
+    @Test
+    fun `debería procesar tokens incrementalmente y generar statements correctos`() {
+        // Crear tokens de prueba para: let x = 10; let y = x + 5;
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "y", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.OPERATOR, "+", Position()),
+                Token(TokenType.NUMBER, "5", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        // Crear el parser de streaming
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val streamingParser = StreamingParser(parser)
+
+        // Agregar todos los tokens
+        streamingParser.addTokens(tokens)
+
+        // Procesar tokens y recolectar statements
+        val statements = mutableListOf<Statement>()
+        var result: StreamingParserResult
+
+        do {
+            result = streamingParser.nextStatement()
+            if (result is StreamingParserResult.StatementParsed) {
+                statements.add(result.statement)
+            }
+        } while (result !is StreamingParserResult.Finished && result !is StreamingParserResult.Error)
+
+        // Verificar que se generaron 2 statements
+        assertEquals(2, statements.size)
+
+        // Verificar primer statement (let x = 10)
+        assertTrue(statements[0] is VariableDeclaration)
+        val firstStmt = statements[0] as VariableDeclaration
+        assertEquals("x", firstStmt.identifierCombo.value)
+
+        // Verificar segundo statement (let y = x + 5)
+        assertTrue(statements[1] is VariableDeclaration)
+        val secondStmt = statements[1] as VariableDeclaration
+        assertEquals("y", secondStmt.identifierCombo.value)
+
+        // Verificar que el valor de y es una expresión binaria
+        assertTrue(secondStmt.value is Binary)
+        val binaryExpr = secondStmt.value as Binary
+        assertTrue(binaryExpr.leftExpression is LiteralIdentifier)
+        assertEquals("x", (binaryExpr.leftExpression as LiteralIdentifier).value.value)
+        assertTrue(binaryExpr.rightExpression is LiteralNumber)
+        assertEquals(5, (binaryExpr.rightExpression as LiteralNumber).value.value)
+    }
+
+    @Test
+    fun `debería manejar tokens malformados y reportar errores correctamente`() {
+        // Crear tokens de prueba con error: let = 10;
+        val tokens =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                // Error: falta el identificador
+                Token(TokenType.NUMBER, "10", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val streamingParser = StreamingParser(parser)
+
+        // Agregar todos los tokens
+        streamingParser.addTokens(tokens)
+
+        // Intentar parsear el siguiente statement
+        val result = streamingParser.nextStatement()
+
+        // Verificar que se detectó el error
+        assertTrue(result is StreamingParserResult.Error)
+    }
+
+    @Test
+    fun `debería poder procesar múltiples statements en secuencia`() {
+        val parser = DefaultParserFactory.createParser(Version.V2)
+        val streamingParser = StreamingParser(parser)
+
+        // Agregamos primero un statement válido
+        val validTokens1 =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "x", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "42", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+            )
+        streamingParser.addTokens(validTokens1)
+
+        // Procesamos el primer statement
+        val result1 = streamingParser.nextStatement()
+        assertTrue(result1 is StreamingParserResult.StatementParsed)
+
+        // Agregamos un segundo statement válido
+        val validTokens2 =
+            listOf(
+                Token(TokenType.KEYWORD, "let", Position()),
+                Token(TokenType.IDENTIFIER, "z", Position()),
+                Token(TokenType.ASSIGNATION, "=", Position()),
+                Token(TokenType.NUMBER, "99", Position()),
+                Token(TokenType.SEMICOLON, ";", Position()),
+                Token(TokenType.EOF, "", Position()),
+            )
+        streamingParser.addTokens(validTokens2)
+
+        // Procesamos el segundo statement
+        val result2 = streamingParser.nextStatement()
+        assertTrue(result2 is StreamingParserResult.StatementParsed)
+        val statement2 = (result2 as StreamingParserResult.StatementParsed).statement
+
+        // Verificar que se procesó correctamente el segundo statement
+        assertTrue(statement2 is VariableDeclaration)
+        val varDecl = statement2 as VariableDeclaration
+        assertEquals("z", varDecl.identifierCombo.value)
     }
 }
