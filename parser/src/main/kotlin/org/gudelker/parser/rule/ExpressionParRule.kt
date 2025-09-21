@@ -22,4 +22,8 @@ class ExpressionParRule(
             )
         }
     }
+
+    fun getRules(): List<SyntaxParRule> {
+        return rules
+    }
 }
