@@ -25,7 +25,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
       - name: Change version to next available
-        run: ./gradlew changeVersion
+        run: ./gradlew changeVersion -Pgpr.user=${{ github.actor }} -Pgpr.key=${{ secrets.GITHUB_TOKEN }} -Pgpr.org=${{ github.repository_owner }}
       - name: Commit version change
         run: |
           git config --local user.email "action@github.com"
