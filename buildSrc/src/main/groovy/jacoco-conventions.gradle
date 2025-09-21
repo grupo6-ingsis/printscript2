@@ -55,7 +55,7 @@ tasks.withType(JacocoCoverageVerification) {
     violationRules {
         rule {
             limit {
-                minimum = 0.7601
+                minimum = 0.794383
             }
         }
 

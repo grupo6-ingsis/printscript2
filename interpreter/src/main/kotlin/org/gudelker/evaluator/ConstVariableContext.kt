@@ -28,8 +28,6 @@ data class ConstVariableContext(
 
     fun getVariableType(name: String): String? = variableTypes[name]
 
-    fun getAllVariableTypes(): Map<String, String> = variableTypes.toMap()
-
     fun getVariable(name: String): Any {
         if (!hasVariable(name)) {
             throw Exception("Variable no declarada: $name")
