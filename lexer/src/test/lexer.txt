@@ -1,1 +1,5 @@
-let holaComo = "estas";
+let holaComo = readInput("3" + "5");
+println(3+5);
+if(true){
+let hola_boca:String = "boca";
+}

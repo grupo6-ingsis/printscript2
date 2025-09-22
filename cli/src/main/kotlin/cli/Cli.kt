@@ -204,7 +204,7 @@ class Analyzing : CliktCommand("analyzing") {
                     val pos = violation.position
                     echo(
                         "❌ Lint error: ${violation.message} " +
-                            "[Lines ${pos.startLine}-${pos.endLine}, Columns ${pos.startColumn}-${pos.endColumn}]",
+                            "[Line ${pos.startLine}, Column ${pos.startColumn}]",
                     )
                 }
             }

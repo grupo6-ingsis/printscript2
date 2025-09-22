@@ -522,18 +522,18 @@ class IntegrationTest {
                     mapOf(
                         "identifierFormat" to
                             LinterConfig(
-                                identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                                restrictReadInputExpressions = true,
+                                identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                                restrictReadInputToIdentifierOrLiteral = true,
                             ),
                         "restrictPrintlnExpressions" to
                             LinterConfig(
-                                identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                                restrictReadInputExpressions = true,
+                                identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                                restrictReadInputToIdentifierOrLiteral = true,
                             ),
                         "restrictReadInputExpressions" to
                             LinterConfig(
-                                identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                                restrictReadInputExpressions = true,
+                                identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                                restrictReadInputToIdentifierOrLiteral = true,
                             ),
                     )
                 return linter.lint(StatementStream(statements), rules)

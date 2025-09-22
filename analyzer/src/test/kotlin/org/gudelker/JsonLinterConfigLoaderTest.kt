@@ -15,7 +15,7 @@ class JsonLinterConfigLoaderTest {
 
         assertEquals(3, configMap.size)
         assertEquals("camelCase", configMap["identifierFormat"]?.identifierFormat)
-        assertEquals(true, configMap["restrictPrintlnExpressions"]?.restrictPrintlnExpressions)
-        assertEquals(true, configMap["restrictReadInputExpressions"]?.restrictReadInputExpressions)
+        assertEquals(true, configMap["restrictPrintlnToIdentifierOrLiteral"]?.restrictPrintlnToIdentifierOrLiteral)
+        assertEquals(true, configMap["restrictReadInputToIdentifierOrLiteral"]?.restrictReadInputToIdentifierOrLiteral)
     }
 }

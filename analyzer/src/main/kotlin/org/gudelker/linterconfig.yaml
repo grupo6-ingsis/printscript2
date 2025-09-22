@@ -1,4 +1,4 @@
 rules:
   identifierFormat: snakeCase
   restrictPrintlnExpressions: true
-  restrictReadInputExpressions: true
+  restrictReadInputToIdentifierOrLiteral: true
