@@ -1,7 +1,7 @@
 {
   "rules": {
     "identifierFormat": "camelCase",
-    "restrictPrintlnExpressions": true,
-    "restrictReadInputExpressions": true
+    "restrictPrintlnToIdentifierOrLiteral": true,
+    "restrictReadInputToIdentifierOrLiteral": true
   }
 }

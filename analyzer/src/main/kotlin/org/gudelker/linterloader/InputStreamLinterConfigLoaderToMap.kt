@@ -25,23 +25,23 @@ class InputStreamLinterConfigLoaderToMap(private val inputStream: InputStream) :
             when (normalizeKey(key)) {
                 "identifierformat" ->
                     identifierFormat = getStringValue(element)
-                "restrictprintlnexpressions", "mandatoryvariableorliteralinprintln" ->
+                "restrictprintlntoidentifierorliteral", "mandatoryvariableorliteralinprintln" ->
                     restrictPrintln = getBoolValue(element)
-                "restrictreadinputexpressions", "mandatoryvariableorliteralinreadinput" ->
+                "restrictreadinputtoidentifierorliteral", "mandatoryvariableorliteralinreadinput" ->
                     restrictReadInput = getBoolValue(element)
             }
         }
         val config =
             LinterConfig(
                 identifierFormat = identifierFormat,
-                restrictPrintlnExpressions = restrictPrintln,
-                restrictReadInputExpressions = restrictReadInput,
+                restrictPrintlnToIdentifierOrLiteral = restrictPrintln,
+                restrictReadInputToIdentifierOrLiteral = restrictReadInput,
             )
 
         return mapOf(
             "identifierFormat" to config,
-            "restrictPrintlnExpressions" to config,
-            "restrictReadInputExpressions" to config,
+            "restrictPrintlnToIdentifierOrLiteral" to config,
+            "restrictReadInputToIdentifierOrLiteral" to config,
         )
     }
 

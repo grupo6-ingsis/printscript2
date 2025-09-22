@@ -23,7 +23,7 @@ import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.operators.AdditionOperator
 import org.gudelker.operators.MinusOperator
 import org.gudelker.result.LintViolation
-import org.gudelker.rulelinter.RestrictPrintLnExpressions
+import org.gudelker.rulelinter.RestrictPrintlnToIdentifierOrLiteral
 import org.gudelker.rulelinter.VariableDeclarationCamelCaseRule
 import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.statements.VariableReassignment
@@ -48,7 +48,7 @@ class LinterTests {
                 VariableDeclarationLintAnalyzer(listOf(VariableDeclarationCamelCaseRule(), VariableDeclarationSnakeCaseRule())),
                 CallableLintAnalyzer(
                     listOf(
-                        RestrictPrintLnExpressions(
+                        RestrictPrintlnToIdentifierOrLiteral(
                             listOf(
                                 LiteralString::class,
                                 LiteralNumber::class,
@@ -84,18 +84,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(listOf(stmt)), rules)
@@ -131,18 +131,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
@@ -167,18 +167,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(listOf(stmt)), rules)
@@ -196,18 +196,18 @@ class LinterTests {
             mapOf(
                 "camelCase" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(listOf(stmt)), rules)
@@ -253,18 +253,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
@@ -279,18 +279,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), rules)
@@ -320,18 +320,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), config)
@@ -359,18 +359,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), config)
@@ -391,18 +391,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = false,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = false,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), config)
@@ -468,18 +468,18 @@ class LinterTests {
             mapOf(
                 "identifierFormat" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictPrintlnExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
                 "restrictReadInputExpressions" to
                     LinterConfig(
-                        identifierFormat = "camelCase", restrictPrintlnExpressions = true,
-                        restrictReadInputExpressions = true,
+                        identifierFormat = "camelCase", restrictPrintlnToIdentifierOrLiteral = true,
+                        restrictReadInputToIdentifierOrLiteral = true,
                     ),
             )
         val result = linter.lint(StatementStream(stmts), rules)

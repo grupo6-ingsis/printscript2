@@ -29,8 +29,8 @@ class YamlLinterConfigLoaderToMap(private val path: String) : LinterConfigLoader
             val config =
                 LinterConfig(
                     identifierFormat = rulesMap["identifierFormat"] as? String ?: "",
-                    restrictPrintlnExpressions = rulesMap["restrictPrintlnExpressions"] as? Boolean ?: false,
-                    restrictReadInputExpressions = rulesMap["restrictReadInputExpressions"] as? Boolean ?: false,
+                    restrictPrintlnToIdentifierOrLiteral = rulesMap["restrictPrintlnToIdentifierOrLiteral"] as? Boolean ?: false,
+                    restrictReadInputToIdentifierOrLiteral = rulesMap["restrictReadInputToIdentifierOrLiteral"] as? Boolean ?: false,
                 )
 
             rulesMap.keys.associateWith { config }

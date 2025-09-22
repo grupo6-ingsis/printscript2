@@ -1,15 +1,13 @@
-package org.gudelker
-
-import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
+import org.gudelker.linterloader.YamlLinterConfigLoaderToMap
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class JsonLinterConfigLoaderTest {
+class YamlLinterConfigLoaderTest {
     @Test
-    fun `loads config from existing linterconfig json`() {
+    fun `loads config from existing linterconfig yaml`() {
         val loader =
-            JsonLinterConfigLoaderToMap(
-                "src/main/kotlin/org/gudelker/linterconfig.json",
+            YamlLinterConfigLoaderToMap(
+                "/Users/pedrodelaguila/faculty/ingsis/printscript2/analyzer/src/main/kotlin/org/gudelker/linterconfig.yaml",
             )
         val configMap = loader.loadConfig()
 

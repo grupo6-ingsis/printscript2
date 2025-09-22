@@ -15,11 +15,11 @@ class LinterConfigTest {
         val config =
             LinterConfig(
                 identifierFormat = "snake_case",
-                restrictPrintlnExpressions = false,
-                restrictReadInputExpressions = true,
+                restrictPrintlnToIdentifierOrLiteral = false,
+                restrictReadInputToIdentifierOrLiteral = true,
             )
         assertEquals("snake_case", config.identifierFormat)
-        assertEquals(false, config.restrictPrintlnExpressions)
+        assertEquals(false, config.restrictPrintlnToIdentifierOrLiteral)
 
         val json = Json.encodeToString(LinterConfig.serializer(), config)
         val decoded = Json.decodeFromString(LinterConfig.serializer(), json)

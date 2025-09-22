@@ -21,8 +21,8 @@ import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
 import org.gudelker.rulelinter.ConstDeclarationCamelCaseRule
 import org.gudelker.rulelinter.ConstDeclarationSnakeCaseRule
-import org.gudelker.rulelinter.RestrictPrintLnExpressions
-import org.gudelker.rulelinter.RestrictReadInputExpressions
+import org.gudelker.rulelinter.RestrictPrintlnToIdentifierOrLiteral
+import org.gudelker.rulelinter.RestrictReadInputToIdentifierOrLiteral
 import org.gudelker.rulelinter.VariableDeclarationCamelCaseRule
 import org.gudelker.rulelinter.VariableDeclarationSnakeCaseRule
 import org.gudelker.utilities.Version
@@ -41,7 +41,7 @@ object DefaultLinterFactory {
                 listOf(
                     CallableLintAnalyzer(
                         listOf(
-                            RestrictPrintLnExpressions(
+                            RestrictPrintlnToIdentifierOrLiteral(
                                 listOf(
                                     LiteralString::class,
                                     LiteralNumber::class,
@@ -84,7 +84,7 @@ object DefaultLinterFactory {
             listOf(
                 CallableLintAnalyzer(
                     listOf(
-                        RestrictPrintLnExpressions(
+                        RestrictPrintlnToIdentifierOrLiteral(
                             listOf(
                                 LiteralString::class,
                                 LiteralNumber::class,
@@ -96,7 +96,7 @@ object DefaultLinterFactory {
                 ),
                 CallableCallLintAnalyzer(
                     listOf(
-                        RestrictReadInputExpressions(
+                        RestrictReadInputToIdentifierOrLiteral(
                             listOf(
                                 LiteralString::class,
                                 LiteralNumber::class,
