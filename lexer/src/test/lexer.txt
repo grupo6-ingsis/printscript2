@@ -1,2 +1,4 @@
-let boca:String = readInput("hola");
-println(boca);
+let something: string= "a really cool thing";
+let another_thing: string ="another really cool thing";
+let twice_thing: string = "another really cool thing twice";
+let third_thing: string="another really cool thing three times";

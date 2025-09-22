@@ -85,23 +85,32 @@ private fun parseTokens(
     val parser = DefaultParserFactory.createParser(parseVersion(version))
     val streamingParser = StreamingParser(parser)
     val statements = mutableListOf<Statement>()
-    var finished = false
 
-    while (!finished) {
-        when (val lexerResult = streamingLexer.nextBatch()) {
-            is StreamingLexerResult.TokenBatch -> streamingParser.addTokens(lexerResult.tokens)
-            is StreamingLexerResult.Error -> throw Exception("Lexing error: ${lexerResult.message}")
-            is StreamingLexerResult.Finished -> finished = true
+    while (streamingLexer.hasMore() || streamingParser.hasMore()) {
+        if (streamingLexer.hasMore()) {
+            val lexerResult = streamingLexer.nextBatch(10)
+            if (lexerResult is StreamingLexerResult.TokenBatch) {
+                streamingParser.addTokens(lexerResult.tokens)
+            }
         }
 
-        while (streamingParser.hasMore()) {
-            when (val parseResult = streamingParser.nextStatement()) {
-                is StreamingParserResult.StatementParsed -> statements.add(parseResult.statement)
-                is StreamingParserResult.Error -> throw Exception("Parse error: ${parseResult.message}")
-                is StreamingParserResult.Finished -> finished = true
+        val parseResult = streamingParser.nextStatement()
+        when (parseResult) {
+            is StreamingParserResult.StatementParsed -> {
+                statements.add(parseResult.statement)
+            }
+            is StreamingParserResult.Error -> {
+                if (parseResult.message.lowercase().contains("need more tokens")) {
+                    continue
+                }
+                throw Exception("Parse error: ${parseResult.message}")
+            }
+            is StreamingParserResult.Finished -> {
+                break
             }
         }
     }
+
     return statements
 }
 
