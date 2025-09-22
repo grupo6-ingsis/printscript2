@@ -164,7 +164,6 @@ class Formatting : CliktCommand("formatting") {
             }
             File(filePath).writeText(strBuilder.toString())
             echo("✅ Archivo formateado correctamente: $filePath")
-
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}", err = true)
         }
