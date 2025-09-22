@@ -1,6 +1,7 @@
 package org.gudelker.analyzer
 
 import org.gudelker.expressions.Binary
+import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
@@ -86,10 +87,10 @@ class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidato
                 val valuePos = value.operator.position
                 valuePos.startColumn - equals.position.startColumn
             }
-//            is Grouping -> {
-//                val valuePos = value.openParenthesis
-//                valuePos!!.startColumn - equals.position.endColumn
-//            }
+            is CallableCall -> {
+                val valuePos = value.functionName.position
+                valuePos.startColumn - equals.position.endColumn
+            }
             else -> 0
         }
     }

@@ -1,6 +1,7 @@
 package org.gudelker.analyzer
 
 import org.gudelker.expressions.Binary
+import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
@@ -59,7 +60,9 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
                 val valueFormatted = formatter.formatNode(statement.value!!, formatterRuleMap)
                 resultString += "$spacesBeforeEquals${statement.equals!!.value}$spacesAfterEquals$valueFormatted"
             }
-            resultString += ";"
+            if (!resultString.contains(";")) {
+                resultString += ";"
+            }
             rulesValidators.forEach { validator ->
                 if (validator.matches(formatterRuleMap)) {
                     resultString = validator.applyRule(resultString, statement, formatterRuleMap)
@@ -100,10 +103,10 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
                 val valuePos = value.operator.position
                 valuePos.startColumn - equals.position.startColumn
             }
-//            is Grouping -> {
-//                val valuePos = value.openParenthesis
-//                valuePos!!.startColumn - equals.position.endColumn
-//            }
+            is CallableCall -> {
+                val valuePos = value.functionName.position
+                valuePos.startColumn - equals.position.endColumn
+            }
             else -> 0
         }
     }

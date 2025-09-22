@@ -133,7 +133,7 @@ class Execution : CliktCommand("execution") {
             pipeline.initialize(sourceReader)
             pipeline.processAll()
             val errorMessage = pipeline.getLastErrorMessage()
-            if (errorMessage != null) {
+            if (errorMessage == null) {
                 echo("❌ Error: $errorMessage", err = true)
             } else {
                 showProgress("Executing", 100)
@@ -165,7 +165,7 @@ class Formatting : CliktCommand("formatting") {
             File(filePath).writeText(strBuilder.toString())
             echo("✅ Archivo formateado correctamente: $filePath")
         } catch (e: Exception) {
-            echo("❌ Error: ${e.message}", err = true)
+            echo("❌ Error: $e", err = true)
         }
     }
 }

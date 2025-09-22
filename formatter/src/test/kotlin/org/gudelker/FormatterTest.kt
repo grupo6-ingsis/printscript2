@@ -491,8 +491,8 @@ class FormatterTest {
         val result = formatter.format(statement, rules)
         val result2 = formatter.format(statement2, rules)
 
-        val expected = "readInput(\"Enter your name:\");\n"
-        val expected2 = "readEnv(\"PATH\");\n"
+        val expected = "readInput(\"Enter your name:\");"
+        val expected2 = "readEnv(\"PATH\");"
 
         assertEquals(expected, result)
         assertEquals(expected2, result2)

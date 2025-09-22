@@ -7,6 +7,10 @@ plugins {
 
 version = rootProject.ext.versionCode
 
+run {
+    standardInput = System.in
+}
+
 repositories {
     mavenCentral()
 }
