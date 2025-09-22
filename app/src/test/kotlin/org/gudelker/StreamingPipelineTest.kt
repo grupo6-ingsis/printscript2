@@ -449,4 +449,45 @@ class StreamingPipelineTest {
         }
         return builder.toString()
     }
+
+    @Test
+    fun `should process readInput and println statements with TestInputProvider`() {
+        val code =
+            """
+            let boca:String = readInput("hola");
+            println(boca);
+            """.trimIndent()
+
+        val inputProvider = org.gudelker.inputprovider.TestInputProvider(mutableListOf("test input"))
+        val pipeline =
+            createStreamingPipeline(
+                version = org.gudelker.utilities.Version.V2,
+                inputProvider = inputProvider,
+            )
+        pipeline.initialize(StringSourceReader(code))
+
+        val results = mutableListOf<Any?>()
+        pipeline.processAll { result ->
+            results.add(result)
+            true
+        }
+
+        // The first result is the value assigned to boca, the second is println(boca)
+        assertEquals(2, results.size)
+        assertEquals("test input", results[1])
+    }
+
+    // Helper to inject custom InputProvider
+    private fun createStreamingPipeline(
+        version: org.gudelker.utilities.Version = org.gudelker.utilities.Version.V1,
+        inputProvider: org.gudelker.inputprovider.InputProvider,
+    ): StreamingPipeline {
+        val defaultLexer = LexerFactory.createLexer(version)
+        val defaultParser = DefaultParserFactory.createParser(version)
+        val streamingLexer = StreamingLexer(defaultLexer)
+        val streamingParser = StreamingParser(defaultParser)
+        val chunkBaseInterpreter = ChunkBaseFactory.createInterpreter(version, inputProvider)
+        val evaluators = chunkBaseInterpreter.getEvaluators()
+        return StreamingPipeline.create(streamingLexer, streamingParser, evaluators)
+    }
 }
