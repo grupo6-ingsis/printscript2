@@ -11,7 +11,6 @@ class PrintLn : CallableValidator {
 
     override fun execute(argumentResult: EvaluationResult): EvaluationResult {
         val something = argumentResult.value.toString()
-        println(something)
         return EvaluationResult(something, argumentResult.context) // Devuelve el valor impreso
     }
 }
