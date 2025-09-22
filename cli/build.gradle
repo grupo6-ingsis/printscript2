@@ -26,6 +26,7 @@ dependencies {
     implementation project(':interpreter')
     implementation project(':formatter')
     implementation project(':analyzer')
+    implementation project(':common')
 }
 
 test {

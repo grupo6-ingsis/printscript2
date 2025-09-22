@@ -1,2 +1,2 @@
-let river:String  = "HelloWorld";
-println(river);
+let boca:String = readInput("hola");
+println(boca);

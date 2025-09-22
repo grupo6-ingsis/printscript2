@@ -6,20 +6,22 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
+import org.gudelker.StreamingPipeline
 import org.gudelker.formatter.DefaultFormatterFactory
 import org.gudelker.inputprovider.CLIInputProvider
-import org.gudelker.interpreter.InterpreterFactory
+import org.gudelker.interpreter.ChunkBaseFactory
+import org.gudelker.interpreter.StreamingInterpreter
 import org.gudelker.lexer.LexerFactory
+import org.gudelker.lexer.StreamingLexer
+import org.gudelker.lexer.StreamingLexerResult
 import org.gudelker.linter.DefaultLinterFactory
 import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
 import org.gudelker.parser.DefaultParserFactory
-import org.gudelker.parser.result.ParserSyntaxError
-import org.gudelker.parser.result.Valid
-import org.gudelker.parser.tokenstream.TokenStream
-import org.gudelker.resultlexer.LexerSyntaxError
-import org.gudelker.resultlexer.ValidTokens
+import org.gudelker.parser.StreamingParser
+import org.gudelker.parser.StreamingParserResult
 import org.gudelker.rules.JsonReaderFormatterToMap
 import org.gudelker.sourcereader.FileSourceReader
+import org.gudelker.statements.interfaces.Statement
 import org.gudelker.stmtposition.StatementStream
 import org.gudelker.utilities.Version
 
@@ -47,9 +49,8 @@ class Validation : CliktCommand("validation") {
 
     override fun run() {
         try {
-            val tokens = lexSource(filePath, version)
-            val ast = parseTokens(tokens, version)
-            val statements = ast.getStatements()
+            val lexer = lexSource(filePath, version)
+            val statements = parseTokens(lexer, version)
             statements.forEachIndexed { idx, statement ->
                 showProgress("Parsing statement ${idx + 1}/${statements.size}", ((idx + 1) * 100) / statements.size)
                 println(statement)
@@ -66,30 +67,42 @@ class Validation : CliktCommand("validation") {
 private fun lexSource(
     filePath: String,
     version: String,
-): ValidTokens {
+): StreamingLexer {
+    showProgress("Lexing", 20)
     showProgress("Lexing", 20)
     val lexer = LexerFactory.createLexer(parseVersion(version))
+    val streamingLexer = StreamingLexer(lexer)
     val sourceReader = FileSourceReader(filePath)
-    val tokensResult = lexer.lex(sourceReader)
-    return when (tokensResult) {
-        is ValidTokens -> tokensResult
-        is LexerSyntaxError -> throw Exception("Lexing error: ${tokensResult.messageError}")
-    }
+    streamingLexer.initialize(sourceReader)
+    return streamingLexer
 }
 
 private fun parseTokens(
-    tokens: ValidTokens,
+    streamingLexer: StreamingLexer,
     version: String,
-): Valid {
+): List<Statement> {
     showProgress("Parsing", 50)
     val parser = DefaultParserFactory.createParser(parseVersion(version))
-    val tokenIterator = TokenStream(tokens.value)
-    val ast = parser.parse(tokenIterator)
-    return when (ast) {
-        is Valid -> ast
-        is ParserSyntaxError -> throw Exception("Parse error: ${ast.getError()}")
-        else -> throw Exception("Unknown parser result")
+    val streamingParser = StreamingParser(parser)
+    val statements = mutableListOf<Statement>()
+    var finished = false
+
+    while (!finished) {
+        when (val lexerResult = streamingLexer.nextBatch()) {
+            is StreamingLexerResult.TokenBatch -> streamingParser.addTokens(lexerResult.tokens)
+            is StreamingLexerResult.Error -> throw Exception("Lexing error: ${lexerResult.message}")
+            is StreamingLexerResult.Finished -> finished = true
+        }
+
+        while (streamingParser.hasMore()) {
+            when (val parseResult = streamingParser.nextStatement()) {
+                is StreamingParserResult.StatementParsed -> statements.add(parseResult.statement)
+                is StreamingParserResult.Error -> throw Exception("Parse error: ${parseResult.message}")
+                is StreamingParserResult.Finished -> finished = true
+            }
+        }
     }
+    return statements
 }
 
 class Execution : CliktCommand("execution") {
@@ -98,12 +111,24 @@ class Execution : CliktCommand("execution") {
 
     override fun run() {
         try {
-            val tokens = lexSource(filePath, version)
-            val ast = parseTokens(tokens, version)
-            showProgress("Executing", 100)
-            val interpreter = InterpreterFactory.createInterpreter(parseVersion(version), CLIInputProvider())
-            interpreter.interpret(ast.getStatements())
-            echo("✅ Execution finished")
+            val lexer = LexerFactory.createLexer(parseVersion(version))
+            val parser = DefaultParserFactory.createParser(parseVersion(version))
+            val interpreter = ChunkBaseFactory.createInterpreter(parseVersion(version), CLIInputProvider())
+            val evaluators = interpreter.getEvaluators()
+            val streamingLexer = StreamingLexer(lexer)
+            val streamingParser = StreamingParser(parser)
+            val streamingInterpreter = StreamingInterpreter(evaluators)
+            val pipeline = StreamingPipeline(streamingLexer, streamingParser, streamingInterpreter)
+            val sourceReader = FileSourceReader(filePath)
+            pipeline.initialize(sourceReader)
+            pipeline.processAll()
+            val errorMessage = pipeline.getLastErrorMessage()
+            if (errorMessage != null) {
+                echo("❌ Error: $errorMessage", err = true)
+            } else {
+                showProgress("Executing", 100)
+                echo("✅ Execution finished")
+            }
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}", err = true)
         }
@@ -117,13 +142,13 @@ class Formatting : CliktCommand("formatting") {
 
     override fun run() {
         try {
-            val tokens = lexSource(filePath, version)
-            val ast = parseTokens(tokens, version)
+            val lexer = lexSource(filePath, version)
+            val statements = parseTokens(lexer, version)
             showProgress("Formatting", 100)
             val formatter = DefaultFormatterFactory.createFormatter(parseVersion(version))
             val jsonToMap = JsonReaderFormatterToMap(configPath)
             val strBuilder = StringBuilder()
-            for (statement in ast.getStatements()) {
+            for (statement in statements) {
                 formatter.format(statement, jsonToMap.loadConfig())
                 strBuilder.append(statement)
             }
@@ -141,11 +166,11 @@ class Analyzing : CliktCommand("analyzing") {
 
     override fun run() {
         try {
-            val tokens = lexSource(filePath, version)
-            val ast = parseTokens(tokens, version)
+            val lexer = lexSource(filePath, version)
+            val statements = parseTokens(lexer, version)
             showProgress("Analyzing", 100)
             val linter = DefaultLinterFactory.createLinter(parseVersion(version))
-            val statementStream = StatementStream(ast.getStatements())
+            val statementStream = StatementStream(statements)
             val configLoader = JsonLinterConfigLoaderToMap(configPath)
             val rules = configLoader.loadConfig()
             val result = linter.lint(statementStream, rules)
