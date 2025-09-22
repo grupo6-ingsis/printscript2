@@ -36,7 +36,6 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class FormatterTest {
-
     @Test
     fun `test espacio antes de dos puntos en declaracion - con espacio`() {
         val statement =
@@ -748,6 +747,7 @@ class FormatterTest {
 
         assertEquals("let x = 42;\n", result)
     }
+
     @Test
     fun `test mandatory single space separation`() {
         val statement =
@@ -773,5 +773,4 @@ class FormatterTest {
         assertEquals("let x : Number = 5;", result)
         assertEquals("let x : Number = 5;", result2)
     }
-
 }
