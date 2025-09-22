@@ -45,7 +45,7 @@ class ConditionalEvaluator : Evaluator<Any> {
             }
             else ->
                 Result.failure(
-                    Exception("Expected ConditionalExpression, got ${statement::class.simpleName}"),
+                    Exception("Not evaluator for: ${statement::class.simpleName}"),
                 )
         }
     }

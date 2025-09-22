@@ -12,45 +12,41 @@ class VariableReassignmentEvaluator(
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): Result<EvaluationResult> {
-        return try {
-            when (statement) {
-                is VariableReassignment -> {
-                    val name = statement.identifier.value
-                    if (!context.hasVariable(name)) {
+        return when (statement) {
+            is VariableReassignment -> {
+                val name = statement.identifier.value
+                if (!context.hasVariable(name)) {
+                    return Result.failure(
+                        Exception("Variable '$name' no declarada"),
+                    )
+                }
+                val expectedType = context.getVariableType(name)
+                val valueResult = Analyzer.analyze(statement.value, context, evaluators)
+                val value = valueResult.getOrThrow().value
+
+                if (expectedType != null) {
+                    val validator = acceptedTypes[expectedType]
+                    if (validator == null) {
                         return Result.failure(
-                            Exception("Variable '$name' no declarada"),
+                            Exception("Tipo '$expectedType' no soportado"),
                         )
                     }
-                    val expectedType = context.getVariableType(name)
-                    val valueResult = Analyzer.analyze(statement.value, context, evaluators)
-                    val value = valueResult.getOrThrow().value
-
-                    if (expectedType != null) {
-                        val validator = acceptedTypes[expectedType]
-                        if (validator == null) {
-                            return Result.failure(
-                                Exception("Tipo '$expectedType' no soportado"),
-                            )
-                        }
-                        if (value != null && !validator.isInstance(value)) {
-                            return Result.failure(
-                                Exception(
-                                    "Tipo de dato inválido para variable '$name': " +
-                                        "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
-                                ),
-                            )
-                        }
+                    if (value != null && !validator.isInstance(value)) {
+                        return Result.failure(
+                            Exception(
+                                "Tipo de dato inválido para variable '$name': " +
+                                    "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
+                            ),
+                        )
                     }
-                    val newContext = valueResult.getOrThrow().context.updateVariable(name, value!!)
-                    Result.success(EvaluationResult(Unit, newContext))
                 }
-                else ->
-                    Result.failure(
-                        Exception("Expected VariableReassignment, got ${statement::class.simpleName}"),
-                    )
+                val newContext = valueResult.getOrThrow().context.updateVariable(name, value!!)
+                Result.success(EvaluationResult(Unit, newContext))
             }
-        } catch (e: Exception) {
-            Result.failure(e)
+            else ->
+                Result.failure(
+                    Exception("Not evaluator for: ${statement::class.simpleName}"),
+                )
         }
     }
 }

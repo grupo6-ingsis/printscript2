@@ -11,13 +11,10 @@ import org.gudelker.linter.LinterConfig
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.StreamingParser
 import org.gudelker.parser.StreamingParserResult
-import org.gudelker.pipeline.StreamingPipeline
-import org.gudelker.pipeline.StreamingPipelineResult
 import org.gudelker.result.CompoundResult
 import org.gudelker.rules.FormatterRule
 import org.gudelker.sourcereader.StringSourceReader
 import org.gudelker.statements.interfaces.Statement
-import org.gudelker.stmtposition.StatementStream
 import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

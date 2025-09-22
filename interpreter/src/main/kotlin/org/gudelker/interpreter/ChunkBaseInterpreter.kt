@@ -51,7 +51,7 @@ class ChunkBaseInterpreter(
                 context = evalResult.context
                 results.add(evalResult.value)
             } else {
-                return Result.failure(Exception("Invalid statement"))
+                return Result.failure(Exception(result.exceptionOrNull() ?: Exception("Invalid statement")))
             }
         }
 

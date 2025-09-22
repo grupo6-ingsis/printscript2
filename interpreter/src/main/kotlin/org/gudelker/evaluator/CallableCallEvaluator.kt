@@ -25,6 +25,6 @@ class CallableCallEvaluator(private val callables: List<CallableValidator>) : Ev
                 }
             }
         }
-        return Result.failure(Exception("Invalid callable statement"))
+        return Result.failure(Exception("Not evaluator for: ${statement::class.simpleName}"))
     }
 }

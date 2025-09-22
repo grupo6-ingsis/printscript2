@@ -1,4 +1,4 @@
-package org.gudelker.pipeline
+package org.gudelker
 
 import org.gudelker.evaluator.Evaluator
 import org.gudelker.interpreter.StreamingInterpreter
@@ -26,6 +26,9 @@ class StreamingPipeline(
     private var isFinished = false
     private val minBufferSize = 5
     private val maxBufferSize = 20 // Límite máximo para evitar problemas de memoria
+    private var lastErrorMessage: String? = null
+
+    fun getLastErrorMessage(): String? = lastErrorMessage
 
     fun initialize(sourceReader: SourceReader) {
         streamingLexer.initialize(sourceReader)
@@ -35,6 +38,7 @@ class StreamingPipeline(
 
     fun processNext(): StreamingPipelineResult {
         if (!isInitialized) {
+            lastErrorMessage = "Not initialized"
             return StreamingPipelineResult.Error("Pipeline", "Not initialized")
         }
 
@@ -51,6 +55,7 @@ class StreamingPipeline(
                         streamingParser.addTokens(lexerResult.tokens)
                     }
                     is StreamingLexerResult.Error -> {
+                        lastErrorMessage = lexerResult.message
                         return StreamingPipelineResult.Error("Lexer", lexerResult.message)
                     }
                     StreamingLexerResult.Finished -> {
@@ -59,7 +64,6 @@ class StreamingPipeline(
                 }
             }
 
-            // 2. Intentar parsear siguiente statement
             when (val parseResult = streamingParser.nextStatement()) {
                 is StreamingParserResult.StatementParsed -> {
                     // 3. Interpretar el statement
@@ -68,6 +72,7 @@ class StreamingPipeline(
                             return StreamingPipelineResult.StatementProcessed(interpretResult.result)
                         }
                         is StreamingInterpreterResult.Error -> {
+                            lastErrorMessage = interpretResult.message
                             return StreamingPipelineResult.Error("Interpreter", interpretResult.message)
                         }
                         StreamingInterpreterResult.Finished -> {
@@ -78,6 +83,7 @@ class StreamingPipeline(
                 }
                 is StreamingParserResult.Error -> {
                     // Si necesita más tokens y el lexer puede proporcionar más, intentar de nuevo
+                    lastErrorMessage = parseResult.message
                     if (parseResult.message.contains("Need more tokens", ignoreCase = true) &&
                         streamingLexer.hasMore()
                     ) {
@@ -102,9 +108,10 @@ class StreamingPipeline(
         }
 
         // Si llegamos aquí, hemos intentado múltiples veces sin éxito
+        lastErrorMessage = "Could not parse statement after attempts. Parser buffer size: ${streamingParser.getBufferSize()}"
         return StreamingPipelineResult.Error(
             "Parser",
-            "Could not parse statement after attempts. Parser buffer size: ${streamingParser.getBufferSize()}",
+            lastErrorMessage!!,
         )
     }
 

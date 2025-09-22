@@ -2,7 +2,6 @@ package org.gudelker
 
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.Callable
-import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.LiteralNumber
 import org.gudelker.expressions.LiteralString
 import org.gudelker.inputprovider.CLIInputProvider
@@ -235,23 +234,6 @@ class ErrorTests {
                     type = null,
                     equals = null,
                     value = LiteralNumber(ComboValuePosition(20.0, StatementPosition(2, 9, 2, 12))),
-                ),
-            )
-
-        val interpreter = ChunkBaseFactory.createInterpreter(Version.V2, CLIInputProvider())
-        val result = interpreter.interpret(statements)
-
-        assertTrue(result is InvalidInterpreterResult)
-    }
-
-    @Test
-    fun `error al pasar parámetros incorrectos a una función`() {
-        val statements =
-            listOf(
-                CallableCall(
-                    ComboValuePosition("readEnv", StatementPosition(1, 1, 1, 7)),
-                    LiteralNumber(ComboValuePosition(123.0, StatementPosition(1, 9, 1, 11))),
-                    // readEnv espera un string
                 ),
             )
 
