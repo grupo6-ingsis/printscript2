@@ -24,6 +24,7 @@ import org.gudelker.sourcereader.FileSourceReader
 import org.gudelker.statements.interfaces.Statement
 import org.gudelker.stmtposition.StatementStream
 import org.gudelker.utilities.Version
+import java.io.File
 
 fun parseVersion(version: String): Version =
     when (version) {
@@ -158,10 +159,12 @@ class Formatting : CliktCommand("formatting") {
             val jsonToMap = JsonReaderFormatterToMap(configPath)
             val strBuilder = StringBuilder()
             for (statement in statements) {
-                formatter.format(statement, jsonToMap.loadConfig())
-                strBuilder.append(statement)
+                val formatted = formatter.format(statement, jsonToMap.loadConfig())
+                strBuilder.append(formatted)
             }
-            echo(strBuilder.toString())
+            File(filePath).writeText(strBuilder.toString())
+            echo("✅ Archivo formateado correctamente: $filePath")
+
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}", err = true)
         }
