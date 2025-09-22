@@ -16,10 +16,14 @@ import org.gudelker.lexer.StreamingLexer
 import org.gudelker.lexer.StreamingLexerResult
 import org.gudelker.linter.DefaultLinterFactory
 import org.gudelker.linterloader.JsonLinterConfigLoaderToMap
+import org.gudelker.linterloader.LinterConfigLoader
+import org.gudelker.linterloader.YamlLinterConfigLoaderToMap
 import org.gudelker.parser.DefaultParserFactory
 import org.gudelker.parser.StreamingParser
 import org.gudelker.parser.StreamingParserResult
+import org.gudelker.rules.FormatterConfigLoader
 import org.gudelker.rules.JsonReaderFormatterToMap
+import org.gudelker.rules.YamlReaderFormatterToMap
 import org.gudelker.sourcereader.FileSourceReader
 import org.gudelker.statements.interfaces.Statement
 import org.gudelker.stmtposition.StatementStream
@@ -156,10 +160,10 @@ class Formatting : CliktCommand("formatting") {
             val statements = parseTokens(lexer, version)
             showProgress("Formatting", 100)
             val formatter = DefaultFormatterFactory.createFormatter(parseVersion(version))
-            val jsonToMap = JsonReaderFormatterToMap(configPath)
+            val configLoader = getFormatterConfigLoader(configPath)
             val strBuilder = StringBuilder()
             for (statement in statements) {
-                val formatted = formatter.format(statement, jsonToMap.loadConfig())
+                val formatted = formatter.format(statement, configLoader.loadConfig())
                 strBuilder.append(formatted)
             }
             File(filePath).writeText(strBuilder.toString())
@@ -167,6 +171,13 @@ class Formatting : CliktCommand("formatting") {
         } catch (e: Exception) {
             echo("❌ Error: $e", err = true)
         }
+    }
+}
+
+private fun getFormatterConfigLoader(configPath: String): FormatterConfigLoader {
+    return when (File(configPath).extension.lowercase()) {
+        "yaml", "yml" -> YamlReaderFormatterToMap(configPath)
+        else -> JsonReaderFormatterToMap(configPath)
     }
 }
 
@@ -182,7 +193,7 @@ class Analyzing : CliktCommand("analyzing") {
             showProgress("Analyzing", 100)
             val linter = DefaultLinterFactory.createLinter(parseVersion(version))
             val statementStream = StatementStream(statements)
-            val configLoader = JsonLinterConfigLoaderToMap(configPath)
+            val configLoader = getLinterConfigLoader(configPath)
             val rules = configLoader.loadConfig()
             val result = linter.lint(statementStream, rules)
             val lintResults = result.results
@@ -200,6 +211,13 @@ class Analyzing : CliktCommand("analyzing") {
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}", err = true)
         }
+    }
+}
+
+private fun getLinterConfigLoader(configPath: String): LinterConfigLoader {
+    return when (File(configPath).extension.lowercase()) {
+        "yaml", "yml" -> YamlLinterConfigLoaderToMap(configPath)
+        else -> JsonLinterConfigLoaderToMap(configPath)
     }
 }
 

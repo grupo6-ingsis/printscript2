@@ -1,1 +1,1 @@
-let p = readInput("escribe");
+let holaComo = "estas";

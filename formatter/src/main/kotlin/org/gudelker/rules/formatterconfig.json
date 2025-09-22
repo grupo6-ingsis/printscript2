@@ -9,7 +9,7 @@
   },
   "enforce-spacing-around-equals": {
     "on": true,
-    "quantity": 1
+    "quantity": 0
   },
   "line-breaks-after-println": {
     "on": false,
