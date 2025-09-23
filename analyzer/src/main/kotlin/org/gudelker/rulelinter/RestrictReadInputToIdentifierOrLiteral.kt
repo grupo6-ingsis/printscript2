@@ -1,6 +1,6 @@
 package org.gudelker.rulelinter
 
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.linter.LinterConfig
 import org.gudelker.result.LintViolation
 import org.gudelker.result.LinterResult
@@ -14,7 +14,7 @@ class RestrictReadInputToIdentifierOrLiteral(private val allowedTypes: List<KCla
     }
 
     override fun validate(statement: Statement): LinterResult {
-        if (statement is CallableCall && statement.functionName.value == "readInput") {
+        if (statement is InvocableExpression && statement.functionName.value == "readInput") {
             val arg = statement.expression
             val allowed = allowedTypes.any { it.isInstance(arg) }
             return if (allowed) {

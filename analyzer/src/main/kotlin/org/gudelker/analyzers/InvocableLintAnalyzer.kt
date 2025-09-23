@@ -1,15 +1,15 @@
 package org.gudelker.analyzers
 
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.linter.Linter
 import org.gudelker.linter.LinterConfig
 import org.gudelker.result.LinterResult
 import org.gudelker.rulelinter.RuleLinter
 import org.gudelker.statements.interfaces.Statement
 
-class CallableCallLintAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
+class InvocableLintAnalyzer(private val linterRules: List<RuleLinter>) : LinterAnalyzer {
     override fun canHandle(statement: Statement): Boolean {
-        return statement is CallableCall
+        return statement is InvocableExpression
     }
 
     override fun lint(
@@ -18,7 +18,7 @@ class CallableCallLintAnalyzer(private val linterRules: List<RuleLinter>) : Lint
         linter: Linter,
         results: List<LinterResult>,
     ): List<LinterResult> {
-        if (statement is CallableCall) {
+        if (statement is InvocableExpression) {
             val newList =
                 linterRules.fold(results) { acc, rule ->
                     if (rule.matches(ruleMap)) acc + rule.validate(statement) else acc

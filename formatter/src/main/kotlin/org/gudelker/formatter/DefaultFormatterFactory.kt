@@ -3,11 +3,11 @@ package org.gudelker.formatter
 import org.gudelker.analyzer.Analyzer
 import org.gudelker.analyzer.BinaryForAnalyzer
 import org.gudelker.analyzer.BooleanExprForAnalyzer
-import org.gudelker.analyzer.CallableCallForAnalyzer
 import org.gudelker.analyzer.CallableForAnalyzer
 import org.gudelker.analyzer.ConditionalExprForAnalyzer
 import org.gudelker.analyzer.ConstDeclarationForAnalyzer
 import org.gudelker.analyzer.GroupingForAnalyzer
+import org.gudelker.analyzer.InvocableForAnalyzer
 import org.gudelker.analyzer.LiteralBooleanForAnalyzer
 import org.gudelker.analyzer.LiteralIdentifierForAnalyzer
 import org.gudelker.analyzer.LiteralNumberForAnalyzer
@@ -89,7 +89,7 @@ object DefaultFormatterFactory {
         val analyzers =
             createAnalyzersV1() +
                 listOf(
-                    CallableCallForAnalyzer(emptyList()),
+                    InvocableForAnalyzer(emptyList()),
                     BooleanExprForAnalyzer(),
                     ConditionalExprForAnalyzer(
                         listOf(

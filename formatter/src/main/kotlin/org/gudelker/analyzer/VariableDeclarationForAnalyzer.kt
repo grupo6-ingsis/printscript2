@@ -1,8 +1,8 @@
 package org.gudelker.analyzer
 
 import org.gudelker.expressions.Binary
-import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.CanBeCallStatement
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
@@ -103,7 +103,7 @@ class VariableDeclarationForAnalyzer(private val rulesValidators: List<RuleValid
                 val valuePos = value.operator.position
                 valuePos.startColumn - equals.position.startColumn
             }
-            is CallableCall -> {
+            is InvocableExpression -> {
                 val valuePos = value.functionName.position
                 valuePos.startColumn - equals.position.endColumn
             }

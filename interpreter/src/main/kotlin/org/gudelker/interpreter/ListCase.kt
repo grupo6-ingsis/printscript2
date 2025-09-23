@@ -11,12 +11,12 @@ import org.gudelker.compare.operators.LesserEquals
 import org.gudelker.compare.operators.NotEquals
 import org.gudelker.evaluator.BinaryEvaluator
 import org.gudelker.evaluator.BooleanExpressionEvaluator
-import org.gudelker.evaluator.CallableCallEvaluator
 import org.gudelker.evaluator.CallableEvaluator
 import org.gudelker.evaluator.ConditionalEvaluator
 import org.gudelker.evaluator.ConstDeclarationEvaluator
 import org.gudelker.evaluator.Evaluator
 import org.gudelker.evaluator.GroupingEvaluator
+import org.gudelker.evaluator.InvocableEvaluator
 import org.gudelker.evaluator.LiteralBooleanEvaluator
 import org.gudelker.evaluator.LiteralIdentifierEvaluator
 import org.gudelker.evaluator.LiteralNumberEvaluator
@@ -113,7 +113,7 @@ class ListCase {
                         VariableDeclarationEvaluator(typeValidatorsV2),
                         VariableReassignmentEvaluator(typeValidatorsV2),
                         CallableEvaluator(listOf(PrintLn())),
-                        CallableCallEvaluator(
+                        InvocableEvaluator(
                             listOf(
                                 ReadEnv(),
                                 ReadInput(

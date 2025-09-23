@@ -1,6 +1,6 @@
 package org.gudelker.parser.rule
 
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
@@ -19,7 +19,7 @@ class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxPar
             return errorResult(header.error.getError(), header.nextStream)
         }
         val callable =
-            CallableCall(
+            InvocableExpression(
                 ComboValuePosition(header.functionToken!!.getValue(), header.position),
                 header.expression!!,
             )

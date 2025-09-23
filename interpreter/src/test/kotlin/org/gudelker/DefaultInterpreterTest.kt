@@ -9,9 +9,9 @@ import org.gudelker.compare.operators.NotEquals
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.Callable
-import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.ConditionalExpression
 import org.gudelker.expressions.Grouping
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
@@ -34,7 +34,6 @@ import org.gudelker.utilities.Version
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import kotlin.collections.get
 
 class DefaultInterpreterTest {
     @Test
@@ -352,7 +351,7 @@ class DefaultInterpreterTest {
     fun `callable calls`() {
         val statatements =
             listOf(
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readEnv", StatementPosition(2, 1, 2, 1)),
                     LiteralString(ComboValuePosition("BOCA", StatementPosition(2, 3, 2, 3))),
                 ),

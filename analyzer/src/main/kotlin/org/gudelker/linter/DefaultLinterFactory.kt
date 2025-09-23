@@ -2,11 +2,11 @@ package org.gudelker.linter
 
 import org.gudelker.analyzers.BinaryExpressionLintAnalyzer
 import org.gudelker.analyzers.BooleanExpressionLintAnalyzer
-import org.gudelker.analyzers.CallableCallLintAnalyzer
 import org.gudelker.analyzers.CallableLintAnalyzer
 import org.gudelker.analyzers.ConditionalExpressionLintAnalyzer
 import org.gudelker.analyzers.ConstDeclarationLintAnalyzer
 import org.gudelker.analyzers.GroupingExpressionLintAnalyzer
+import org.gudelker.analyzers.InvocableLintAnalyzer
 import org.gudelker.analyzers.LinterAnalyzer
 import org.gudelker.analyzers.LiteralBooleanLintAnalyzer
 import org.gudelker.analyzers.LiteralIdentifierLintAnalyzer
@@ -94,7 +94,7 @@ object DefaultLinterFactory {
                         ),
                     ),
                 ),
-                CallableCallLintAnalyzer(
+                InvocableLintAnalyzer(
                     listOf(
                         RestrictReadInputToIdentifierOrLiteral(
                             listOf(

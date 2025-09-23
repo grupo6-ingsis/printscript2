@@ -4,9 +4,9 @@ import org.gudelker.compare.operators.NotEquals
 import org.gudelker.expressions.Binary
 import org.gudelker.expressions.BooleanExpression
 import org.gudelker.expressions.Callable
-import org.gudelker.expressions.CallableCall
 import org.gudelker.expressions.ConditionalExpression
 import org.gudelker.expressions.Grouping
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.expressions.LiteralBoolean
 import org.gudelker.expressions.LiteralIdentifier
 import org.gudelker.expressions.LiteralNumber
@@ -381,15 +381,15 @@ class LinterV2Test {
     fun `test linter readInput restrictExpressions only literals`() {
         val statements =
             listOf(
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(1, 1, 1, 9)),
                     LiteralString(ComboValuePosition("Enter name:", StatementPosition(1, 10, 1, 22))),
                 ),
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(3, 1, 3, 7)),
                     LiteralNumber(ComboValuePosition(5, StatementPosition(3, 8, 3, 13))),
                 ),
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(5, 1, 5, 7)),
                     Binary(
                         LiteralNumber(ComboValuePosition(1, StatementPosition(5, 8, 5, 9))),
@@ -397,7 +397,7 @@ class LinterV2Test {
                         LiteralNumber(ComboValuePosition(2, StatementPosition(5, 10, 5, 11))),
                     ),
                 ),
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(5, 1, 5, 7)),
                     Unary(
                         LiteralNumber(ComboValuePosition(3, StatementPosition(6, 8, 6, 9))),
@@ -600,11 +600,11 @@ class LinterV2Test {
     fun `covers CallableCall analyzer`() {
         val stmts =
             listOf(
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(1, 1, 1, 9)),
                     LiteralString(ComboValuePosition("Enter a value:", StatementPosition(1, 11, 1, 25))),
                 ),
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(2, 1, 2, 9)),
                     Binary(
                         LiteralString(ComboValuePosition("Value: ", StatementPosition(2, 11, 2, 18))),
@@ -677,7 +677,7 @@ class LinterV2Test {
                     ),
                 ),
                 // CallableCall with readInput restriction
-                CallableCall(
+                InvocableExpression(
                     ComboValuePosition("readInput", StatementPosition(5, 1, 5, 9)),
                     Binary(
                         LiteralString(ComboValuePosition("Enter a value for ", StatementPosition(5, 11, 5, 28))),

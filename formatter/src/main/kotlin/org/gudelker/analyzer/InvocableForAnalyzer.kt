@@ -1,14 +1,14 @@
 package org.gudelker.analyzer
 
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.formatter.DefaultFormatter
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.statements.interfaces.Statement
 
-class CallableCallForAnalyzer(private val ruleValidators: List<RuleValidatorFormatter>) : Analyzer {
+class InvocableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
-        return statement is CallableCall
+        return statement is InvocableExpression
     }
 
     override fun format(
@@ -16,7 +16,7 @@ class CallableCallForAnalyzer(private val ruleValidators: List<RuleValidatorForm
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val callableCall = statement as CallableCall
+        val callableCall = statement as InvocableExpression
         val name = callableCall.functionName.value
         val formattedExpression = formatter.format(callableCall.expression, formatterRuleMap)
         var string = "$name($formattedExpression);"

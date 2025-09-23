@@ -1,13 +1,13 @@
 package org.gudelker.callable
 
 import org.gudelker.evaluator.EvaluationResult
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.inputprovider.InputProvider
 import org.gudelker.statements.interfaces.Statement
 
 class ReadInput(private val inputProvider: InputProvider) : CallableValidator {
     override fun matches(statement: Statement): Boolean {
-        return statement is CallableCall && statement.functionName.value == "readInput"
+        return statement is InvocableExpression && statement.functionName.value == "readInput"
     }
 
     override fun execute(argumentResult: EvaluationResult): EvaluationResult {

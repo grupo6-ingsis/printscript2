@@ -1,16 +1,16 @@
 package org.gudelker.evaluator
 
 import org.gudelker.callable.CallableValidator
-import org.gudelker.expressions.CallableCall
+import org.gudelker.expressions.InvocableExpression
 import org.gudelker.statements.interfaces.Statement
 
-class CallableCallEvaluator(private val callables: List<CallableValidator>) : Evaluator<Any> {
+class InvocableEvaluator(private val callables: List<CallableValidator>) : Evaluator<Any> {
     override fun evaluate(
         statement: Statement,
         context: ConstVariableContext,
         evaluators: List<Evaluator<out Any>>,
     ): Result<EvaluationResult> {
-        if (statement is CallableCall) {
+        if (statement is InvocableExpression) {
             for (callable in callables) {
                 if (callable.matches(statement)) {
                     val argumentResult = Analyzer.analyze(statement.expression, context, evaluators)
