@@ -12,7 +12,7 @@ sealed class StreamingLexerResult {
 
     data class Error(val message: String) : StreamingLexerResult()
 
-    object Finished : StreamingLexerResult()
+    data object Finished : StreamingLexerResult()
 }
 
 class StreamingLexer(private val defaultLexer: DefaultLexer) {

@@ -14,7 +14,7 @@ sealed class StreamingPipelineResult {
 
     data class Error(val stage: String, val message: String) : StreamingPipelineResult()
 
-    object Finished : StreamingPipelineResult()
+    data object Finished : StreamingPipelineResult()
 }
 
 class StreamingPipeline(
@@ -24,8 +24,6 @@ class StreamingPipeline(
 ) {
     private var isInitialized = false
     private var isFinished = false
-    private val minBufferSize = 5
-    private val maxBufferSize = 20 // Límite máximo para evitar problemas de memoria
     private var lastErrorMessage: String? = null
 
     fun getLastErrorMessage(): String? = lastErrorMessage
@@ -47,7 +45,6 @@ class StreamingPipeline(
         }
 
         while (streamingLexer.hasMore() || streamingParser.hasMore()) {
-            // 1. Alimentar parser con tokens si es necesario y posible
             if (streamingLexer.hasMore()) {
                 val tokensToRequest = 5
                 when (val lexerResult = streamingLexer.nextBatch(tokensToRequest)) {
@@ -66,7 +63,6 @@ class StreamingPipeline(
 
             when (val parseResult = streamingParser.nextStatement()) {
                 is StreamingParserResult.StatementParsed -> {
-                    // 3. Interpretar el statement
                     when (val interpretResult = streamingInterpreter.processStatement(parseResult.statement)) {
                         is StreamingInterpreterResult.StatementEvaluated -> {
                             return StreamingPipelineResult.StatementProcessed(interpretResult.result)
@@ -82,15 +78,13 @@ class StreamingPipeline(
                     }
                 }
                 is StreamingParserResult.Error -> {
-                    // Si necesita más tokens y el lexer puede proporcionar más, intentar de nuevo
                     lastErrorMessage = parseResult.message
                     if (parseResult.message.contains("Need more tokens", ignoreCase = true) &&
                         streamingLexer.hasMore()
                     ) {
-                        continue // Intentar obtener más tokens en la siguiente iteración
+                        continue
                     }
 
-                    // Si necesita más tokens pero el lexer terminó, es fin normal
                     if (parseResult.message.contains("Need more tokens", ignoreCase = true) &&
                         !streamingLexer.hasMore()
                     ) {
@@ -107,7 +101,6 @@ class StreamingPipeline(
             }
         }
 
-        // Si llegamos aquí, hemos intentado múltiples veces sin éxito
         lastErrorMessage = "Could not parse statement after attempts. Parser buffer size: ${streamingParser.getBufferSize()}"
         return StreamingPipelineResult.Error(
             "Parser",
