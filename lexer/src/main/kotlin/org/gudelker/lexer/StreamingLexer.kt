@@ -2,10 +2,12 @@ package org.gudelker.lexer
 
 import org.gudelker.resulttokenizers.LexerError
 import org.gudelker.resulttokenizers.ValidToken
+import org.gudelker.rules.RuleTokenizer
 import org.gudelker.sourcereader.SourceReader
 import org.gudelker.token.Position
 import org.gudelker.token.Token
 import org.gudelker.token.TokenType
+import kotlin.collections.plusAssign
 
 sealed class StreamingLexerResult {
     data class TokenBatch(val tokens: List<Token>) : StreamingLexerResult()
@@ -38,17 +40,13 @@ class StreamingLexer(private val defaultLexer: DefaultLexer) {
         if (!initialized) {
             return StreamingLexerResult.Error("StreamingLexer not initialized")
         }
-
         if (hasError) {
             return StreamingLexerResult.Error(errorMessage)
         }
-
         if (isFinished) {
             return StreamingLexerResult.Finished
         }
-
         val batch = mutableListOf<Token>()
-
         repeat(batchSize) {
             val token = nextSingleToken() ?: return@repeat
 
@@ -59,7 +57,6 @@ class StreamingLexer(private val defaultLexer: DefaultLexer) {
                 return@repeat
             }
         }
-
         return if (batch.isEmpty()) {
             StreamingLexerResult.Finished
         } else {
@@ -74,49 +71,84 @@ class StreamingLexer(private val defaultLexer: DefaultLexer) {
             val rules = defaultLexer.getRules()
 
             while (!sourceReader.isEOF()) {
-                val newChar = sourceReader.next().toString()
-                currentWord += newChar
-                val nextChar = sourceReader.peek()
-
-                val matchingRule = rules.firstOrNull { it.matches(currentWord, nextChar) }
-
+                val (currentWord, nextChar) = consumeNextChar()
+                val matchingRule = findMatchingRule(rules, currentWord, nextChar)
                 if (matchingRule != null) {
                     val posWithNewOffset = defaultLexer.changingOffSet(currentPosition, currentWord)
-                    val pos = posWithNewOffset.copy()
-                    val tokenResult = matchingRule.generateToken(emptyList(), currentWord, pos)
-
-                    when (tokenResult) {
-                        is ValidToken -> {
-                            currentWord = ""
-                            currentPosition = defaultLexer.advancePosition(posWithNewOffset, nextChar)
-
-                            if (tokenResult.tokens.isNotEmpty()) {
-                                return tokenResult.tokens.first()
-                            }
-                        }
-                        is LexerError -> {
-                            hasError = true
-                            errorMessage = "${tokenResult.errMessage}. Error at line ${pos.startLine}"
-                            return null
-                        }
-                    }
+                    return processMatchingRule(matchingRule, emptyList(), currentWord, posWithNewOffset, nextChar)
                 }
             }
-
-            // EOF reached
             if (currentWord.isNotEmpty()) {
-                hasError = true
-                errorMessage = "Unexpected character sequence at end: $currentWord"
-                return null
+                return handleUnexpectedSequenceAtEnd()
             }
-
-            isFinished = true
-            return Token(TokenType.EOF, "EOF", currentPosition)
+            return handleEOF()
         } catch (e: Exception) {
-            hasError = true
-            errorMessage = "Lexing error: ${e.message}"
-            return null
+            return handleException(e)
         }
+    }
+
+    private fun processMatchingRule(
+        matchingRule: RuleTokenizer,
+        tokensList: List<Token>,
+        currentWord: String,
+        posWithNewOffset: Position,
+        nextChar: Char?,
+    ): Token? {
+        val pos = posWithNewOffset.copy()
+        val tokenResult = matchingRule.generateToken(tokensList, currentWord, pos)
+        return when (tokenResult) {
+            is ValidToken -> handleValidToken(tokenResult, posWithNewOffset, nextChar)
+            is LexerError -> handleLexerError(tokenResult, pos)
+        }
+    }
+
+    private fun findMatchingRule(
+        rules: List<RuleTokenizer>,
+        currentWord: String,
+        nextChar: Char?,
+    ): RuleTokenizer? = rules.firstOrNull { it.matches(currentWord, nextChar) }
+
+    private fun handleValidToken(
+        tokenResult: ValidToken,
+        posWithNewOffset: Position,
+        nextChar: Char?,
+    ): Token? {
+        currentWord = ""
+        currentPosition = defaultLexer.advancePosition(posWithNewOffset, nextChar)
+        return tokenResult.tokens.firstOrNull()
+    }
+
+    private fun handleLexerError(
+        tokenResult: LexerError,
+        pos: Position,
+    ): Token? {
+        hasError = true
+        errorMessage = "${tokenResult.errMessage}. Error at line ${pos.startLine}"
+        return null
+    }
+
+    private fun handleEOF(): Token? {
+        isFinished = true
+        return Token(TokenType.EOF, "EOF", currentPosition)
+    }
+
+    private fun handleUnexpectedSequenceAtEnd(): Token? {
+        hasError = true
+        errorMessage = "Unexpected character sequence at end: $currentWord"
+        return null
+    }
+
+    private fun handleException(e: Exception): Token? {
+        hasError = true
+        errorMessage = "Lexing error: ${e.message}"
+        return null
+    }
+
+    private fun consumeNextChar(): Pair<String, Char?> {
+        val newChar = sourceReader.next().toString()
+        currentWord += newChar
+        val nextChar = sourceReader.peek()
+        return Pair(currentWord, nextChar)
     }
 
     fun hasMore(): Boolean = initialized && !hasError && !isFinished
