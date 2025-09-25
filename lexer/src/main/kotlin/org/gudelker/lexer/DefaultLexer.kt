@@ -4,6 +4,7 @@ import org.gudelker.resultlexer.LexerResult
 import org.gudelker.resultlexer.LexerSyntaxError
 import org.gudelker.resultlexer.ValidTokens
 import org.gudelker.resulttokenizers.LexerError
+import org.gudelker.resulttokenizers.TokenResult
 import org.gudelker.resulttokenizers.ValidToken
 import org.gudelker.rules.RuleTokenizer
 import org.gudelker.sourcereader.SourceReader
@@ -11,6 +12,7 @@ import org.gudelker.token.Position
 import org.gudelker.token.Token
 import org.gudelker.token.TokenType
 import kotlin.collections.plus
+import kotlin.text.matches
 
 class DefaultLexer(
     private val rules: List<RuleTokenizer>,
@@ -22,41 +24,68 @@ class DefaultLexer(
             startPos: Position,
         ): LexerResult {
             if (sourceReader.isEOF()) {
-                val finalTokens = tokensList + Token(TokenType.EOF, "EOF", startPos)
-                return ValidTokens(finalTokens)
+                return handleEOF(tokensList, startPos)
             }
             val newChar = sourceReader.next().toString()
             val updatedWord = actualWord + newChar
             val nextChar = sourceReader.peek()
 
-            val matchingRule = rules.firstOrNull { it.matches(updatedWord, nextChar) }
+            val matchingRule = findMatchingRule(updatedWord, nextChar)
 
             return if (matchingRule != null) {
                 val posWithNewOffset = changingOffSet(startPos, updatedWord)
-                val pos = posWithNewOffset.copy()
-                val tokenResult = matchingRule.generateToken(tokensList, updatedWord, pos)
-
-                when (tokenResult) {
-                    is ValidToken -> {
-                        lexRecursive(
-                            "",
-                            tokenResult.tokens,
-                            advancePosition(
-                                posWithNewOffset,
-                                nextChar,
-                            ),
-                        )
-                    }
-                    is LexerError -> {
-                        LexerSyntaxError(tokenResult.errMessage + ". Error at line ${pos.startLine}")
-                    }
-                }
+                processMatchingRule(
+                    matchingRule,
+                    tokensList,
+                    updatedWord,
+                    posWithNewOffset,
+                    nextChar,
+                    ::lexRecursive,
+                )
             } else {
                 lexRecursive(updatedWord, tokensList, startPos)
             }
         }
 
         return lexRecursive("", listOf(), Position())
+    }
+
+    private fun handleEOF(
+        tokensList: List<Token>,
+        startPos: Position,
+    ): ValidTokens {
+        val finalTokens = tokensList + Token(TokenType.EOF, "EOF", startPos)
+        return ValidTokens(finalTokens)
+    }
+
+    private fun handleTokenResult(
+        tokenResult: TokenResult,
+        pos: Position,
+        posWithNewOffset: Position,
+        nextChar: Char?,
+        lexRecursive: (String, List<Token>, Position) -> LexerResult,
+    ): LexerResult =
+        when (tokenResult) {
+            is ValidToken -> lexRecursive("", tokenResult.tokens, advancePosition(posWithNewOffset, nextChar))
+            is LexerError -> LexerSyntaxError(tokenResult.errMessage + ". Error at line ${pos.startLine}")
+        }
+
+    private fun findMatchingRule(
+        updatedWord: String,
+        nextChar: Char?,
+    ): RuleTokenizer? = rules.firstOrNull { it.matches(updatedWord, nextChar) }
+
+    private fun processMatchingRule(
+        matchingRule: RuleTokenizer,
+        tokensList: List<Token>,
+        updatedWord: String,
+        posWithNewOffset: Position,
+        nextChar: Char?,
+        lexRecursive: (String, List<Token>, Position) -> LexerResult,
+    ): LexerResult {
+        val pos = posWithNewOffset.copy()
+        val tokenResult = matchingRule.generateToken(tokensList, updatedWord, pos)
+        return handleTokenResult(tokenResult, pos, posWithNewOffset, nextChar, lexRecursive)
     }
 
     fun advancePosition(

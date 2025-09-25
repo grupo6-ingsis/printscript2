@@ -11,7 +11,6 @@ class StringTokenizer : RuleTokenizer {
         actualWord: String,
         nextChar: Char?,
     ): Boolean {
-        // Verificar que tenga al menos 2 caracteres (comillas de apertura y cierre)
         if (actualWord.length < 2) {
             return false
         }
@@ -21,9 +20,6 @@ class StringTokenizer : RuleTokenizer {
         if (firstCharIsQuotationMark) {
             return false
         }
-
-        // La cadena está completa si el último carácter es la misma comilla de inicio
-        // y el siguiente carácter ya no forma parte de la cadena
         return actualWord.last() == firstChar
     }
 

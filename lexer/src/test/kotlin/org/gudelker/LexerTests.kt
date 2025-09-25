@@ -20,8 +20,6 @@ class LexerTests {
 
     @Test
     fun `test token rules`() {
-        // Usar ruta relativa desde la raíz del proyecto
-        // Ahora no hay que cambiarlo constantemente
         val reader = FileSourceReader("src/test/lexer.txt")
         when (val tokens = lexerV1.lex(reader)) {
             is ValidTokens ->
