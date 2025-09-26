@@ -14,6 +14,7 @@ import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.statements.declarations.ConstDeclaration
 import org.gudelker.statements.interfaces.Statement
 import org.gudelker.stmtposition.ComboValuePosition
+import org.gudelker.utils.FormatterUtils
 
 class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
@@ -25,73 +26,114 @@ class ConstDeclarationForAnalyzer(private val rulesValidators: List<RuleValidato
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        if (statement is ConstDeclaration) {
-            val keyword = statement.keywordCombo.value
-            val identifier = statement.identifierCombo.value
-            var resultString = "$keyword $identifier"
-            if (statement.colon != null) {
-                val numberOfSpacesBeforeColon =
-                    statement.colon!!.position.startColumn - statement.identifierCombo.position.startColumn
-                val spacesBeforeColon = " ".repeat(numberOfSpacesBeforeColon - 1)
-                val numberOfSpacesAfterColon = statement.type?.position!!.startColumn - statement.colon!!.position.startColumn
-                val spacesAfterColon = " ".repeat(numberOfSpacesAfterColon - 1)
-                resultString += "$spacesBeforeColon${statement.colon!!.value}$spacesAfterColon${statement.type!!.value}"
-            }
-
-            val numberOfSpacesBeforeEquals = statement.equals!!.position.startColumn - statement.type!!.position.startColumn
-            val spacesBeforeEquals = " ".repeat(numberOfSpacesBeforeEquals - 1)
-            val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(statement.value!!, statement.equals!!)
-            val spacesAfterEquals = " ".repeat(numberOfSpacesAfterEquals - 1)
-
-            val valueFormatted = formatter.formatNode(statement.value!!, formatterRuleMap)
-            resultString += "$spacesBeforeEquals${statement.equals!!.value}$spacesAfterEquals$valueFormatted"
-
-            resultString += ";"
-            rulesValidators.forEach { validator ->
-                if (validator.matches(formatterRuleMap)) {
-                    resultString = validator.applyRule(resultString, statement, formatterRuleMap)
-                }
-            }
-
-            return resultString
+        if (statement !is ConstDeclaration) {
+            return ""
         }
-        return ""
+
+        var resultString = formatUntilIdentifier(statement)
+
+        if (statement.colon != null) {
+            resultString = formatWithSpacesAroundColon(statement, resultString)
+        }
+
+        resultString = formatSpacesAroundEqualsAndValue(statement, formatter, formatterRuleMap, resultString)
+
+        resultString += ";"
+        resultString = lookForAndApplyOtherRules(formatterRuleMap, resultString, statement)
+
+        return resultString
     }
+
+    private fun lookForAndApplyOtherRules(
+        formatterRuleMap: Map<String, FormatterRule>,
+        resultString: String,
+        statement: Statement,
+    ): String {
+        var resultString1 = resultString
+        rulesValidators.forEach { validator ->
+            if (validator.matches(formatterRuleMap)) {
+                resultString1 = validator.applyRule(resultString1, statement, formatterRuleMap)
+            }
+        }
+        return resultString1
+    }
+
+    private fun formatSpacesAroundEqualsAndValue(
+        statement: ConstDeclaration,
+        formatter: DefaultFormatter,
+        formatterRuleMap: Map<String, FormatterRule>,
+        resultString: String,
+    ): String {
+        var resultString1 = resultString
+        val numberOfSpacesBeforeEquals = getEqualsColumn(statement) - getTypeStartColumn(statement)
+        val spacesBeforeEquals = FormatterUtils.generateSpaces(numberOfSpacesBeforeEquals - 1)
+        val numberOfSpacesAfterEquals = calculateSpacesAfterEquals(statement.value, statement.equals)
+        val spacesAfterEquals = FormatterUtils.generateSpaces(numberOfSpacesAfterEquals - 1)
+
+        val valueFormatted = formatter.formatNode(statement.value, formatterRuleMap)
+        resultString1 += "$spacesBeforeEquals${getEquals(statement)}$spacesAfterEquals$valueFormatted"
+        return resultString1
+    }
+
+    private fun getEquals(statement: ConstDeclaration) = statement.equals.value
+
+    private fun formatUntilIdentifier(statement: ConstDeclaration): String {
+        val keyword = getKeyword(statement)
+        val identifier = getIdentifier(statement)
+        val resultString = "$keyword $identifier"
+        return resultString
+    }
+
+    private fun getTypeStartColumn(statement: ConstDeclaration) = statement.type!!.position.startColumn
+
+    private fun getEqualsColumn(statement: ConstDeclaration) = statement.equals.position.startColumn
+
+    private fun formatWithSpacesAroundColon(
+        statement: ConstDeclaration,
+        resultString: String,
+    ): String {
+        var resultString1 = resultString
+        val numberOfSpacesBeforeColon = getColonColumn(statement) - getIdentifierColumn(statement)
+        val spacesBeforeColon = FormatterUtils.generateSpaces(numberOfSpacesBeforeColon - 1)
+        val numberOfSpacesAfterColon = getTypeColumn(statement) - getColonColumn(statement)
+        val spacesAfterColon = FormatterUtils.generateSpaces(numberOfSpacesAfterColon - 1)
+
+        resultString1 += "$spacesBeforeColon${statement.colon!!.value}$spacesAfterColon${statement.type!!.value}"
+        return resultString1
+    }
+
+    private fun getTypeColumn(statement: ConstDeclaration) = statement.type?.position!!.startColumn
+
+    private fun getIdentifierColumn(statement: ConstDeclaration) = statement.identifierCombo.position.startColumn
+
+    private fun getColonColumn(statement: ConstDeclaration) = statement.colon!!.position.startColumn
+
+    private fun getIdentifier(statement: ConstDeclaration) = statement.identifierCombo.value
+
+    private fun getKeyword(statement: ConstDeclaration) = statement.keywordCombo.value
 
     private fun calculateSpacesAfterEquals(
         value: CanBeCallStatement,
         equals: ComboValuePosition<String>,
     ): Int {
-        return when (value) {
-            is LiteralBoolean -> {
-                val valuePos = value.value.position
-                valuePos.startColumn - equals.position.startColumn
+        val valueStartColumn =
+            when (value) {
+                is LiteralBoolean -> value.value.position.startColumn
+                is LiteralNumber -> value.value.position.startColumn
+                is LiteralString -> value.value.position.startColumn
+                is LiteralIdentifier -> value.value.position.startColumn
+                is Binary -> value.position?.startColumn
+                is Unary -> value.operator.position.startColumn
+                is InvocableExpression -> value.functionName.position.startColumn
+                else -> null
+            } ?: return 0
+
+        val equalsColumn =
+            when (value) {
+                is LiteralBoolean, is Unary -> equals.position.startColumn
+                else -> equals.position.endColumn
             }
-            is LiteralNumber -> {
-                val valuePos = value.value.position
-                valuePos.startColumn - equals.position.endColumn
-            }
-            is LiteralString -> {
-                val valuePos = value.value.position
-                valuePos.startColumn - equals.position.endColumn
-            }
-            is LiteralIdentifier -> {
-                val valuePos = value.value.position
-                valuePos.startColumn - equals.position.endColumn
-            }
-            is Binary -> {
-                val valuePos = value.position
-                valuePos!!.startColumn - equals.position.endColumn
-            }
-            is Unary -> {
-                val valuePos = value.operator.position
-                valuePos.startColumn - equals.position.startColumn
-            }
-            is InvocableExpression -> {
-                val valuePos = value.functionName.position
-                valuePos.startColumn - equals.position.endColumn
-            }
-            else -> 0
-        }
+
+        return valueStartColumn - equalsColumn
     }
 }
