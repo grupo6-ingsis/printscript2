@@ -136,13 +136,8 @@ class Execution : CliktCommand("execution") {
             val sourceReader = FileSourceReader(filePath)
             pipeline.initialize(sourceReader)
             pipeline.processAll()
-            val errorMessage = pipeline.getLastErrorMessage()
-            if (errorMessage == null) {
-                echo("❌ Error: $errorMessage", err = true)
-            } else {
-                showProgress("Executing", 100)
-                echo("✅ Execution finished")
-            }
+            showProgress("Executing", 100)
+            echo("✅ Execution finished")
         } catch (e: Exception) {
             echo("❌ Error: ${e.message}", err = true)
         }
