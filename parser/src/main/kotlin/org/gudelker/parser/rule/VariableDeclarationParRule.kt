@@ -26,12 +26,12 @@ class VariableDeclarationParRule(
         val (keywordToken, streamAfterKeyword) =
             consumeKeyword(tokenStream)
                 ?: return errorResult("Se esperaba una keyword al inicio de la declaración", tokenStream)
-        val keywordTokenPosition = getPosition(keywordToken!!)
+        val keywordTokenPosition = ParserUtils.createStatementPosition(keywordToken!!)
         val identifierResult = ParserUtils.parseIdentifier(streamAfterKeyword)
         if (identifierResult.identifier == null) {
             return errorResult("Se esperaba un identificador después de '${keywordToken.getValue()}'", streamAfterKeyword)
         }
-        val identifierPos = getPosition(identifierResult.identifier)
+        val identifierPos = ParserUtils.createStatementPosition(identifierResult.identifier)
         val typeResult = ParserUtils.parseOptionalType(identifierResult.nextStream)
         if (typeResult.error != null) {
             return errorResult(typeResult.error.toString(), typeResult.nextStream)
@@ -61,11 +61,6 @@ class VariableDeclarationParRule(
     }
 
     private fun consumeKeyword(tokenStream: TokenStream) = tokenStream.consume(TokenType.KEYWORD).takeIf { it.first != null }
-
-    private fun getPosition(token: Token): StatementPosition {
-        val pos = token.getPosition()
-        return StatementPosition(pos.startLine, pos.startColumn, pos.endLine, pos.endColumn)
-    }
 
     private fun errorResult(
         message: String,

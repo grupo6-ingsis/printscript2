@@ -11,6 +11,7 @@ import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.token.Token
 import org.gudelker.token.TokenType
+import kotlin.toString
 
 class ConstDeclarationParRule(
     private val keywords: Set<String>,
@@ -19,56 +20,6 @@ class ConstDeclarationParRule(
     override fun matches(tokenStream: TokenStream): Boolean {
         val current = tokenStream.current()
         return current?.getType() == TokenType.KEYWORD && keywords.contains(current.getValue())
-    }
-
-    override fun parse(tokenStream: TokenStream): ParseResult {
-        val (keywordToken, streamAfterKeyword) =
-            consumeKeyword(tokenStream)
-                ?: return errorResult("Se esperaba una keyword al inicio de la declaración", tokenStream)
-        val keywordPos = getPosition(keywordToken!!)
-        val (identifierToken, streamAfterIdentifier) =
-            consumeIdentifier(streamAfterKeyword)
-                ?: return errorResult("Se esperaba un identificador después de '${keywordToken.getValue()}'", streamAfterKeyword)
-        val identifierPos = getPosition(identifierToken!!)
-        val typeResult = ParserUtils.parseOptionalType(streamAfterIdentifier)
-        if (typeResult.error != null) {
-            return errorResult(typeResult.error.toString(), typeResult.nextStream)
-        }
-        // Create type ComboValuePosition only if type is present
-        val typeCombo =
-            if (typeResult.typeName != null && typeResult.typePosition != null) {
-                ComboValuePosition(typeResult.typeName, typeResult.typePosition)
-            } else {
-                null
-            }
-        val (assignToken, streamAfterAssign) = streamAfterType(typeResult)
-        if (assignToken == null) {
-            return errorResult("Se esperaba '=' después de la declaración", typeResult.nextStream)
-        }
-        val equalsPos = assignToken.getPosition()
-        val equalsCombo =
-            ComboValuePosition(
-                assignToken.getValue(),
-                StatementPosition(equalsPos.startLine, equalsPos.startColumn, equalsPos.endLine, equalsPos.endColumn),
-            )
-
-        val colonCombo =
-            if (typeResult.colon != null) {
-                ComboValuePosition(typeResult.colon, typeResult.colonPosition!!)
-            } else {
-                null
-            }
-
-        return parseWithAssignment(
-            keywordToken,
-            keywordPos,
-            identifierToken,
-            identifierPos,
-            typeCombo,
-            streamAfterAssign,
-            colonCombo,
-            equalsCombo,
-        )
     }
 
     private fun consumeKeyword(tokenStream: TokenStream) = tokenStream.consume(TokenType.KEYWORD).takeIf { it.first != null }
@@ -87,11 +38,40 @@ class ConstDeclarationParRule(
 
     private fun streamAfterType(typeResult: TypeParseResult) = typeResult.nextStream.consume(TokenType.ASSIGNATION)
 
+    override fun parse(tokenStream: TokenStream): ParseResult {
+        val (keywordToken, streamAfterKeyword) =
+            consumeKeyword(tokenStream)
+                ?: return errorResult("Se esperaba una keyword al inicio de la declaración", tokenStream)
+        val keywordPos = getPosition(keywordToken!!)
+        val (identifierToken, streamAfterIdentifier) =
+            consumeIdentifier(streamAfterKeyword)
+                ?: return errorResult("Se esperaba un identificador después de '${keywordToken.getValue()}'", streamAfterKeyword)
+        val identifierPos = getPosition(identifierToken!!)
+        val typeResult = ParserUtils.parseOptionalType(streamAfterIdentifier)
+        if (typeResult.error != null) {
+            return errorResult(typeResult.error.toString(), typeResult.nextStream)
+        }
+        val typeCombo = createCombo(typeResult.typeName, typeResult.typePosition)
+        val (assignToken, streamAfterAssign) = streamAfterType(typeResult)
+        if (assignToken == null) {
+            return errorResult("Se esperaba '=' después de la declaración", typeResult.nextStream)
+        }
+        val equalsCombo = createCombo(assignToken.getValue(), getPosition(assignToken))!!
+        val colonCombo = createCombo(typeResult.colon, typeResult.colonPosition)
+
+        return parseWithAssignment(
+            createCombo(keywordToken.getValue(), keywordPos)!!,
+            createCombo(identifierToken.getValue(), identifierPos)!!,
+            typeCombo,
+            streamAfterAssign,
+            colonCombo,
+            equalsCombo,
+        )
+    }
+
     private fun parseWithAssignment(
-        keywordToken: Token,
-        keywordPos: StatementPosition,
-        identifierToken: Token,
-        identifierPos: StatementPosition,
+        keyword: ComboValuePosition<String>,
+        identifier: ComboValuePosition<String>,
         type: ComboValuePosition<String>?,
         streamAfterAssign: TokenStream,
         colon: ComboValuePosition<String>?,
@@ -110,14 +90,40 @@ class ConstDeclarationParRule(
             return errorResult("Se esperaba un punto y coma al final de la declaración", expressionResult.tokenStream)
         }
         val statement =
-            ConstDeclaration(
-                ComboValuePosition(keywordToken.getValue(), keywordPos),
-                ComboValuePosition(identifierToken.getValue(), identifierPos),
+            createConstDeclaration(
+                keyword,
+                identifier,
                 colon,
                 type,
                 equals,
                 expressionStatement,
             )
+
         return ParseResult(ValidStatementParserResult(statement), finalStream)
+    }
+
+    private fun createCombo(
+        value: String?,
+        pos: StatementPosition?,
+    ): ComboValuePosition<String>? {
+        return if (value != null && pos != null) ComboValuePosition(value, pos) else null
+    }
+
+    private fun createConstDeclaration(
+        keyword: ComboValuePosition<String>,
+        identifier: ComboValuePosition<String>,
+        colon: ComboValuePosition<String>?,
+        type: ComboValuePosition<String>?,
+        equals: ComboValuePosition<String>,
+        value: CanBeCallStatement,
+    ): ConstDeclaration {
+        return ConstDeclaration(
+            keywordCombo = keyword,
+            identifierCombo = identifier,
+            colon = colon,
+            type = type,
+            equals = equals,
+            value = value,
+        )
     }
 }

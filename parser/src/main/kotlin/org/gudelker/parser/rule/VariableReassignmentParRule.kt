@@ -1,5 +1,4 @@
 package org.gudelker.parser.rule
-
 import org.gudelker.expressions.CanBeCallStatement
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
@@ -24,21 +23,11 @@ class VariableReassignmentParRule(
         val (identifierToken, streamAfterIdentifier) =
             consumeIdentifier(tokenStream)
                 ?: return errorResult("Se esperaba un identificador", tokenStream)
-        val identifierPos = getPosition(identifierToken!!)
+        val identifierPos = ParserUtils.createStatementPosition(identifierToken!!)
         val (assignToken, streamAfterAssign) =
             consumeAssignation(streamAfterIdentifier)
                 ?: return errorResult("Se esperaba '=' después del identificador", streamAfterIdentifier)
-        val assignPos = assignToken!!.getPosition()
-        val equalsCombo =
-            ComboValuePosition(
-                assignToken.getValue(),
-                StatementPosition(
-                    assignPos.startLine,
-                    assignPos.startColumn,
-                    assignPos.endLine,
-                    assignPos.endColumn,
-                ),
-            )
+        val equalsCombo = createComboValuePosition(assignToken!!)
         return parseWithAssignment(identifierToken, identifierPos, equalsCombo, streamAfterAssign)
     }
 
@@ -46,10 +35,8 @@ class VariableReassignmentParRule(
 
     private fun consumeAssignation(tokenStream: TokenStream) = tokenStream.consume(TokenType.ASSIGNATION).takeIf { it.first != null }
 
-    private fun getPosition(token: Token): StatementPosition {
-        val pos = token.getPosition()
-        return StatementPosition(pos.startLine, pos.startColumn, pos.endLine, pos.endColumn)
-    }
+    private fun createComboValuePosition(token: Token): ComboValuePosition<String> =
+        ComboValuePosition(token.getValue(), ParserUtils.createStatementPosition(token))
 
     private fun errorResult(
         message: String,

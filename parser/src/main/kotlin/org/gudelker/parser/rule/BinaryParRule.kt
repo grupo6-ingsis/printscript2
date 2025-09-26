@@ -13,6 +13,7 @@ import org.gudelker.parser.result.ValidStatementParserResult
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.stmtposition.StatementPosition
+import org.gudelker.token.Token
 import org.gudelker.token.TokenType
 
 class BinaryParRule(
@@ -45,64 +46,86 @@ class BinaryParRule(
         stream: TokenStream,
     ): ParseResult {
         val currentToken = stream.current()
-
         return if (currentToken?.getType() == TokenType.OPERATOR &&
             currentToken.getValue() in additionOperators.keys
         ) {
             val operatorValue =
-                additionOperators[currentToken.getValue()]?.invoke()
+                getOperatorValue(additionOperators, currentToken)
                     ?: return ParseResult(
                         ParserSyntaxError("Operador no válido: ${currentToken.getValue()}"),
                         stream,
                     )
-            val operatorPos = currentToken.getPosition()
-            val operatorPosition =
-                StatementPosition(
-                    operatorPos.startLine,
-                    operatorPos.startColumn,
-                    operatorPos.endLine,
-                    operatorPos.endColumn,
-                )
-
+            val operatorPosition = getOperatorPosition(currentToken)
             val (_, streamAfterOperator) = stream.next()
             val rightResult = parseMultiplication(streamAfterOperator)
-
             if (rightResult.parserResult !is ValidStatementParserResult) {
                 return rightResult
             }
-
             val rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement
-
-            // Calculate overall binary expression position
-            val leftPos = getExpressionStartPosition(leftExpression)
-            val rightPos = getExpressionEndPosition(rightExpression)
-
-            val overallPosition =
-                if (leftPos != null && rightPos != null) {
-                    StatementPosition(
-                        leftPos.startLine,
-                        leftPos.startColumn,
-                        rightPos.endLine,
-                        rightPos.endColumn,
-                    )
-                } else {
-                    null
-                }
-
-            // Create ComboValuePosition for operator
-            val operatorCombo = ComboValuePosition(operatorValue, operatorPosition)
-
-            val binaryExpression =
-                Binary(
-                    leftExpression = leftExpression,
-                    operator = operatorCombo,
-                    rightExpression = rightExpression,
-                    position = overallPosition,
-                )
-
+            val (leftPos, rightPos) = getLeftRightPositions(leftExpression, rightExpression)
+            val overallPosition = combinePositions(leftPos, rightPos)
+            val binaryExpression = createBinaryExpression(leftExpression, operatorValue, operatorPosition, rightExpression, overallPosition)
             parseAdditionContinuation(binaryExpression, rightResult.tokenStream)
         } else {
             ParseResult(ValidStatementParserResult(leftExpression), stream)
+        }
+    }
+
+    private fun getOperatorValue(
+        operatorMap: Map<String, () -> Operator>,
+        token: Token,
+    ): Operator? {
+        return operatorMap[token.getValue()]?.invoke()
+    }
+
+    private fun getOperatorPosition(token: Token): StatementPosition {
+        val pos = token.getPosition()
+        return StatementPosition(
+            pos.startLine,
+            pos.startColumn,
+            pos.endLine,
+            pos.endColumn,
+        )
+    }
+
+    private fun createBinaryExpression(
+        leftExpression: ExpressionStatement,
+        operatorValue: Operator,
+        operatorPosition: StatementPosition,
+        rightExpression: ExpressionStatement,
+        overallPosition: StatementPosition?,
+    ): Binary {
+        val operatorCombo = ComboValuePosition(operatorValue, operatorPosition)
+        return Binary(
+            leftExpression = leftExpression,
+            operator = operatorCombo,
+            rightExpression = rightExpression,
+            position = overallPosition,
+        )
+    }
+
+    private fun getLeftRightPositions(
+        leftExpression: ExpressionStatement,
+        rightExpression: ExpressionStatement,
+    ): Pair<StatementPosition?, StatementPosition?> {
+        val leftPos = getExpressionStartPosition(leftExpression)
+        val rightPos = getExpressionEndPosition(rightExpression)
+        return Pair(leftPos, rightPos)
+    }
+
+    private fun combinePositions(
+        left: StatementPosition?,
+        right: StatementPosition?,
+    ): StatementPosition? {
+        return if (left != null && right != null) {
+            StatementPosition(
+                left.startLine,
+                left.startColumn,
+                right.endLine,
+                right.endColumn,
+            )
+        } else {
+            null
         }
     }
 
@@ -123,59 +146,32 @@ class BinaryParRule(
         stream: TokenStream,
     ): ParseResult {
         val currentToken = stream.current()
-
         return if (currentToken?.getType() == TokenType.OPERATOR &&
             currentToken.getValue() in multiplicationOperators.keys
         ) {
             val operatorValue =
-                multiplicationOperators[currentToken.getValue()]?.invoke()
+                getOperatorValue(multiplicationOperators, currentToken)
                     ?: return ParseResult(
                         ParserSyntaxError("Operador no válido: ${currentToken.getValue()}"),
                         stream,
                     )
-
-            // Get operator position
-            val operatorPos = currentToken.getPosition()
-            val operatorPosition =
-                StatementPosition(
-                    operatorPos.startLine,
-                    operatorPos.startColumn,
-                    operatorPos.endLine,
-                    operatorPos.endColumn,
-                )
-
+            val operatorPosition = getOperatorPosition(currentToken)
             val (_, streamAfterOperator) = stream.next()
             val rightResult = expressionRule.parse(streamAfterOperator)
-
             if (rightResult.parserResult !is ValidStatementParserResult) {
                 return rightResult
             }
-
             val rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement
-            val leftPos = getExpressionStartPosition(leftExpression)
-            val rightPos = getExpressionEndPosition(rightExpression)
-
-            val overallPosition =
-                if (leftPos != null && rightPos != null) {
-                    StatementPosition(
-                        leftPos.startLine,
-                        leftPos.startColumn,
-                        rightPos.endLine,
-                        rightPos.endColumn,
-                    )
-                } else {
-                    null
-                }
-            val operatorCombo = ComboValuePosition(operatorValue, operatorPosition)
-
+            val (leftPos, rightPos) = getLeftRightPositions(leftExpression, rightExpression)
+            val overallPosition = combinePositions(leftPos, rightPos)
             val binaryExpression =
-                Binary(
-                    leftExpression = leftExpression,
-                    operator = operatorCombo,
-                    rightExpression = rightExpression,
-                    position = overallPosition,
+                createBinaryExpression(
+                    leftExpression,
+                    operatorValue,
+                    operatorPosition,
+                    rightExpression,
+                    overallPosition,
                 )
-
             parseMultiplicationContinuation(binaryExpression, rightResult.tokenStream)
         } else {
             ParseResult(ValidStatementParserResult(leftExpression), stream)

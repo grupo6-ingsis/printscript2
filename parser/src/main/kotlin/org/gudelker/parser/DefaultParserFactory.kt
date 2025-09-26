@@ -2,9 +2,9 @@ package org.gudelker.parser
 
 import org.gudelker.parser.rule.BinaryParRule
 import org.gudelker.parser.rule.BooleanExpressionParRule
-import org.gudelker.parser.rule.CallableCallParRule
 import org.gudelker.parser.rule.ExpressionParRule
 import org.gudelker.parser.rule.GroupingParRule
+import org.gudelker.parser.rule.InvocableParRule
 import org.gudelker.parser.rule.LiteralBooleanParRule
 import org.gudelker.parser.rule.LiteralIdentifierParRule
 import org.gudelker.parser.rule.LiteralNumberParRule
@@ -34,7 +34,7 @@ object DefaultParserFactory {
         return buildParser(
             includeBoolean = true,
             buildExtraRules = { completeExpressionRule ->
-                val callableCall = CallableCallParRule(completeExpressionRule)
+                val callableCall = InvocableParRule(completeExpressionRule)
                 val expression = ParserFactoryUtils.createExpressionRule(listOf(completeExpressionRule, callableCall))
 
                 val completeExpressionForCallable =

@@ -34,15 +34,7 @@ class UnaryParRule(
         val operator =
             unaryOperators[token!!.getValue()]?.invoke()
                 ?: return errorResult("Operador unario no válido: ${token.getValue()}", tokenStream)
-        // Get operator position
-        val operatorPos = token.getPosition()
-        val operatorPosition =
-            StatementPosition(
-                operatorPos.startLine,
-                operatorPos.startColumn,
-                operatorPos.endLine,
-                operatorPos.endColumn,
-            )
+        val operatorPosition = ParserUtils.createStatementPosition(token)
         val (_, streamAfterOperator) = tokenStream.next()
         return parseUnaryExpression(operator, streamAfterOperator, operatorPosition)
     }
@@ -64,27 +56,9 @@ class UnaryParRule(
         if (expression !is ExpressionStatement) {
             return errorResult("Se esperaba una expresión después del operador unario", expressionResult.tokenStream)
         }
-        // Get expression position and calculate overall position
         val exprPos = getExpressionEndPosition(expression)
-        val overallPosition =
-            if (exprPos != null) {
-                StatementPosition(
-                    operatorPosition.startLine,
-                    operatorPosition.startColumn,
-                    exprPos.endLine,
-                    exprPos.endColumn,
-                )
-            } else {
-                null
-            }
-        val operatorCombo = ComboValuePosition(operator, operatorPosition)
-
-        val unaryExpression =
-            Unary(
-                value = expression,
-                operator = operatorCombo,
-                position = overallPosition,
-            )
+        val overallPosition = generateOverallPosition(operatorPosition, exprPos)
+        val unaryExpression = createUnaryExpression(operator, operatorPosition, expression, overallPosition)
         return ParseResult(ValidStatementParserResult(unaryExpression), expressionResult.tokenStream)
     }
 
@@ -102,6 +76,36 @@ class UnaryParRule(
             is Binary -> expr.position ?: getExpressionEndPosition(expr.rightExpression)
             is Unary -> expr.position ?: getExpressionEndPosition(expr.value)
             else -> null
+        }
+    }
+
+    private fun createUnaryExpression(
+        operator: Operator,
+        operatorPosition: StatementPosition,
+        expression: ExpressionStatement,
+        overallPosition: StatementPosition?,
+    ): Unary {
+        val operatorCombo = ComboValuePosition(operator, operatorPosition)
+        return Unary(
+            value = expression,
+            operator = operatorCombo,
+            position = overallPosition,
+        )
+    }
+
+    private fun generateOverallPosition(
+        operatorPosition: StatementPosition?,
+        exprEndPosition: StatementPosition?,
+    ): StatementPosition? {
+        return if (operatorPosition != null && exprEndPosition != null) {
+            StatementPosition(
+                operatorPosition.startLine,
+                operatorPosition.startColumn,
+                exprEndPosition.endLine,
+                exprEndPosition.endColumn,
+            )
+        } else {
+            null
         }
     }
 }

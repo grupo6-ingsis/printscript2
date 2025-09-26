@@ -12,12 +12,12 @@ import org.gudelker.operators.MinusOperator
 import org.gudelker.operators.MultiplyOperator
 import org.gudelker.parser.rule.BinaryParRule
 import org.gudelker.parser.rule.BooleanExpressionParRule
-import org.gudelker.parser.rule.CallableCallParRule
 import org.gudelker.parser.rule.CallableParRule
 import org.gudelker.parser.rule.ConditionalParRule
 import org.gudelker.parser.rule.ConstDeclarationParRule
 import org.gudelker.parser.rule.ExpressionParRule
 import org.gudelker.parser.rule.GroupingParRule
+import org.gudelker.parser.rule.InvocableParRule
 import org.gudelker.parser.rule.LiteralBooleanParRule
 import org.gudelker.parser.rule.LiteralIdentifierParRule
 import org.gudelker.parser.rule.LiteralNumberParRule
@@ -74,7 +74,7 @@ object ParserFactoryUtils {
         unaryRule: UnaryParRule,
         finalGroupingRule: GroupingParRule,
         literalRules: List<SyntaxParRule>,
-        callableCall: CallableCallParRule,
+        callableCall: InvocableParRule,
     ): ExpressionParRule {
         return createExpressionRule(
             listOf(finalBooleanRule, finalBinaryRule, unaryRule, finalGroupingRule, callableCall) + literalRules,
@@ -159,7 +159,7 @@ object ParserFactoryUtils {
         basicRules: ExpressionParRule,
         callableExpressionRule: ExpressionParRule,
         booleanRule: BooleanExpressionParRule,
-        callableCall: CallableCallParRule,
+        callableCall: InvocableParRule,
     ): List<SyntaxParRule> {
         val callableRule = CallableParRule(callableExpressionRule)
         val variableDeclarationRule = VariableDeclarationParRule(setOf("let"), basicRules)

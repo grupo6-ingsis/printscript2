@@ -14,30 +14,40 @@ class GroupingParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule
     }
 
     override fun parse(tokenStream: TokenStream): ParseResult {
-        val (openParen, afterOpen) = tokenStream.consume(TokenType.OPEN_PARENTHESIS)
+        return consumeTokens(tokenStream)
+    }
 
+    private fun consumeTokens(tokenStream: TokenStream): ParseResult {
+        val (openParen, afterOpen) = tokenStream.consume(TokenType.OPEN_PARENTHESIS)
         if (openParen == null) {
-            return ParseResult(ParserSyntaxError("Expected '('"), tokenStream)
+            return ParseResult(ParserSyntaxError("Expected '(' at start of grouping"), tokenStream)
         }
 
         val expressionResult = expressionRule.parse(afterOpen)
         val newTokenStream = expressionResult.tokenStream
 
         if (expressionResult.parserResult !is ValidStatementParserResult) {
-            return ParseResult(ParserSyntaxError("Invalid expression in grouping"), newTokenStream)
+            return ParseResult(ParserSyntaxError("Invalid expression inside grouping"), newTokenStream)
         }
-
         val expression = expressionResult.parserResult.getStatement()
         if (expression !is ExpressionStatement) {
-            return ParseResult(ParserSyntaxError(""), newTokenStream)
+            return ParseResult(ParserSyntaxError("Parsed statement is not an expression"), newTokenStream)
         }
+
         val (closeParen, afterClose) = newTokenStream.consume(TokenType.CLOSE_PARENTHESIS)
-
         if (closeParen == null) {
-            return ParseResult(ParserSyntaxError("Expected ')'"), newTokenStream)
+            return ParseResult(ParserSyntaxError("Expected ')' at end of grouping"), newTokenStream)
         }
 
-        val grouping = Grouping(openParen.getValue(), expression, closeParen.getValue())
+        val grouping = createGrouping(openParen.getValue(), expression, closeParen.getValue())
         return ParseResult(ValidStatementParserResult(grouping), afterClose)
+    }
+
+    private fun createGrouping(
+        openParenValue: String,
+        expression: ExpressionStatement?,
+        closeParenValue: String,
+    ): Grouping {
+        return Grouping(openParenValue, expression, closeParenValue)
     }
 }

@@ -8,7 +8,7 @@ import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.stmtposition.ComboValuePosition
 import org.gudelker.token.TokenType
 
-class CallableCallParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule {
+class InvocableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {
         return tokenStream.current()?.getType() == TokenType.FUNCTION
     }
