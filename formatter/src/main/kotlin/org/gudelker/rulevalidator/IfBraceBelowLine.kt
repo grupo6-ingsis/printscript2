@@ -16,7 +16,6 @@ class IfBraceBelowLine : RuleValidatorFormatter {
             if (match.value.contains("\n{")) {
                 match.value
             } else {
-                // Replace the space and { with just a newline and {
                 match.value.replace(Regex("\\)([ \\t]*)\\{"), ")\n{")
             }
         }

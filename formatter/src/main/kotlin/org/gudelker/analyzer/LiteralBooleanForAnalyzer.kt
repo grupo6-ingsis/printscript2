@@ -15,7 +15,10 @@ class LiteralBooleanForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val literalBoolean = statement as LiteralBoolean
-        return literalBoolean.value.toString()
+        if (statement !is LiteralBoolean) {
+            return ""
+        }
+
+        return statement.value.toString()
     }
 }

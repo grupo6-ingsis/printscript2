@@ -5,6 +5,7 @@ import org.gudelker.formatter.DefaultFormatter
 import org.gudelker.rules.FormatterRule
 import org.gudelker.rulevalidator.RuleValidatorFormatter
 import org.gudelker.statements.interfaces.Statement
+import org.gudelker.utils.FormatterUtils
 
 class CallableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatter>) : Analyzer {
     override fun canHandle(statement: Statement): Boolean {
@@ -16,20 +17,28 @@ class CallableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatte
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val callable = statement as Callable
-        val name = callable.functionName.value
-        val position = callable.functionName.position
-        val spacesBeforeName = " ".repeat(position.startColumn - 1)
+        if (statement !is Callable) {
+            return ""
+        }
+        val name = getFunctionName(statement)
+        val functionPosition = getFunctionPosition(statement)
 
-        val formattedExpression = formatter.format(callable.expression, formatterRuleMap)
-        var string = "$spacesBeforeName$name($formattedExpression);"
+        val spacesBeforeName = FormatterUtils.generateSpaces(functionPosition.startColumn - 1)
+
+        val formattedExpression = formatter.format(statement.expression, formatterRuleMap)
+
+        var resultString = "$spacesBeforeName$name($formattedExpression);"
 
         ruleValidators.forEach { rule ->
             if (rule.matches(formatterRuleMap)) {
-                string = rule.applyRule(string, statement, formatterRuleMap)
+                resultString = rule.applyRule(resultString, statement, formatterRuleMap)
             }
         }
 
-        return string
+        return resultString
     }
+
+    private fun getFunctionPosition(statement: Callable) = statement.functionName.position
+
+    private fun getFunctionName(statement: Callable) = statement.functionName.value
 }

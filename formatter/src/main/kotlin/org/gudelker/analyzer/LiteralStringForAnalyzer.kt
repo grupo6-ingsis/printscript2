@@ -15,6 +15,9 @@ class LiteralStringForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        return "\"${(statement as LiteralString).value}\""
+        if (statement !is LiteralString) {
+            return ""
+        }
+        return "\"${statement.value}\""
     }
 }
