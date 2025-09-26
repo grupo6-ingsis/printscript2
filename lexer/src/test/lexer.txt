@@ -1,6 +1,7 @@
-let holaComo:Number=5;
-println(3+5);
-let hola_boca:String = "boca";
-if(true){
-let x = 5;
+let holaComo : Number=5;
+
+println(3 + 5);
+let hola_boca : String="boca";
+if (true){
+ let x=5;
 }

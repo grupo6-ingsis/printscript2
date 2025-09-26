@@ -12,15 +12,19 @@
     "quantity": 0
   },
   "line-breaks-after-println": {
-    "on": false,
+    "on": true,
     "quantity": 1
   },
   "indent-inside-if": {
     "on": true,
     "quantity": 1
   },
-    "if-brace-same-line": {
-        "on": true
-    }
+  "if-brace-same-line": {
+      "on": true
+  },
+  "mandatory-line-break-after-statement" : {
+    "on": true,
+    "quantity": 1
+  }
 
 }

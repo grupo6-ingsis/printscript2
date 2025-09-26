@@ -20,3 +20,7 @@ indent-inside-if:
 
 if-brace-same-line:
   on: false
+
+mandatory-line-break-after-statement:
+  on: true
+  quantity: 1
