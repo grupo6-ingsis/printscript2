@@ -14,29 +14,48 @@ class BinaryEvaluator(
         evaluators: List<Evaluator<out Any>>,
     ): Result<EvaluationResult> {
         return when (statement) {
-            is Binary -> {
-                if (operatorNotSupported(statement)) {
-                    return Result.failure(UnsupportedOperationException("Operador no soportado: ${statement.operator::class.simpleName}"))
-                }
-                val leftResult = Analyzer.analyze(statement.leftExpression, context, evaluators)
-
-                leftResult.fold(
-                    onSuccess = { leftEvalResult ->
-                        val rightResult = Analyzer.analyze(statement.rightExpression, leftEvalResult.context, evaluators)
-
-                        rightResult.fold(
-                            onSuccess = { rightEvalResult ->
-                                val operator = statement.operator.value
-                                evaluationResult(operator, leftEvalResult, rightEvalResult)
-                            },
-                            onFailure = { Result.failure(it) },
-                        )
-                    },
-                    onFailure = { Result.failure(it) },
-                )
-            }
-            else -> Result.failure(Exception("Not evaluator for: ${statement::class.simpleName}"))
+            is Binary -> evaluateBinary(statement, context, evaluators)
+            else -> Result.failure(unsupportedStatementError(statement))
         }
+    }
+
+    private fun evaluateBinary(
+        statement: Binary,
+        context: ConstVariableContext,
+        evaluators: List<Evaluator<out Any>>,
+    ): Result<EvaluationResult> {
+        if (operatorNotSupported(statement)) {
+            return Result.failure(unsupportedOperatorError(statement))
+        }
+        return analyzeLeft(statement, context, evaluators)
+    }
+
+    private fun analyzeLeft(
+        statement: Binary,
+        context: ConstVariableContext,
+        evaluators: List<Evaluator<out Any>>,
+    ): Result<EvaluationResult> {
+        val leftResult = Analyzer.analyze(statement.leftExpression, context, evaluators)
+        return leftResult.fold(
+            onSuccess = { leftEvalResult ->
+                analyzeRight(statement, leftEvalResult, evaluators)
+            },
+            onFailure = { Result.failure(it) },
+        )
+    }
+
+    private fun analyzeRight(
+        statement: Binary,
+        leftEvalResult: EvaluationResult,
+        evaluators: List<Evaluator<out Any>>,
+    ): Result<EvaluationResult> {
+        val rightResult = Analyzer.analyze(statement.rightExpression, leftEvalResult.context, evaluators)
+        return rightResult.fold(
+            onSuccess = { rightEvalResult ->
+                evaluationResult(statement.operator.value, leftEvalResult, rightEvalResult)
+            },
+            onFailure = { Result.failure(it) },
+        )
     }
 
     private fun evaluationResult(
@@ -51,8 +70,12 @@ class BinaryEvaluator(
             Result.failure(UnsupportedOperationException("Operador binario no soportado: ${operator::class.simpleName}"))
         }
 
-    private fun operatorNotSupported(statement: Binary): Boolean {
-        return supportedOperators.isNotEmpty() &&
+    private fun operatorNotSupported(statement: Binary): Boolean =
+        supportedOperators.isNotEmpty() &&
             !supportedOperators.contains(statement.operator.value::class.java)
-    }
+
+    private fun unsupportedOperatorError(statement: Binary) =
+        UnsupportedOperationException("Operador no soportado: ${statement.operator::class.simpleName}")
+
+    private fun unsupportedStatementError(statement: Statement) = Exception("Not evaluator for: ${statement::class.simpleName}")
 }

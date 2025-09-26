@@ -74,11 +74,14 @@ private fun lexSource(
     version: String,
 ): StreamingLexer {
     showProgress("Lexing", 20)
-    showProgress("Lexing", 20)
     val lexer = LexerFactory.createLexer(parseVersion(version))
     val streamingLexer = StreamingLexer(lexer)
     val sourceReader = FileSourceReader(filePath)
     streamingLexer.initialize(sourceReader)
+    val result = streamingLexer.nextBatch()
+    if (result is StreamingLexerResult.Error) {
+        throw Exception("Lexer error: ${result.message}")
+    }
     return streamingLexer
 }
 
@@ -137,10 +140,10 @@ class Execution : CliktCommand("execution") {
             pipeline.initialize(sourceReader)
             pipeline.processAll()
             val errorMessage = pipeline.getLastErrorMessage()
-            if (errorMessage == null) {
+            showProgress("Executing", 100)
+            if (errorMessage != null) {
                 echo("❌ Error: $errorMessage", err = true)
             } else {
-                showProgress("Executing", 100)
                 echo("✅ Execution finished")
             }
         } catch (e: Exception) {

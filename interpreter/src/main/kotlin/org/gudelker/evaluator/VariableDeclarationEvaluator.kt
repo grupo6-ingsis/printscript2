@@ -13,68 +13,102 @@ class VariableDeclarationEvaluator(
         evaluators: List<Evaluator<out Any>>,
     ): Result<EvaluationResult> {
         return when (statement) {
-            is VariableDeclaration -> {
-                val name = statement.identifierCombo.value
-                if (context.hasVariable(name) || context.hasConstant(name)) {
-                    return Result.failure(
-                        Exception("Variable o constante '$name' ya declarada"),
-                    )
-                }
-                val expectedType = statement.type?.value?.lowercase()
-                val hasValue = statement.value != null
-                val valueResult =
-                    if (statement.value != null) {
-                        Analyzer.analyze(statement.value!!, context, evaluators)
-                    } else {
-                        Result.success(EvaluationResult(null, context))
-                    }
-                val value: Any? = valueResult.getOrThrow().value
-
-                if (expectedType != null) {
-                    val validator = acceptedTypes[expectedType]
-                    if (validator == null) {
-                        return Result.failure(
-                            Exception("Tipo '$expectedType' no soportado"),
-                        )
-                    }
-                    if (hasValue && value != null && !validator.isInstance(value)) {
-                        return Result.failure(
-                            Exception(
-                                "Tipo de dato inválido para variable '$name': " +
-                                    "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
-                            ),
-                        )
-                    }
-                    // Guarda el tipo aunque no tenga valor
-                    val newContext =
-                        if (hasValue) {
-                            context.setVariableWithType(name, value!!, expectedType)
-                        } else {
-                            context.setVariableWithType(name, null, expectedType)
-                        }
-                    Result.success(EvaluationResult(Unit, newContext))
-                } else {
-                    // Si no hay tipo, solo permite si hay valor
-                    if (!hasValue) {
-                        return Result.failure(
-                            Exception("Debe especificar un tipo o un valor para la variable '$name'"),
-                        )
-                    }
-                    // Inferencia extensible usando acceptedTypes
-                    val inferredType = acceptedTypes.entries.firstOrNull { it.value.isInstance(value!!) }?.key
-                    if (inferredType == null) {
-                        return Result.failure(
-                            Exception("No se pudo inferir el tipo de la variable '$name'"),
-                        )
-                    }
-                    val newContext = context.setVariableWithType(name, value!!, inferredType)
-                    Result.success(EvaluationResult(Unit, newContext))
-                }
-            }
-            else ->
-                Result.failure(
-                    IllegalArgumentException("Not evaluator for: ${statement::class.simpleName}"),
-                )
+            is VariableDeclaration -> evaluateVariableDeclaration(statement, context, evaluators)
+            else -> Result.failure(unsupportedStatementError(statement))
         }
     }
+
+    private fun evaluateVariableDeclaration(
+        statement: VariableDeclaration,
+        context: ConstVariableContext,
+        evaluators: List<Evaluator<out Any>>,
+    ): Result<EvaluationResult> {
+        val name = statement.identifierCombo.value
+        checkNameConflicts(name, context)?.let { return Result.failure(it) }
+
+        val hasValue = statement.value != null
+        val valueResult = evaluateValue(statement, context, evaluators)
+        val value = valueResult.getOrElse { return Result.failure(it) }.value
+
+        val expectedType = statement.type?.value?.lowercase()
+        if (expectedType != null) {
+            validateType(expectedType, value, hasValue, name)?.let { return Result.failure(it) }
+            val newContext = setVariableWithType(context, name, value, expectedType, hasValue)
+            return Result.success(EvaluationResult(Unit, newContext))
+        } else {
+            if (!hasValue) {
+                return Result.failure(missingTypeOrValueError(name))
+            }
+            val inferredType =
+                inferType(value)
+                    ?: return Result.failure(cannotInferTypeError(name))
+            val newContext = context.setVariableWithType(name, value!!, inferredType)
+            return Result.success(EvaluationResult(Unit, newContext))
+        }
+    }
+
+    private fun checkNameConflicts(
+        name: String,
+        context: ConstVariableContext,
+    ): Exception? {
+        if (context.hasVariable(name) || context.hasConstant(name)) {
+            return Exception("Variable o constante '$name' ya declarada")
+        }
+        return null
+    }
+
+    private fun evaluateValue(
+        statement: VariableDeclaration,
+        context: ConstVariableContext,
+        evaluators: List<Evaluator<out Any>>,
+    ): Result<EvaluationResult> {
+        return if (statement.value != null) {
+            Analyzer.analyze(statement.value!!, context, evaluators)
+        } else {
+            Result.success(EvaluationResult(null, context))
+        }
+    }
+
+    private fun validateType(
+        expectedType: String,
+        value: Any?,
+        hasValue: Boolean,
+        name: String,
+    ): Exception? {
+        val validator = acceptedTypes[expectedType]
+        if (validator == null) {
+            return Exception("Tipo '$expectedType' no soportado")
+        }
+        if (hasValue && value != null && !validator.isInstance(value)) {
+            return Exception(
+                "Tipo de dato inválido para variable '$name': " +
+                    "se esperaba '$expectedType', pero se obtuvo '${value::class.simpleName}'",
+            )
+        }
+        return null
+    }
+
+    private fun setVariableWithType(
+        context: ConstVariableContext,
+        name: String,
+        value: Any?,
+        type: String,
+        hasValue: Boolean,
+    ): ConstVariableContext {
+        return if (hasValue) {
+            context.setVariableWithType(name, value!!, type)
+        } else {
+            context.setVariableWithType(name, null, type)
+        }
+    }
+
+    private fun inferType(value: Any?): String? {
+        return acceptedTypes.entries.firstOrNull { it.value.isInstance(value!!) }?.key
+    }
+
+    private fun missingTypeOrValueError(name: String) = Exception("Debe especificar un tipo o un valor para la variable '$name'")
+
+    private fun cannotInferTypeError(name: String) = Exception("No se pudo inferir el tipo de la variable '$name'")
+
+    private fun unsupportedStatementError(statement: Statement) = Exception("Not evaluator for: ${statement::class.simpleName}")
 }
