@@ -15,14 +15,22 @@ class BinaryForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val binary = statement as Binary
-        val left = binary.leftExpression
-        val operator = binary.operator
-        val right = binary.rightExpression
+        if (statement !is Binary) {
+            return ""
+        }
+        val left = getLeft(statement)
+        val operator = getOperator(statement)
+        val right = getRight(statement)
 
         val formattedLeft = formatter.format(left, formatterRuleMap)
         val formattedRight = formatter.format(right, formatterRuleMap)
 
         return "$formattedLeft ${operator.value.getValue()} $formattedRight"
     }
+
+    private fun getRight(statement: Binary) = statement.rightExpression
+
+    private fun getOperator(statement: Binary) = statement.operator
+
+    private fun getLeft(statement: Binary) = statement.leftExpression
 }

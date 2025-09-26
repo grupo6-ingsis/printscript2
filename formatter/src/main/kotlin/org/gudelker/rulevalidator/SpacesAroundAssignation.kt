@@ -5,7 +5,6 @@ import org.gudelker.statements.interfaces.Statement
 
 class SpacesAroundAssignation : RuleValidatorFormatter {
     override fun matches(formatterRuleMap: Map<String, FormatterRule>): Boolean {
-        // Check for either rule
         return formatterRuleMap.containsKey("enforce-spacing-around-equals") ||
             formatterRuleMap.containsKey("enforce-no-spacing-around-equals")
     }

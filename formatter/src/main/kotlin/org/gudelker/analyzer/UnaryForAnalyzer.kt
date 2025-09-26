@@ -15,10 +15,18 @@ class UnaryForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val unary = statement as Unary
-        val operator = unary.operator
-        val expression = unary.value
+        if (statement !is Unary) {
+            return ""
+        }
+        val operator = getOperator(statement)
+        val expression = getExpression(statement)
+
         val formattedExpression = formatter.format(expression, formatterRuleMap)
+
         return "${operator.value.getValue()}$formattedExpression"
     }
+
+    private fun getExpression(statement: Unary) = statement.value
+
+    private fun getOperator(statement: Unary) = statement.operator
 }

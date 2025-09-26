@@ -15,6 +15,9 @@ class LiteralNumberForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        return (statement as LiteralNumber).value.toString()
+        if (statement !is LiteralNumber) {
+            return ""
+        }
+        return statement.value.toString()
     }
 }

@@ -15,6 +15,9 @@ class LiteralIdentifierForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        return (statement as LiteralIdentifier).value.value
+        if (statement !is LiteralIdentifier) {
+            return ""
+        }
+        return statement.value.value
     }
 }

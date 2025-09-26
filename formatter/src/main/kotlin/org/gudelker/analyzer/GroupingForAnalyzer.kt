@@ -15,11 +15,21 @@ class GroupingForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val grouping = statement as Grouping
-        val leftParen = grouping.openParenthesis
-        val expression = grouping.expression
-        val rightParen = grouping.closingParenthesis
+        if (statement !is Grouping) {
+            return ""
+        }
+        val leftParen = getLeftParen(statement)
+        val expression = getExpression(statement)
+        val rightParen = getRightParen(statement)
+
         val formattedExpression = expression?.let { formatter.formatNode(it, formatterRuleMap) }
+
         return "$leftParen$formattedExpression$rightParen"
     }
+
+    private fun getRightParen(statement: Grouping) = statement.closingParenthesis
+
+    private fun getExpression(statement: Grouping) = statement.expression
+
+    private fun getLeftParen(statement: Grouping) = statement.openParenthesis
 }

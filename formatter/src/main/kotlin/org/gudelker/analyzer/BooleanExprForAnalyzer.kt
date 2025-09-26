@@ -15,13 +15,22 @@ class BooleanExprForAnalyzer : Analyzer {
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val booleanExpression = statement as BooleanExpression
-        val left = booleanExpression.left
-        val operator = booleanExpression.comparator
-        val right = booleanExpression.right
+        if (statement !is BooleanExpression) {
+            return ""
+        }
+        val left = getLeft(statement)
+        val operator = getOperator(statement)
+        val right = getRight(statement)
+
         val formattedLeft = formatter.format(left, formatterRuleMap)
         val formattedRight = formatter.format(right, formatterRuleMap)
 
         return "$formattedLeft ${operator.getValue()} $formattedRight"
     }
+
+    private fun getRight(statement: BooleanExpression) = statement.right
+
+    private fun getOperator(statement: BooleanExpression) = statement.comparator
+
+    private fun getLeft(statement: BooleanExpression) = statement.left
 }

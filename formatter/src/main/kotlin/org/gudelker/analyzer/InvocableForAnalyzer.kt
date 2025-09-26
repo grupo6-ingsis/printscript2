@@ -16,10 +16,15 @@ class InvocableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatt
         formatterRuleMap: Map<String, FormatterRule>,
         formatter: DefaultFormatter,
     ): String {
-        val callableCall = statement as InvocableExpression
-        val name = callableCall.functionName.value
-        val formattedExpression = formatter.format(callableCall.expression, formatterRuleMap)
+        if (statement !is InvocableExpression) {
+            return ""
+        }
+
+        val name = getFunctionName(statement)
+        val formattedExpression = formatter.format(statement.expression, formatterRuleMap)
+
         var string = "$name($formattedExpression);"
+
         ruleValidators.forEach { rule ->
             if (rule.matches(formatterRuleMap)) {
                 string = rule.applyRule(string, statement, formatterRuleMap)
@@ -27,4 +32,6 @@ class InvocableForAnalyzer(private val ruleValidators: List<RuleValidatorFormatt
         }
         return string
     }
+
+    private fun getFunctionName(statement: InvocableExpression) = statement.functionName.value
 }
