@@ -26,7 +26,6 @@ class BooleanExpressionParRule(
         if (leftResult.parserResult !is ValidStatementParserResult) {
             return leftResult
         }
-
         return parseComparisonContinuation(
             leftResult.parserResult.getStatement() as ExpressionStatement,
             leftResult.tokenStream,
@@ -38,34 +37,40 @@ class BooleanExpressionParRule(
         stream: TokenStream,
     ): ParseResult {
         val currentToken = stream.current()
-
-        return if (currentToken?.getType() == TokenType.COMPARATOR &&
-            currentToken.getValue() in comparisonOperators.keys
-        ) {
+        return if (isComparatorToken(currentToken)) {
             val comparator =
-                comparisonOperators[currentToken.getValue()]?.invoke()
+                getComparator(currentToken!!.getValue())
                     ?: return ParseResult(
                         ParserSyntaxError("Comparador no válido: ${currentToken.getValue()}"),
                         stream,
                     )
-
             val (_, streamAfterComparator) = stream.next()
             val rightResult = expressionRule.parse(streamAfterComparator)
-
             if (rightResult.parserResult !is ValidStatementParserResult) {
                 return rightResult
             }
-
-            val booleanExpression =
-                BooleanExpression(
-                    left = leftExpression,
-                    comparator = comparator,
-                    right = rightResult.parserResult.getStatement() as ExpressionStatement,
-                )
-
+            val rightExpression = rightResult.parserResult.getStatement() as ExpressionStatement
+            val booleanExpression = createBooleanExpression(leftExpression, comparator, rightExpression)
             parseComparisonContinuation(booleanExpression, rightResult.tokenStream)
         } else {
             ParseResult(ValidStatementParserResult(leftExpression), stream)
         }
+    }
+
+    private fun isComparatorToken(token: org.gudelker.token.Token?): Boolean {
+        return token?.getType() == TokenType.COMPARATOR &&
+            token.getValue() in comparisonOperators.keys
+    }
+
+    private fun getComparator(value: String): Comparator? {
+        return comparisonOperators[value]?.invoke()
+    }
+
+    private fun createBooleanExpression(
+        left: ExpressionStatement,
+        comparator: Comparator,
+        right: ExpressionStatement,
+    ): BooleanExpression {
+        return BooleanExpression(left = left, comparator = comparator, right = right)
     }
 }

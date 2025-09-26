@@ -1,6 +1,7 @@
 package org.gudelker.parser.rule
 
 import org.gudelker.expressions.Callable
+import org.gudelker.parser.parsingtoken.FunctionCallHeaderParseResult
 import org.gudelker.parser.result.ParseResult
 import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
@@ -22,15 +23,18 @@ class CallableParRule(private val expressionRule: SyntaxParRule) : SyntaxParRule
         if (semicolonToken == null) {
             return errorResult("Expected ';' after function call", header.nextStream)
         }
-        val callable =
-            Callable(
-                ComboValuePosition(
-                    header.functionToken!!.getValue(),
-                    header.position,
-                ),
-                header.expression!!,
-            )
+        val callable = createCallable(header)
         return ParseResult(ValidStatementParserResult(callable), afterSemicolon)
+    }
+
+    private fun createCallable(header: FunctionCallHeaderParseResult): Callable {
+        return Callable(
+            ComboValuePosition(
+                header.functionToken!!.getValue(),
+                header.position,
+            ),
+            header.expression!!,
+        )
     }
 
     private fun errorResult(

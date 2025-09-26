@@ -24,4 +24,13 @@ Un mini lenguaje de programación inspirado en **TypeScript**, con soporte para:
 - 🕵️ **Linter** → detecta errores y malas prácticas  
 - 💻 **CLI** → corre, formatea y analiza el código desde la terminal  
 
+## 🌟 Commands CLI
+-version: 1.0|1.1
+- Validation: ./gradlew run --args="validation <filePath> [--version <version>]"
+- Execution:  ./gradlew run --args="execution <filePath> [--version <version>]"
+- Formatting: ./gradlew run --args="formatting <filePath> --config <configPath> [--version <version>]"
+- Analyzing: ./gradlew run --args="analyzing <filePath> --config <configPath> [--version <version>]"
+
+
+
 ---

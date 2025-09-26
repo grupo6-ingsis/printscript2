@@ -23,23 +23,9 @@ object ParserUtils {
     fun parseOptionalType(stream: TokenStream): TypeParseResult {
         if (stream.check(TokenType.COLON)) {
             val (colonToken, streamAfterColon) = stream.consume(TokenType.COLON)
-            val colonPos =
-                StatementPosition(
-                    colonToken!!.getPosition().startLine,
-                    colonToken.getPosition().startColumn,
-                    colonToken.getPosition().endLine,
-                    colonToken.getPosition().endColumn,
-                )
+            val colonPos = createStatementPosition(colonToken!!)
             val (typeToken, streamAfterType) = streamAfterColon.consume(TokenType.TYPE)
-            val typePos =
-                typeToken?.let {
-                    StatementPosition(
-                        it.getPosition().startLine,
-                        it.getPosition().startColumn,
-                        it.getPosition().endLine,
-                        it.getPosition().endColumn,
-                    )
-                }
+            val typePos = typeToken?.let { createStatementPosition(it) }
             return if (typeToken == null) {
                 TypeParseResult(null, null, null, null, ParserSyntaxError("Se esperaba un tipo después de ':'"), streamAfterColon)
             } else {
@@ -54,14 +40,7 @@ object ParserUtils {
         afterFunction: TokenStream,
         expressionRule: SyntaxParRule,
     ): FunctionCallParseResult {
-        val tokenPosition = functionToken.getPosition()
-        val callablePosition =
-            StatementPosition(
-                tokenPosition.startLine,
-                tokenPosition.startColumn,
-                tokenPosition.endLine,
-                tokenPosition.endColumn,
-            )
+        val callablePosition = createStatementPosition(functionToken)
         val (openParenToken, afterOpenParen) = afterFunction.consume(TokenType.OPEN_PARENTHESIS)
         if (openParenToken == null) {
             return FunctionCallParseResult(null, afterFunction, callablePosition)
@@ -117,5 +96,15 @@ object ParserUtils {
             )
         }
         return FunctionCallHeaderParseResult(functionToken, result.expression, result.position, afterCloseParen, null)
+    }
+
+    fun createStatementPosition(token: Token): StatementPosition {
+        val pos = token.getPosition()
+        return StatementPosition(
+            pos.startLine,
+            pos.startColumn,
+            pos.endLine,
+            pos.endColumn,
+        )
     }
 }

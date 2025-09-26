@@ -6,28 +6,40 @@ import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.stmtposition.ComboValuePosition
-import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.token.TokenType
 
 class LiteralIdentifierParRule : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {
-        return tokenStream.current()?.getType() == TokenType.IDENTIFIER
+        return isIdentifierToken(tokenStream)
     }
 
     override fun parse(tokenStream: TokenStream): ParseResult {
-        val token = tokenStream.current()
-        if (token?.getType() != TokenType.IDENTIFIER) {
-            val currentIndex = tokenStream.getCurrentIndex()
-            return ParseResult(ParserSyntaxError("Se esperaba un identifier en la posición $currentIndex"), tokenStream)
+        if (!isIdentifierToken(tokenStream)) {
+            return errorResult(tokenStream, "Se esperaba un identifier en la posición ${tokenStream.getCurrentIndex()}")
         }
+        return parseIdentifierToken(tokenStream)
+    }
+
+    private fun isIdentifierToken(tokenStream: TokenStream): Boolean {
+        return tokenStream.current()?.getType() == TokenType.IDENTIFIER
+    }
+
+    private fun parseIdentifierToken(tokenStream: TokenStream): ParseResult {
+        val token = tokenStream.current()!!
         val value = token.getValue()
-        val tokenPosition = token.getPosition()
-        val position = StatementPosition(tokenPosition.startLine, tokenPosition.startColumn, tokenPosition.endLine, tokenPosition.endColumn)
+        val position = ParserUtils.createStatementPosition(token)
         val literalIdentifier = LiteralIdentifier(ComboValuePosition(value, position))
         val (_, newTokenStream) = tokenStream.consume(TokenType.IDENTIFIER)
         return ParseResult(
             ValidStatementParserResult(literalIdentifier),
             newTokenStream,
         )
+    }
+
+    private fun errorResult(
+        tokenStream: TokenStream,
+        message: String,
+    ): ParseResult {
+        return ParseResult(ParserSyntaxError(message), tokenStream)
     }
 }

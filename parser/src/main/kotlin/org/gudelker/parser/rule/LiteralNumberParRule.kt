@@ -6,24 +6,29 @@ import org.gudelker.parser.result.ParserSyntaxError
 import org.gudelker.parser.result.ValidStatementParserResult
 import org.gudelker.parser.tokenstream.TokenStream
 import org.gudelker.stmtposition.ComboValuePosition
-import org.gudelker.stmtposition.StatementPosition
 import org.gudelker.token.Token
 import org.gudelker.token.TokenType
 
 class LiteralNumberParRule : SyntaxParRule {
     override fun matches(tokenStream: TokenStream): Boolean {
-        return tokenStream.current()?.getType() == TokenType.NUMBER
+        return isNumberToken(tokenStream)
     }
 
     override fun parse(tokenStream: TokenStream): ParseResult {
-        val token = tokenStream.current()
-        if (token?.getType() != TokenType.NUMBER) {
-            val currentIndex = tokenStream.getCurrentIndex()
-            return ParseResult(ParserSyntaxError("Se esperaba un número en la posición $currentIndex"), tokenStream)
+        if (!isNumberToken(tokenStream)) {
+            return errorResult(tokenStream, "Se esperaba un número en la posición ${tokenStream.getCurrentIndex()}")
         }
+        return parseNumberToken(tokenStream)
+    }
+
+    private fun isNumberToken(tokenStream: TokenStream): Boolean {
+        return tokenStream.current()?.getType() == TokenType.NUMBER
+    }
+
+    private fun parseNumberToken(tokenStream: TokenStream): ParseResult {
+        val token = tokenStream.current()!!
         val value = getNumberValue(token)
-        val tokenPosition = token.getPosition()
-        val position = StatementPosition(tokenPosition.startLine, tokenPosition.startColumn, tokenPosition.endLine, tokenPosition.endColumn)
+        val position = ParserUtils.createStatementPosition(token)
         val literalNumber = LiteralNumber(ComboValuePosition(value, position))
         val (_, newTokenStream) = tokenStream.consume(TokenType.NUMBER)
         return ParseResult(
@@ -33,12 +38,17 @@ class LiteralNumberParRule : SyntaxParRule {
     }
 
     private fun getNumberValue(token: Token): Number {
-        val value =
-            if (token.getValue().contains(".")) {
-                token.getValue().toDouble()
-            } else {
-                token.getValue().toInt()
-            }
-        return value
+        return if (token.getValue().contains(".")) {
+            token.getValue().toDouble()
+        } else {
+            token.getValue().toInt()
+        }
+    }
+
+    private fun errorResult(
+        tokenStream: TokenStream,
+        message: String,
+    ): ParseResult {
+        return ParseResult(ParserSyntaxError(message), tokenStream)
     }
 }

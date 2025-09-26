@@ -16,7 +16,7 @@ class DefaultParser(
         return parseRecursive(tokenStream, emptyList())
     }
 
-    public fun getRules(): List<SyntaxParRule> = rules
+    fun getRules(): List<SyntaxParRule> = rules
 
     private fun parseRecursive(
         currentStream: TokenStream,
